@@ -1,8 +1,8 @@
-# youka — a personal space
+# youka — a personal field guide
 
-自然人文风个人主页：暖白纸张、苔绿、风景摄影与衬线排版。以静态文件直接兼容 GitHub Pages，无服务端、无运行时 CDN 依赖。
+以“追问为什么”连接 AI、数据分析与屏幕之外的个人兴趣。暖白纸张、深林绿、衬线大字与线性图解；静态文件直接兼容现有 GitHub Pages，没有增加数据库、服务端或运行时 CDN 依赖。
 
-## 本地开发
+## 开发
 
 ```sh
 npm ci
@@ -10,44 +10,52 @@ npm run build
 npm run dev
 ```
 
-打开终端打印的本地地址。修改 `src/main.js` 后重新运行 `npm run build`；HTML/CSS 修改会自动刷新。
+打开终端给出的地址。HTML/CSS 会热更新；修改 `src/main.js` 后需重新 `npm run build`，因为首页加载的是与 GitHub Pages 共用的构建产物。
 
-- `index.html`：个人信息、项目与页面结构。
-- `styles.css`：响应式布局与视觉系统。
-- `src/main.js`：GSAP / ScrollTrigger、Lenis、共享元素转场、移动菜单与交互实验。
-- `script.js`、`script.css`、`script.js.LEGAL.txt`：构建产物，需要和页面一起提交。
-- `assets/`：本地图片、WOFF2 字体与字体许可。
+- `index.html`：完整页面内容、SVG 方法图与个人兴趣叙事。
+- `styles.css`：本地字体、排版、响应式和减少动态效果模式。
+- `src/main.js`：GSAP / ScrollTrigger、Lenis、项目滚动叙事、个人章节共享元素转场与交互。
+- `script.js`、`script.css`、`script.js.LEGAL.txt`：必须一起提交的静态构建产物。
+- `scripts/build.mjs`：打包并为 CSS/JS 添加内容版本号。
 
-## 动效与降级
+## 设计与交互
 
-首次访问显示短暂遮罩开场（每个会话一次，不代表网络加载进度）；照片视差、文字显现、滚动驱动横向展台和照片交叠。桌面宽屏启用固定展台，手机、较矮窗口及减少动态效果模式使用原生横向滑动。支持 View Transitions 的浏览器使用共享海报转场，其余浏览器直接展开原生 dialog。
+InsightAI 从点击封面进入弹窗改为直接可读的三幕叙事：关系 → 画像 → 洞察。宽屏右侧图解保持在视野中，随左侧章节滚动切换；也可用鼠标或键盘直接选择。手机自然纵向阅读，用标签切换图解，不强制横向滚动。配比滑杆只改变方法图，不调用后端或计算真实用户排名。
 
-实验详情有可操作的滑杆、重置、Escape 关闭及焦点返回。减少动态效果偏好关闭入场、平滑滚动和滚动动画。无 JavaScript 时页面正文仍可阅读。
+原有 Orbit / Soft Form / Field 实验全部移除。新的个人坐标以数据研究、音乐和羽毛球三种兴趣编排：可切换观察背景、调整纯视觉声波节奏、重播球场轨迹。支持 View Transitions 时使用局部共享图形过渡，否则使用渐显。
 
-## 资料状态
+首次访问的短遮罩是开场设计，不代表加载进度；照片视差、文字显现与图解过渡随系统减少动态效果偏好关闭。音乐没有音频，持续动画仅在对应图形可见、页面在前台时运行。关闭 JavaScript 后项目与三种兴趣的正文仍可阅读。
 
-已使用用户提供的昵称 youka，以及 AI、羽毛球、音乐、数据分析、回归实证研究、探索深层动机等兴趣与方向。
+## 内容依据与展示边界
 
-Community 对应用户的本科毕业设计 **InsightAI 2026：社区用户建模与创意洞察智能分析系统**。项目名称、双社区支持、功能、技术栈与方法依据用户上传的《毕业设计系统介绍文档》整理。主页提供可展开的完整项目故事、方法折叠面板与架构流程；展示界面是依据文档重绘的示意，不是实际截图，也不包含真实运行数据。文档中的未来上线计划和预期收益没有作为已完成成果展示。当前联系入口为此仓库拥有者的 GitHub，未虚构邮箱。
+昵称 youka，以及 AI、数据分析、回归实证研究、追问深层动机、音乐与羽毛球兴趣，沿用上一版已记录的用户资料。没有编造院校、职业、论文、比赛、具体歌曲或成果数字。山湖照片仍是 Unsplash 氛围素材，不是用户个人摄影。
 
-摄影为 Unsplash 氛围素材，不是用户个人拍摄：
+InsightAI 项目能力于 2026-11-05 对照 [community 源码](https://github.com/youka150/community) 核实：
 
-- 山湖：`https://images.unsplash.com/photo-1470770841072-f978cf4d019e`
-- 森林：`https://images.unsplash.com/photo-1441974231531-c6227db76b6e`
+| 主页叙事                                                   | 对应实现                                                                                                        |
+| ---------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| 有向加权网络、PageRank、八维评分、熵权/自定义权重、Louvain | `python/huawei_mining_service/services/network_service.py`；`src/components/huawei-dashboard/AIAnalysisTab.jsx` |
+| 行为与可选语义特征融合、PCA、KMeans，语义不可用时回退      | `python/huawei_mining_service/services/clustering_service.py`                                                   |
+| 核心群体的语义聚类、产品机会、潜力用户识别                 | `python/huawei_mining_service/services/hotspot_service.py`                                                      |
+| 规划、检索、反思补搜、流式报告                             | `src/lib/agents/TrendAgent.js`；`src/app/api/trend-analysis/route.js`                                           |
+| 华为/昇腾双社区                                            | `python/huawei_mining_service/app.py` 与两套前端接口                                                            |
 
-字体：Cormorant Garamond、DM Sans、Manrope，遵循 SIL Open Font License；许可证见 `assets/licenses/`。
+所有抽象图解均为方法示意，不是实际系统截图或实时社区数据。没有展示伪造热门话题、人物排名、收益、准确率或运行规模；无需访问本地 PostgreSQL。`localhost:3000` 的真实截图未来可以作为额外素材补充。
+
+摄影来源：[Unsplash 山湖](https://images.unsplash.com/photo-1470770841072-f978cf4d019e)。原有森林素材保留但当前未展示。字体为 Cormorant Garamond、DM Sans、Manrope，遵循 SIL Open Font License，见 `assets/licenses/`。
 
 ## 验证
 
 ```sh
 npm run check
 npm run build
-# 先启动本地开发服务器；需要系统已安装 Chromium
+# 另一个终端运行 npm run dev；需要系统 Chromium
 node scripts/interaction-check.mjs
+node scripts/visual-check.mjs
 ```
 
-测试接受 `CHROMIUM_PATH` 和 `PREVIEW_URL` 环境变量，覆盖桌面锚点、详情转场、滑杆/重置、关闭后的焦点恢复、手机菜单、三个实验、减少动态效果、320–1440px 布局与无 JavaScript 页面。
+浏览器检查支持 `PREVIEW_URL` 与 `CHROMIUM_PATH`。覆盖项目滚动与标签选择、键盘切换、配比、Agent 重播、研究视角、视觉节奏、球场轨迹、手机导航、运行时切换减少动态效果、320–1440px 布局、无 JS 正文、图片加载与运行时错误。截图保存在忽略的 `.test-results/`。
 
 ## GitHub Pages
 
-仓库根目录即网站，GitHub Pages 从 `main` 分支根目录发布到 https://youka150.github.io/。提交前运行 `npm run build` 保持构建产物同步；构建会更新样式和脚本的内容版本标识，避免旧资源缓存。`.nojekyll` 让 Pages 直接提供静态文件。
+沿用 `main` 分支根目录发布到 [youka150.github.io](https://youka150.github.io/)。构建后提交源码与根目录产物；`.nojekyll` 保持静态资源直接可用。本次未迁移到 Sites 托管。

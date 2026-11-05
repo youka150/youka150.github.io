@@ -3,12 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#eeede7" />
+    <meta name="theme-color" content="#f1f0e8" />
     <meta
       name="description"
-      content="Youka 的个人空间。关于 AI、数据分析、音乐与日常生活的个人空间。"
+      content="我是 Youka，关注 AI、数据分析与实证研究，也喜欢音乐和羽毛球。从社区智能分析项目 InsightAI，到屏幕之外的好奇心。"
     />
-    <title>Youka — A slower kind of curiosity.</title>
+    <title>Youka — Curious by nature.</title>
     <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml" />
     <link
       rel="preload"
@@ -17,32 +17,35 @@
       type="font/woff2"
       crossorigin
     />
-    <link rel="stylesheet" href="./styles.css?v=41f0db8e4e2a" />
+    <link rel="stylesheet" href="./styles.css?v=6826adb7b86c" />
     <link rel="stylesheet" href="./script.css?v=1a72e3168803" />
-    <script type="module" src="./script.js?v=ed5d69aaa3f1"></script>
+    <script type="module" src="./script.js?v=e1ed81d7b38f"></script>
   </head>
   <body>
     <a class="skip-link" href="#main">跳转到内容</a>
     <div class="splash" aria-hidden="true">
-      <span class="splash-word">youka<span>®</span></span>
+      <span class="splash-word"
+        >youka<span
+          ><svg viewBox="0 0 100 100" aria-hidden="true">
+            <path d="M50 8v84M8 50h84M20 20l60 60M80 20 20 80" /></svg></span
+      ></span>
       <div class="splash-bottom">
-        <span>A SPACE FOR CURIOSITY</span><span class="splash-count">00</span>
+        <span>A MIND IN MOTION</span><span>好奇，始终在线。</span>
       </div>
       <div class="splash-line"></div>
     </div>
     <header class="header">
       <a class="brand" href="#home" aria-label="Youka 首页"
-        >yk<span class="asterisk"
+        >youka<span class="brand-star" aria-hidden="true"
           ><svg viewBox="0 0 100 100" aria-hidden="true">
-            <path d="M50 8v84M8 50h84M20 20l60 60M80 20 20 80" /></svg></span
-      ></a>
-      <a class="header-note" href="#about"
-        >INDEPENDENT MIND.<br />EVER-EVOLVING SPACE.</a
-      >
+            <path
+              d="M50 8v84M8 50h84M20 20l60 60M80 20 20 80"
+            /></svg></span></a
+      ><span class="header-note">A PERSONAL FIELD GUIDE</span>
       <nav aria-label="主导航">
-        <a href="#selected">作品 <span>01</span></a
-        ><a href="#about">关于 <span>03</span></a
-        ><a class="nav-contact" href="#contact">打个招呼 <span>↗</span></a>
+        <a href="#selected">项目 <span>01</span></a
+        ><a href="#about">我的坐标 <span>02</span></a
+        ><a href="#contact">聊一聊 <span>↗</span></a>
       </nav>
       <button
         class="menu-toggle"
@@ -54,315 +57,842 @@
       </button>
     </header>
     <nav class="mobile-nav" id="mobile-nav" aria-label="移动导航" hidden>
-      <a href="#selected">作品 <small>01</small></a
-      ><a href="#about">关于 <small>03</small></a
-      ><a href="#contact">打个招呼 ↗</a>
+      <a href="#selected">项目 <small>01</small></a
+      ><a href="#about">我的坐标 <small>02</small></a
+      ><a href="#contact">聊一聊 ↗</a>
     </nav>
     <main id="main">
       <section class="hero section-pad" id="home" aria-labelledby="hero-title">
         <div class="hero-meta">
-          <span><i class="status-dot"></i> YOUKA / A PERSONAL JOURNAL</span
-          ><span>VOL. 01 / ALWAYS IN PROGRESS</span>
+          <span><i class="status-dot"></i> YOUKA / 独立探索，持续生长</span
+          ><span>AI · DATA · EVERYDAY LIFE</span>
         </div>
-        <h1 id="hero-title">
-          <span class="line"><span>Stay curious,</span></span
-          ><span class="line second-line"
-            ><span>live <em>gently.</em></span></span
-          >
-        </h1>
-        <figure class="hero-art">
-          <div class="photo-window">
-            <img
-              src="./assets/landscape.jpg"
-              alt="群山环绕的宁静湖泊，岸边一间木屋倒映在水中"
-              width="1800"
-              height="1200"
-              fetchpriority="high"
-            />
+        <div class="hero-grid">
+          <div class="hero-copy">
+            <p class="eyebrow">理性地探索，感性地生活。</p>
+            <h1 id="hero-title">
+              <span class="line"><span>Curious</span></span
+              ><span class="line"><em>by nature.</em></span>
+            </h1>
+            <div class="hero-intro">
+              <span class="tiny-cross" aria-hidden="true">＋</span>
+              <p>
+                你好，我是 <strong>youka。</strong><br />关注 AI
+                与数据，也在意声音、轨迹，<br
+                  class="desktop-break"
+                />和每一个问题背后的「为什么」。
+              </p>
+            </div>
+            <a class="text-link hero-link" href="#selected"
+              >从一个真实项目开始 <span>↘</span></a
+            >
           </div>
-          <figcaption>
-            <span>01 / A MOMENT OF STILLNESS</span><span>去感受，去发现。</span>
-          </figcaption>
-          <span class="photo-stamp" aria-hidden="true"
-            >a little<br /><em>closer to life.</em></span
-          >
-        </figure>
+          <figure class="hero-art">
+            <div class="photo-window">
+              <img
+                src="./assets/landscape.jpg"
+                alt="山湖与倒影，为好奇心留一处安静的风景"
+                width="1800"
+                height="1200"
+                fetchpriority="high"
+              />
+            </div>
+            <svg class="hero-orbit" viewBox="0 0 500 580" aria-hidden="true">
+              <ellipse
+                cx="250"
+                cy="290"
+                rx="226"
+                ry="180"
+                transform="rotate(-42 250 290)"
+              />
+              <ellipse
+                cx="250"
+                cy="290"
+                rx="175"
+                ry="250"
+                transform="rotate(-25 250 290)"
+              />
+              <path d="M250 12v50m0 456v50M12 290h50m376 0h50" />
+              <circle cx="403" cy="127" r="6" class="orbit-dot" />
+            </svg>
+            <div class="photo-note">
+              <span>FIELD NOTE / 001</span>
+              <p>保持开放。<br /><em>Keep wondering.</em></p>
+            </div>
+            <figcaption>
+              <span>在逻辑与感受之间</span><span>BETWEEN LOGIC & LIFE</span>
+            </figcaption>
+          </figure>
+        </div>
         <div class="hero-bottom">
-          <div class="hero-intro">
-            <span class="mini-label">你好，我是 youka。</span>
-            <p>慢慢探索，认真感受。<br />探索 AI 与数据，也关心生活本身。</p>
-          </div>
-          <a class="round-link" href="#work"
-            ><span class="round-arrow">↓</span
-            ><span>向下探索<br /><small>SCROLL TO DISCOVER</small></span></a
-          ><span class="hero-side-note">AI / DATA / EVERYDAY LIFE</span>
-        </div>
-        <div class="hero-rule">
-          <span>A SMALL CORNER OF THE INTERNET.</span
-          ><span>慢一点，也没关系。 ↘</span>
-        </div>
-      </section>
-      <section class="manifesto section-pad" aria-label="探索宣言">
-        <div class="mini-label">A LITTLE THOUGHT</div>
-        <p class="manifesto-text">
-          给生活留白，<span>也给好奇心</span><br />一点生长的空间<span
-            class="orange"
-            >。</span
-          >
-        </p>
-        <div class="manifesto-foot">
-          <span>NOTICE. WONDER. CREATE.</span>
-          <p>
-            一段代码，一束光，或一个还没成形的想法。<br />值得记录的，不只有完成的那一刻。
-          </p>
+          <span>一个人的兴趣，也可以连成一张地图。</span
+          ><a href="#perspective" aria-label="向下探索"
+            >向下探索 <span>↓</span></a
+          ><span class="hero-edition">THE ONGOING EDITION — 2026</span>
         </div>
       </section>
       <section
-        class="featured section-pad"
-        id="selected"
-        aria-labelledby="selected-title"
+        class="perspective section-pad"
+        id="perspective"
+        aria-labelledby="perspective-title"
       >
-        <div class="section-row">
-          <span class="mini-label">01 / SELECTED PROJECT</span
-          ><span class="mini-label">从数据出发，理解人与社区</span>
+        <div class="section-index">
+          <span>THE WAY I LOOK AT THINGS</span><span>观察 · 追问 · 连接</span>
         </div>
-        <article class="featured-project">
-          <button
-            class="featured-cover-button"
-            data-case-open
-            aria-label="阅读 InsightAI 毕业设计项目详情"
-          >
-            <div class="community-cover">
-              <div class="insight-window">
-                <div class="insight-sidebar">
-                  <strong>insight<span>AI</span></strong
-                  ><span class="sidebar-active">◉ &nbsp; 社区总览</span
-                  ><span>⤳ &nbsp; 用户关系网络</span
-                  ><span>▦ &nbsp; 用户建模</span><span>↗ &nbsp; 创意趋势</span
-                  ><small>COMMUNITY INTELLIGENCE</small>
-                </div>
-                <div class="insight-main">
-                  <div class="insight-top">
-                    <span>让数据，<em>成为洞察。</em></span
-                    ><small>华为 / 昇腾</small>
-                  </div>
-                  <div class="insight-tags">
-                    <span>社会网络分析</span><span>用户群体画像</span
-                    ><span>AI 趋势洞察</span>
-                  </div>
-                  <div class="insight-panels">
-                    <div class="network-panel">
-                      <span>用户交互网络 <small>NETWORK</small></span
-                      ><svg viewBox="0 0 340 220" aria-hidden="true">
-                        <g stroke="#acbba0" stroke-width="1" fill="none">
-                          <path
-                            d="m170 110-95-60 35 115 60-55 90-65-25 130-65-65-35-80 125 15M75 50l60-20M110 165l125 10M170 110l-130 5m130-5 140 15M260 45l50 80-75 50M40 115l35-65m35 115-70-50m95-85-25 135"
-                          />
-                        </g>
-                        <g fill="#81966d">
-                          <circle cx="170" cy="110" r="19" />
-                          <circle cx="75" cy="50" r="10" />
-                          <circle cx="110" cy="165" r="12" />
-                          <circle cx="260" cy="45" r="14" />
-                          <circle cx="235" cy="175" r="9" />
-                          <circle cx="135" cy="30" r="7" />
-                          <circle cx="40" cy="115" r="6" />
-                          <circle cx="310" cy="125" r="8" />
-                        </g>
-                        <g fill="#f0f2e8">
-                          <circle cx="170" cy="110" r="5" />
-                          <circle cx="260" cy="45" r="4" />
-                        </g>
-                      </svg>
-                    </div>
-                    <div class="trend-panel">
-                      <span>创意趋势 <small>TRENDS</small></span
-                      ><svg viewBox="0 0 200 100" aria-hidden="true">
-                        <path
-                          d="M0 90h200M0 50h200M0 10h200"
-                          stroke="#e1e5d9"
-                          fill="none"
-                        />
-                        <path
-                          d="M0 85Q15 82 25 62T55 68T85 45T115 55T145 28T175 30T200 8"
-                          fill="none"
-                          stroke="#83996d"
-                          stroke-width="3"
-                        />
-                      </svg>
-                      <div class="insight-note">
-                        <i></i
-                        ><span
-                          >从讨论中发现主题<br /><small
-                            >从关系中理解群体</small
-                          ></span
-                        >
-                      </div>
-                    </div>
-                  </div>
-                  <div class="insight-bottom">
-                    DATA → NETWORK → INSIGHT<span
-                      >2026 / GRADUATION PROJECT</span
+        <h2 id="perspective-title" class="reveal-text">
+          不止看见结果，<br />也想理解它<span class="serif-accent">为什么</span
+          >发生<span class="accent-dot">。</span>
+        </h2>
+        <div class="perspective-foot">
+          <span class="perspective-mark" aria-hidden="true"
+            ><svg viewBox="0 0 100 100">
+              <path
+                d="M20 10v55h65M62 42l23 23-23 23"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.7"
+              /></svg
+          ></span>
+          <p>
+            数据里有人的行为，行为背后有动机。<br />我的兴趣，常常从这里开始。
+          </p>
+          <a class="text-link" href="#about">认识我的另一面 <span>↗</span></a>
+        </div>
+      </section>
+      <section class="featured" id="selected" aria-labelledby="selected-title">
+        <div class="project-heading section-pad">
+          <div class="section-index">
+            <span>01 / SELECTED PROJECT</span
+            ><span>本科毕业设计 · COMMUNITY INTELLIGENCE</span>
+          </div>
+          <div class="project-title-row">
+            <h2 id="selected-title">Insight<span>AI</span><sup>↗</sup></h2>
+            <p>从社区里的声音，<br />读懂人与机会。</p>
+          </div>
+          <div class="project-intro-row">
+            <p>
+              一套连接社会网络分析、语义建模与 AI Agent 的社区分析系统。<br />从「谁更活跃」出发，继续追问「谁在影响，什么值得关注」。
+            </p>
+            <a
+              class="text-link"
+              href="https://github.com/youka150/community"
+              target="_blank"
+              rel="noopener noreferrer"
+              >探索项目源码 <span>↗</span></a
+            >
+          </div>
+          <div class="project-meta">
+            <span>华为 / 昇腾双社区</span
+            ><span>Next.js · React · FastAPI · PostgreSQL</span
+            ><span>NETWORK → PEOPLE → INSIGHT</span>
+          </div>
+        </div>
+        <div class="project-story section-pad">
+          <div class="project-visual">
+            <div class="visual-topline">
+              <span><i class="status-dot"></i> INSIGHT ENGINE</span
+              ><span class="scene-counter">01 / 03</span>
+            </div>
+            <div
+              class="scene-tabs"
+              role="tablist"
+              aria-label="探索 InsightAI 分析方法"
+            >
+              <button
+                id="scene-tab-0"
+                role="tab"
+                aria-selected="true"
+                aria-controls="scene-0"
+                data-project-tab="0"
+              >
+                01 关系</button
+              ><button
+                id="scene-tab-1"
+                role="tab"
+                aria-selected="false"
+                aria-controls="scene-1"
+                tabindex="-1"
+                data-project-tab="1"
+              >
+                02 画像</button
+              ><button
+                id="scene-tab-2"
+                role="tab"
+                aria-selected="false"
+                aria-controls="scene-2"
+                tabindex="-1"
+                data-project-tab="2"
+              >
+                03 洞察
+              </button>
+            </div>
+            <div class="scene-viewport">
+              <div
+                class="project-scene is-active"
+                data-scene="0"
+                id="scene-0"
+                role="tabpanel"
+                tabindex="0"
+                aria-labelledby="scene-tab-0"
+              >
+                <svg
+                  class="network-graphic"
+                  viewBox="0 0 640 400"
+                  role="img"
+                  aria-labelledby="network-title"
+                >
+                  <title id="network-title">
+                    互动关系、网络结构与内容表现构成多维影响力分析的方法示意
+                  </title>
+                  <defs>
+                    <radialGradient id="network-glow">
+                      <stop stop-color="#d0e3ad" stop-opacity=".22" />
+                      <stop offset="1" stop-color="#d0e3ad" stop-opacity="0" />
+                    </radialGradient>
+                  </defs>
+                  <circle cx="320" cy="190" r="160" fill="url(#network-glow)" />
+                  <g
+                    class="network-rings"
+                    fill="none"
+                    stroke="currentColor"
+                    opacity=".12"
+                  >
+                    <circle cx="320" cy="190" r="86" />
+                    <circle cx="320" cy="190" r="152" />
+                    <ellipse cx="320" cy="190" rx="250" ry="174" />
+                    <path d="M25 190h590M320 15v350" />
+                  </g>
+                  <g
+                    class="network-edges"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.2"
+                  >
+                    <path
+                      class="network-edge"
+                      d="M320 190 180 100 116 230 320 190 237 320 116 230M180 100 370 54 320 190 490 110 527 253 320 190 424 319 237 320M490 110 370 54M527 253 424 319M180 100 237 320M80 125 180 100M553 80 490 110M552 340 527 253M48 300 116 230"
+                    />
+                  </g>
+                  <g class="network-nodes" fill="currentColor">
+                    <circle class="network-node" cx="180" cy="100" r="10" />
+                    <circle class="network-node" cx="116" cy="230" r="7" />
+                    <circle class="network-node" cx="237" cy="320" r="11" />
+                    <circle class="network-node" cx="370" cy="54" r="7" />
+                    <circle class="network-node" cx="490" cy="110" r="12" />
+                    <circle class="network-node" cx="527" cy="253" r="8" />
+                    <circle class="network-node" cx="424" cy="319" r="6" />
+                    <circle class="network-node" cx="80" cy="125" r="4" />
+                    <circle class="network-node" cx="553" cy="80" r="4" />
+                    <circle class="network-node" cx="552" cy="340" r="4" />
+                    <circle class="network-node" cx="48" cy="300" r="4" />
+                  </g>
+                  <circle
+                    class="node-halo"
+                    cx="320"
+                    cy="190"
+                    r="35"
+                    fill="none"
+                    stroke="currentColor"
+                    opacity=".35"
+                  />
+                  <circle
+                    class="network-core"
+                    cx="320"
+                    cy="190"
+                    r="23"
+                    fill="currentColor"
+                  />
+                  <path
+                    d="M313 190h14m-7-7v14"
+                    stroke="#183c31"
+                    stroke-width="2"
+                  />
+                  <g class="graph-labels" fill="currentColor" font-size="18">
+                    <text x="348" y="232">影响力</text>
+                    <text x="190" y="81">互动关系</text>
+                    <text x="462" y="86">内容表现</text>
+                    <text x="115" y="265" opacity=".6">USER</text>
+                  </g>
+                </svg>
+                <div class="weight-control">
+                  <label for="influence-weight"
+                    >从不同维度理解影响力 <span>拖动探索</span></label
+                  ><input
+                    id="influence-weight"
+                    type="range"
+                    min="0"
+                    max="100"
+                    value="50"
+                    aria-label="调整网络结构与内容表现的示意配比"
+                  />
+                  <div>
+                    <span
+                      >网络结构 <output id="network-weight">50%</output></span
+                    ><span
+                      >内容表现 <output id="content-weight">50%</output></span
                     >
                   </div>
                 </div>
               </div>
-              <span class="cover-note"
-                >INTERFACE STUDY / 依项目文档重绘示意</span
-              ><span class="cover-open">阅读项目故事 ↗</span>
-            </div>
-          </button>
-          <div class="featured-description">
-            <div>
-              <span class="mini-label">本科毕业设计 / APR. 2026</span>
-              <h2 id="selected-title">
-                InsightAI <span class="project-year">2026</span>
-              </h2>
-            </div>
-            <p>
-              社区用户建模与创意洞察<br /><span
-                >Next.js · Python · 社会网络分析 · LLM</span
+              <div
+                class="project-scene"
+                data-scene="1"
+                id="scene-1"
+                role="tabpanel"
+                tabindex="0"
+                aria-labelledby="scene-tab-1"
+                hidden
               >
-            </p>
-            <button class="case-text-open text-link" data-case-open>
-              了解项目 <span>↗</span>
-            </button>
-          </div>
-        </article>
-      </section>
-      <section class="work" id="work" aria-labelledby="work-title">
-        <div class="work-heading section-pad">
-          <div>
-            <span class="mini-label">02 / SMALL EXPLORATIONS</span>
-            <h2 id="work-title">
-              A little playground.<br /><em>Just for the joy of it.</em>
-            </h2>
-          </div>
-          <p>
-            给好奇心的一小块自由地。<br />三个为此主页制作的视觉小实验，<br />点开它们，随意玩一会儿。
-          </p>
-        </div>
-        <div class="work-track-wrap">
-          <div class="work-track">
-            <article class="project-card" data-project="orbit">
-              <button
-                class="project-open"
-                data-open="orbit"
-                aria-label="打开 Orbit 轨道交互实验"
-              >
-                <div class="project-art orbit-art" data-shared="orbit">
-                  <span class="poster-meta"
-                    >EXPERIMENT NO. 001<span>INTERACTIVE STUDY</span></span
-                  >
-                  <div class="orbit-graphic"><i></i><i></i><i></i><b></b></div>
-                  <span class="poster-title"
-                    >ORBIT<span>秩序之外，自有引力。</span></span
-                  ><span class="project-arrow">↗</span>
+                <div class="cluster-inputs">
+                  <span>行为特征 <i>↘</i></span
+                  ><span>语义向量 <i>↙</i></span>
                 </div>
-                <div class="project-info">
-                  <h3>Orbit — 引力之间</h3>
-                  <span>CREATIVE CODING <i>001</i></span>
+                <svg
+                  class="cluster-graphic"
+                  viewBox="0 0 640 360"
+                  role="img"
+                  aria-labelledby="cluster-title"
+                >
+                  <title id="cluster-title">
+                    行为与语义特征融合后形成用户群体的抽象方法示意
+                  </title>
+                  <g fill="none" stroke="currentColor" opacity=".18">
+                    <path d="M160 0Q160 90 215 135M480 0Q480 90 435 135" />
+                    <ellipse cx="194" cy="185" rx="114" ry="90" />
+                    <ellipse cx="438" cy="180" rx="108" ry="92" />
+                    <ellipse cx="319" cy="262" rx="106" ry="78" />
+                  </g>
+                  <g class="cluster-group cluster-a" fill="#d0e3ad">
+                    <circle cx="165" cy="154" r="13" />
+                    <circle cx="205" cy="134" r="7" />
+                    <circle cx="228" cy="182" r="10" />
+                    <circle cx="173" cy="204" r="9" />
+                    <circle cx="132" cy="183" r="5" />
+                    <circle cx="200" cy="228" r="5" />
+                  </g>
+                  <g class="cluster-group cluster-b" fill="#e7bd97">
+                    <circle cx="424" cy="137" r="8" />
+                    <circle cx="473" cy="167" r="12" />
+                    <circle cx="398" cy="181" r="6" />
+                    <circle cx="441" cy="215" r="10" />
+                    <circle cx="484" cy="221" r="5" />
+                    <circle cx="484" cy="125" r="4" />
+                  </g>
+                  <g class="cluster-group cluster-c" fill="#dce4da">
+                    <circle cx="286" cy="252" r="11" />
+                    <circle cx="332" cy="238" r="8" />
+                    <circle cx="351" cy="282" r="12" />
+                    <circle cx="293" cy="301" r="5" />
+                    <circle cx="316" cy="278" r="5" />
+                  </g>
+                  <g fill="currentColor" font-size="18">
+                    <text x="115" y="69">如何参与</text>
+                    <text x="441" y="69">表达什么</text>
+                    <text x="258" y="353">更完整的群体画像</text>
+                  </g>
+                </svg>
+                <div class="scene-formula">
+                  <span>行为 × 语义</span><span>→</span><span>融合特征</span
+                  ><span>→</span><span>群体画像</span>
                 </div>
-              </button>
-            </article>
-            <article class="project-card" data-project="form">
-              <button
-                class="project-open"
-                data-open="form"
-                aria-label="打开 Soft Form 形态交互实验"
+              </div>
+              <div
+                class="project-scene"
+                data-scene="2"
+                id="scene-2"
+                role="tabpanel"
+                tabindex="0"
+                aria-labelledby="scene-tab-2"
+                hidden
               >
-                <div class="project-art form-art" data-shared="form">
-                  <span class="poster-meta"
-                    >EXPERIMENT NO. 002<span>MATERIAL EXPLORATION</span></span
-                  >
-                  <div class="form-graphic">
-                    <i></i><i></i><i></i><i></i><i></i>
+                <div class="agent-flow" aria-label="趋势 Agent 分析工作流">
+                  <div class="agent-step">
+                    <span>01</span>
+                    <div>
+                      <strong>规划问题</strong
+                      ><small>拆解分析维度与检索方向</small>
+                    </div>
+                    <i>↘</i>
                   </div>
-                  <span class="poster-title">Soft<br /><em>form.</em></span
-                  ><span class="form-caption">不必定义，先去感受。</span
-                  ><span class="project-arrow">↗</span>
+                  <div class="agent-step">
+                    <span>02</span>
+                    <div>
+                      <strong>检索与分析</strong
+                      ><small>聚合线索，理解内容与情感</small>
+                    </div>
+                    <i>↓</i>
+                  </div>
+                  <div class="agent-step agent-reflect">
+                    <span>03</span>
+                    <div>
+                      <strong>反思与补搜</strong
+                      ><small>检查完整度，补充缺失证据</small>
+                    </div>
+                    <i>↺</i>
+                  </div>
+                  <div class="agent-step">
+                    <span>04</span>
+                    <div>
+                      <strong>流式报告</strong
+                      ><small>让进展与结论逐步可见</small>
+                    </div>
+                    <i>↗</i>
+                  </div>
                 </div>
-                <div class="project-info">
-                  <h3>Soft Form — 柔软的边界</h3>
-                  <span>VISUAL EXPLORATION <i>002</i></span>
-                </div>
-              </button>
-            </article>
-            <article class="project-card" data-project="field">
-              <button
-                class="project-open"
-                data-open="field"
-                aria-label="打开 Field 信号交互实验"
+                <p id="agent-status" class="sr-only" role="status">
+                  从规划到报告，探索分析路径。
+                </p>
+                <button class="scene-replay" data-agent-replay>
+                  重看分析路径 <span>↻</span>
+                </button>
+              </div>
+            </div>
+            <div class="visual-bottomline">
+              <span>方法示意 · 非实时社区数据</span
+              ><span>SCROLL TO CONNECT THE DOTS ↓</span>
+            </div>
+          </div>
+          <div class="story-chapters">
+            <article class="story-chapter" data-step="0">
+              <span class="chapter-number">01 / READ THE RELATIONSHIPS</span>
+              <h3>不只看谁活跃，<br />更看谁在影响。</h3>
+              <p>
+                把用户互动连成有向加权网络，让
+                PageRank、中心性与内容表现一起参与判断。八维评分支持熵权与自定义权重，让「重要」有迹可循。
+              </p>
+              <div class="chapter-keywords">
+                <span>PageRank</span><span>八维评分</span
+                ><span>Louvain 社群</span>
+              </div>
+              <a
+                class="source-link"
+                href="https://github.com/youka150/community/blob/main/python/huawei_mining_service/services/network_service.py"
+                target="_blank"
+                rel="noopener noreferrer"
+                >查看网络分析实现 ↗</a
               >
-                <div class="project-art field-art" data-shared="field">
-                  <span class="poster-meta"
-                    >EXPERIMENT NO. 003<span>GENERATIVE SYSTEM</span></span
-                  >
-                  <div class="field-graphic"></div>
-                  <span class="poster-title"
-                    >FIELD<span>每一个点，都是一种可能。</span></span
-                  ><span class="project-arrow">↗</span>
-                </div>
-                <div class="project-info">
-                  <h3>Field — 一片可能</h3>
-                  <span>GENERATIVE ART <i>003</i></span>
-                </div>
-              </button>
+            </article>
+            <article class="story-chapter" data-step="1">
+              <span class="chapter-number">02 / UNDERSTAND THE PEOPLE</span>
+              <h3>看见如何参与，<br />也看见表达什么。</h3>
+              <p>
+                将评论、获赞等行为特征，与文本的语义向量融合，再进行用户聚类。画像不只是一组统计，也尝试理解内容方向；语义模型不可用时，仍可回退到行为特征。
+              </p>
+              <div class="chapter-keywords">
+                <span>语义嵌入</span><span>PCA 融合</span
+                ><span>KMeans 聚类</span>
+              </div>
+              <a
+                class="source-link"
+                href="https://github.com/youka150/community/blob/main/python/huawei_mining_service/services/clustering_service.py"
+                target="_blank"
+                rel="noopener noreferrer"
+                >查看画像建模实现 ↗</a
+              >
+            </article>
+            <article class="story-chapter" data-step="2">
+              <span class="chapter-number">03 / TURN SIGNALS INTO INSIGHT</span>
+              <h3>从核心的声音，<br />走向下一种可能。</h3>
+              <p>
+                从核心用户的语义簇中提炼痛点与产品机会，也发现内容方向相近的潜力用户。趋势
+                Agent 经历规划、检索、反思补搜，再用 SSE 逐步交付报告。
+              </p>
+              <div class="chapter-keywords">
+                <span>商业洞察</span><span>潜力用户</span
+                ><span>可观察 Agent</span>
+              </div>
+              <a
+                class="source-link"
+                href="https://github.com/youka150/community/blob/main/src/lib/agents/TrendAgent.js"
+                target="_blank"
+                rel="noopener noreferrer"
+                >查看 Agent 工作流 ↗</a
+              ><a
+                class="source-link"
+                href="https://github.com/youka150/community/blob/main/python/huawei_mining_service/services/hotspot_service.py"
+                target="_blank"
+                rel="noopener noreferrer"
+                >查看产品机会与潜力用户实现 ↗</a
+              >
             </article>
           </div>
         </div>
-        <div class="work-footer section-pad">
-          <span>由好奇心驱动 / MADE TO BE EXPLORED</span>
-          <div class="work-progress"><span></span></div>
-          <span class="work-counter">01 — 03</span>
+        <div class="project-outro section-pad">
+          <span>THE BIGGER PICTURE</span>
+          <p>
+            采集与导入 <b>→</b> 数据存储 <b>→</b> 网络与语义 <b>→</b> 理解与行动
+          </p>
+          <a
+            class="text-link"
+            href="https://github.com/youka150/community"
+            target="_blank"
+            rel="noopener noreferrer"
+            >看完整项目 <span>↗</span></a
+          >
         </div>
       </section>
       <section
-        class="about section-pad"
+        class="atlas section-pad"
         id="about"
         aria-labelledby="about-title"
       >
-        <div class="about-heading">
-          <span class="mini-label">03 / A LITTLE ABOUT ME</span
-          ><span class="mini-label">STILL GROWING, STILL EXPLORING.</span>
+        <div class="section-index">
+          <span>02 / A PERSONAL ATLAS</span><span>同一份好奇，不同的频率</span>
         </div>
-        <div class="about-grid">
-          <figure class="identity-card">
-            <img
-              src="./assets/forest.jpg"
-              alt="阳光穿过森林树冠，落在满是绿意的林间"
-              width="1000"
-              height="1500"
-              loading="lazy"
-            />
-            <figcaption>
-              <span>随手收藏的一片绿意</span><span>FIELD NOTES / 01</span>
-            </figcaption>
-          </figure>
-          <div class="about-copy">
-            <h2 id="about-title">
-              你好，<br />我是 <span class="serif-word">youka。</span>
-            </h2>
-            <p>
-              我关注
-              AI，也在学习数据分析与回归实证研究。比起只知道结果，我更想弄清楚：事情为什么会这样发生？
-            </p>
-            <p>
-              屏幕之外，喜欢打羽毛球、听音乐，也喜欢接触新鲜事。这里收藏我的作品、思考，以及那些还在慢慢生长的好奇心。
-            </p>
-            <div class="interest-list">
-              <span>01 <b>数据与实证</b><small>DATA & RESEARCH</small></span
-              ><span>02 <b>AI 与新事物</b><small>AI & EXPLORATION</small></span
-              ><span>03 <b>球场与音乐</b><small>BADMINTON & MUSIC</small></span>
+        <div class="atlas-heading">
+          <h2 id="about-title">
+            我的坐标，<br />不止在<span class="serif-accent">屏幕里。</span>
+          </h2>
+          <p>
+            数据帮我靠近问题，音乐让我回到感受，<br />羽毛球把注意力交还给当下。<br />它们共同组成了这里的
+            youka。
+          </p>
+        </div>
+        <div class="atlas-tabs" role="tablist" aria-label="探索我的兴趣">
+          <button
+            id="atlas-tab-research"
+            role="tab"
+            aria-selected="true"
+            aria-controls="atlas-research"
+            data-atlas-tab="research"
+          >
+            <span>01</span><strong>追问</strong><small>DATA & RESEARCH</small
+            ><i>↗</i></button
+          ><button
+            id="atlas-tab-music"
+            role="tab"
+            aria-selected="false"
+            aria-controls="atlas-music"
+            tabindex="-1"
+            data-atlas-tab="music"
+          >
+            <span>02</span><strong>听见</strong><small>MUSIC & FEELING</small
+            ><i>↗</i></button
+          ><button
+            id="atlas-tab-court"
+            role="tab"
+            aria-selected="false"
+            aria-controls="atlas-court"
+            tabindex="-1"
+            data-atlas-tab="court"
+          >
+            <span>03</span><strong>在场</strong><small>BADMINTON & FOCUS</small
+            ><i>↗</i>
+          </button>
+        </div>
+        <div class="atlas-panels">
+          <section
+            class="atlas-panel"
+            id="atlas-research"
+            role="tabpanel"
+            tabindex="0"
+            aria-labelledby="atlas-tab-research"
+            data-atlas-panel="research"
+          >
+            <div class="atlas-copy">
+              <span class="mini-label">01 / FOLLOW THE QUESTION</span>
+              <h3>一个「为什么」，<br />值得再往下走一步。</h3>
+              <p>
+                我在学习数据分析与回归实证研究。比起只看到一个相关关系，我更想追问：它在什么条件下成立？背后还有什么因素？
+              </p>
+              <p class="atlas-aside">
+                社区数据、用户行为与深层动机，也是我想继续探索的方向。
+              </p>
+              <button
+                class="outline-button"
+                data-research-toggle
+                aria-pressed="false"
+                aria-controls="research-visual"
+              >
+                换一个观察角度 <span>↗</span>
+              </button>
+              <p id="research-status" class="sr-only" role="status">
+                先观察两个变量之间的关系。
+              </p>
             </div>
-            <a
-              class="text-link"
-              href="https://github.com/youka150"
-              target="_blank"
-              rel="noopener noreferrer"
-              >到 GitHub 看看 <span>↗</span></a
+            <div class="atlas-art research-art">
+              <div class="art-meta">
+                <span>FIG. 01 — QUESTION, THEN QUESTION AGAIN</span
+                ><span>兴趣的视觉笔记</span>
+              </div>
+              <svg
+                id="research-visual"
+                class="research-graphic atlas-mark"
+                viewBox="0 0 660 440"
+                role="img"
+                aria-labelledby="research-title"
+              >
+                <title id="research-title">
+                  从单一关系走向更多观察角度的概念图，并非真实研究数据
+                </title>
+                <defs>
+                  <pattern
+                    id="research-grid"
+                    width="42"
+                    height="42"
+                    patternUnits="userSpaceOnUse"
+                  >
+                    <path
+                      d="M42 0H0V42"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width=".5"
+                      opacity=".15"
+                    />
+                  </pattern>
+                </defs>
+                <rect
+                  x="65"
+                  y="35"
+                  width="530"
+                  height="335"
+                  fill="url(#research-grid)"
+                />
+                <path
+                  d="M65 35v335h530"
+                  fill="none"
+                  stroke="currentColor"
+                  opacity=".5"
+                />
+                <g class="research-dots" fill="currentColor">
+                  <circle cx="117" cy="304" r="6" />
+                  <circle cx="165" cy="263" r="8" />
+                  <circle cx="190" cy="292" r="5" />
+                  <circle cx="226" cy="221" r="7" />
+                  <circle cx="276" cy="233" r="5" />
+                  <circle cx="315" cy="180" r="9" />
+                  <circle cx="353" cy="217" r="5" />
+                  <circle cx="385" cy="147" r="7" />
+                  <circle cx="433" cy="163" r="5" />
+                  <circle cx="485" cy="106" r="8" />
+                  <circle cx="528" cy="133" r="5" />
+                  <circle cx="554" cy="74" r="6" />
+                </g>
+                <path
+                  class="research-trend"
+                  d="M95 319 561 82"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                />
+                <g class="research-context" fill="none" stroke="currentColor">
+                  <ellipse
+                    cx="191"
+                    cy="271"
+                    rx="84"
+                    ry="63"
+                    transform="rotate(-24 191 271)"
+                  />
+                  <ellipse
+                    cx="339"
+                    cy="192"
+                    rx="84"
+                    ry="63"
+                    transform="rotate(-24 339 192)"
+                  />
+                  <ellipse
+                    cx="487"
+                    cy="119"
+                    rx="84"
+                    ry="63"
+                    transform="rotate(-24 487 119)"
+                  />
+                  <path
+                    d="M179 114c62-56 130-56 189-26"
+                    stroke-dasharray="5 6"
+                  />
+                  <path d="m354 73 14 15-22 2" />
+                </g>
+                <g font-size="18" fill="currentColor">
+                  <text x="63" y="405">看见关系</text>
+                  <text x="419" y="405" class="research-caption">
+                    然后，继续追问。
+                  </text>
+                  <text x="122" y="89" class="research-context">
+                    还有哪些影响因素？
+                  </text>
+                </g>
+              </svg>
+              <div class="art-foot">
+                <span class="art-quote">Correlation is a beginning.</span
+                ><span>关系，是问题的开始。</span>
+              </div>
+            </div>
+          </section>
+          <section
+            class="atlas-panel"
+            id="atlas-music"
+            role="tabpanel"
+            tabindex="0"
+            aria-labelledby="atlas-tab-music"
+            data-atlas-panel="music"
+          >
+            <div class="atlas-copy">
+              <span class="mini-label">02 / LISTEN A LITTLE CLOSER</span>
+              <h3>有些感受，<br />不需要先找到答案。</h3>
+              <p>
+                听音乐，是我喜欢的一种日常。暂时放下分析，把注意力交给一段旋律，给感受留出一点空间。
+              </p>
+              <p class="atlas-aside">
+                这里用一段可调节的视觉节奏，记录这份兴趣。你可以试着把节奏放慢一点。
+              </p>
+              <label class="rhythm-control" for="rhythm-range"
+                ><span>调整视觉节奏 <output id="rhythm-value">60</output></span
+                ><input
+                  id="rhythm-range"
+                  type="range"
+                  min="20"
+                  max="100"
+                  value="60"
+                /><small>纯视觉互动，不播放声音。</small></label
+              ><button
+                class="outline-button"
+                data-music-toggle
+                aria-pressed="false"
+              >
+                暂停视觉节奏 <span>Ⅱ</span>
+              </button>
+            </div>
+            <div class="atlas-art music-art">
+              <div class="art-meta">
+                <span>FIG. 02 — FIND YOUR OWN RHYTHM</span
+                ><span>兴趣的视觉笔记</span>
+              </div>
+              <div class="music-graphic atlas-mark">
+                <svg
+                  viewBox="0 0 660 440"
+                  role="img"
+                  aria-labelledby="music-title"
+                >
+                  <title id="music-title">随视觉节奏调整的抽象声波</title>
+                  <g
+                    class="wave-rings"
+                    fill="none"
+                    stroke="currentColor"
+                    opacity=".18"
+                  >
+                    <circle cx="330" cy="215" r="175" />
+                    <circle cx="330" cy="215" r="126" />
+                    <circle cx="330" cy="215" r="74" />
+                    <path d="M40 215h580" />
+                  </g>
+                  <g class="sound-bars" fill="currentColor"></g>
+                  <text
+                    x="330"
+                    y="408"
+                    text-anchor="middle"
+                    fill="currentColor"
+                    font-size="18"
+                    letter-spacing="4"
+                  >
+                    A MOMENT, IN TUNE.
+                  </text></svg
+                ><span class="music-center" aria-hidden="true">♪</span>
+              </div>
+              <div class="art-foot">
+                <span class="art-quote">Less thinking. More feeling.</span
+                ><span>让感受，自己发生。</span>
+              </div>
+            </div>
+          </section>
+          <section
+            class="atlas-panel"
+            id="atlas-court"
+            role="tabpanel"
+            tabindex="0"
+            aria-labelledby="atlas-tab-court"
+            data-atlas-panel="court"
+          >
+            <div class="atlas-copy">
+              <span class="mini-label">03 / BE HERE, RIGHT NOW</span>
+              <h3>离开屏幕，<br />接住眼前这一拍。</h3>
+              <p>
+                我也喜欢打羽毛球。球来、移动、挥拍，注意力跟着轨迹回到当下。换一个场地，继续保持好奇。
+              </p>
+              <p class="atlas-aside">
+                从数据里的点与线，到球场上的来与回，都是我愿意投入注意力的事。
+              </p>
+              <button class="outline-button" data-rally>
+                来一个回合 <span>↗</span>
+              </button>
+              <p id="rally-status" class="rally-status" role="status">
+                点击发球，跟着轨迹走一回。
+              </p>
+            </div>
+            <div class="atlas-art court-art">
+              <div class="art-meta">
+                <span>FIG. 03 — A DIFFERENT KIND OF FOCUS</span
+                ><span>兴趣的视觉笔记</span>
+              </div>
+              <svg
+                class="court-graphic atlas-mark"
+                viewBox="0 0 660 440"
+                role="img"
+                aria-labelledby="court-title"
+              >
+                <title id="court-title">
+                  羽毛球场与可重播的往返轨迹，象征对运动与当下的关注
+                </title>
+                <g
+                  class="court-lines"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.3"
+                >
+                  <path
+                    d="M96 76h468v286H96zM96 106h468M96 332h468M96 219h468M258 76v286M402 76v286M258 219h144"
+                  />
+                  <path d="M330 50v338" stroke-dasharray="4 5" />
+                </g>
+                <path
+                  id="rally-path"
+                  d="M160 284Q220 50 470 135Q430 335 210 180Q335 50 497 292"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-dasharray="5 7"
+                  opacity=".4"
+                />
+                <g id="shuttle-point" transform="translate(160 284)">
+                  <circle r="17" fill="currentColor" opacity=".14" />
+                  <circle r="6" fill="currentColor" />
+                  <path
+                    d="m-5-7-6-12 11 6 11-6-6 12"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                  />
+                </g>
+                <g fill="currentColor" font-size="18">
+                  <text x="96" y="405">在场，就很好。</text>
+                  <text x="483" y="405">YOUR SERVE ↗</text>
+                </g>
+              </svg>
+              <div class="art-foot">
+                <span class="art-quote"
+                  >A little less screen. A little more play.</span
+                ><span>把注意力，交给这一刻。</span>
+              </div>
+            </div>
+          </section>
+        </div>
+        <div class="atlas-bottom">
+          <span class="atlas-bottom-star" aria-hidden="true"
+            ><svg viewBox="0 0 100 100" aria-hidden="true">
+              <path d="M50 8v84M8 50h84M20 20l60 60M80 20 20 80" /></svg
+          ></span>
+          <p>
+            这些不是分开的标签。<br /><strong
+              >是同一个我，看世界的不同方式。</strong
             >
-          </div>
+          </p>
+          <a
+            class="text-link"
+            href="https://github.com/youka150"
+            target="_blank"
+            rel="noopener noreferrer"
+            >更多正在发生的探索 <span>↗</span></a
+          >
         </div>
       </section>
       <section
@@ -370,20 +900,20 @@
         id="contact"
         aria-labelledby="contact-title"
       >
-        <div class="contact-top">
-          <span class="mini-label">04 / GOOD THINGS BEGIN WITH HELLO</span
+        <div class="section-index">
+          <span>03 / KEEP THE CONVERSATION GOING</span
           ><span class="contact-star" aria-hidden="true"
             ><svg viewBox="0 0 100 100" aria-hidden="true">
               <path d="M50 8v84M8 50h84M20 20l60 60M80 20 20 80" /></svg
           ></span>
         </div>
-        <p>一个想法，一次交流，或者只是一句你好。</p>
+        <p>关于 AI、数据、一个新想法，或者只是打个招呼。</p>
         <h2 id="contact-title">
           <a
             href="https://github.com/youka150"
             target="_blank"
             rel="noopener noreferrer"
-            >Say <em>hello.</em><span class="contact-arrow">↗</span></a
+            >Let's stay<br /><em>curious.</em><span>↗</span></a
           >
         </h2>
         <div class="contact-bottom">
@@ -393,179 +923,21 @@
             href="https://github.com/youka150"
             target="_blank"
             rel="noopener noreferrer"
-            >GITHUB / YOUKA150 ↗</a
+            >GITHUB / YOUKA150 <span>↗</span></a
           >
         </div>
       </section>
     </main>
     <footer class="footer section-pad">
-      <a class="brand" href="#home"
-        >yk<span class="asterisk"
+      <a class="brand" href="#home" aria-label="回到首页"
+        >youka<span class="brand-star" aria-hidden="true"
           ><svg viewBox="0 0 100 100" aria-hidden="true">
             <path
               d="M50 8v84M8 50h84M20 20l60 60M80 20 20 80"
             /></svg></span></a
       ><span
-        >© <span id="year">2026</span> YOUKA — A LITTLE SPACE, A LOT OF
-        CURIOSITY.</span
+        >© <span id="year">2026</span> YOUKA / ALWAYS A WORK IN PROGRESS.</span
       ><a href="#home">回到顶部 ↑</a>
     </footer>
-    <dialog
-      data-lenis-prevent
-      class="project-dialog"
-      aria-labelledby="dialog-title"
-    >
-      <div class="dialog-shell">
-        <div class="dialog-header">
-          <span class="mini-label">YOUKA / INTERACTIVE EXPERIMENT</span
-          ><button class="dialog-close" aria-label="关闭实验">
-            关闭 <span>×</span>
-          </button>
-        </div>
-        <div class="dialog-grid">
-          <div class="dialog-art"></div>
-          <div class="dialog-copy">
-            <span class="mini-label" id="dialog-category"></span>
-            <h2 id="dialog-title"></h2>
-            <p id="dialog-description"></p>
-            <label class="experiment-control" for="experiment-range"
-              ><span id="control-label"></span
-              ><output id="control-value"></output
-              ><input
-                id="experiment-range"
-                type="range"
-                min="0"
-                max="100"
-                value="50" /></label
-            ><button class="reset-experiment">重置实验 ↺</button>
-            <p class="experiment-note">
-              为这个主页制作的浏览器视觉实验。<br />移动滑杆，看看变化如何发生。
-            </p>
-          </div>
-        </div>
-      </div>
-    </dialog>
-    <dialog data-lenis-prevent class="case-dialog" aria-labelledby="case-title">
-      <div class="case-top">
-        <span class="mini-label">SELECTED WORK / 01</span
-        ><button class="case-close" aria-label="关闭项目详情">
-          返回主页 <span>×</span>
-        </button>
-      </div>
-      <div class="case-content">
-        <span class="mini-label">本科毕业设计 · 2026.04</span>
-        <h2 id="case-title">InsightAI <em>2026.</em></h2>
-        <p class="case-subtitle">从社区里的声音，读懂人与趋势。</p>
-        <div class="case-art"></div>
-        <div class="case-intro">
-          <div>
-            <span class="mini-label">THE QUESTION</span>
-            <h3>谁在影响讨论，<br />什么正在成为趋势？</h3>
-            <p>
-              面向华为开发者社区与昇腾生态社区，InsightAI 将社区内容、用户互动和
-              AI
-              分析整合在同一套工作流里，帮助运营、产品、管理与数据工程角色理解社区。
-            </p>
-          </div>
-          <dl>
-            <div>
-              <dt>项目类型</dt>
-              <dd>本科毕业设计 / 多社区智能分析系统</dd>
-            </div>
-            <div>
-              <dt>前端体验</dt>
-              <dd>Next.js 15 · React 19 · Framer Motion</dd>
-            </div>
-            <div>
-              <dt>数据与计算</dt>
-              <dd>Python FastAPI · PostgreSQL</dd>
-            </div>
-            <div>
-              <dt>核心方法</dt>
-              <dd>PageRank · LDA · KMeans · LLM</dd>
-            </div>
-          </dl>
-        </div>
-        <div class="case-methods">
-          <span class="mini-label">THREE WAYS TO UNDERSTAND A COMMUNITY</span>
-          <details open>
-            <summary>
-              <span>01</span>
-              <h3>从关系，理解用户。</h3>
-              <i>+</i>
-            </summary>
-            <div class="method-body">
-              <p>
-                把回复与评论关系构建成有向加权网络，结合
-                PageRank、中心性和内容指标理解用户影响力，再通过 KMeans
-                聚类描绘不同群体。
-              </p>
-              <span>关系网络 · 影响力榜单 · 群体画像</span>
-            </div>
-          </details>
-          <details>
-            <summary>
-              <span>02</span>
-              <h3>从内容，发现变化。</h3>
-              <i>+</i>
-            </summary>
-            <div class="method-body">
-              <p>
-                以 LDA 主题建模提取社区讨论的线索，用时序趋势与 Z-score
-                异常检测观察波动，让热点、反馈和潜在需求有迹可循。
-              </p>
-              <span>主题提取 · 情感汇总 · 趋势异常检测</span>
-            </div>
-          </details>
-          <details>
-            <summary>
-              <span>03</span>
-              <h3>让 AI 分析过程可见。</h3>
-              <i>+</i>
-            </summary>
-            <div class="method-body">
-              <p>
-                创意趋势分析采用规划、搜索、总结、反思与补充的分阶段流程。SSE
-                流式呈现分析进展，让等待变成可理解的过程，并支持报告导出。
-              </p>
-              <span>Agent 工作流 · SSE 流式反馈 · 结构化报告</span>
-            </div>
-          </details>
-        </div>
-        <div class="case-flow">
-          <span class="mini-label">FROM DATA TO INSIGHT</span>
-          <div>
-            <span>社区内容<small>POSTS & INTERACTIONS</small></span
-            ><b>→</b><span>网络与主题<small>NETWORK & TOPICS</small></span
-            ><b>→</b><span>用户与趋势<small>PEOPLE & TRENDS</small></span
-            ><b>→</b><span>分析与建议<small>INSIGHTS & ACTIONS</small></span>
-          </div>
-        </div>
-        <div class="case-reflection">
-          <span class="mini-label">A NOTE ON THE PROCESS</span>
-          <h3>好的分析，也需要理解自己的边界。</h3>
-          <p>
-            这次探索不仅关乎生成结论，也关乎结论从何而来。文档中记录了启发式评分的偏差、大规模网络计算的开销，以及
-            LLM 输出的可追溯性问题。下一步是加强指标验证、语义理解与可复现评估。
-          </p>
-        </div>
-        <p class="case-source">
-          依据毕业设计系统介绍文档整理 · 界面为重绘示意，不代表实际运行数据。
-        </p>
-      </div>
-    </dialog>
-    <noscript
-      ><style>
-        .splash {
-          display: none;
-        }
-        .hero .line > span {
-          transform: none;
-        }
-      </style>
-      <p class="noscript-note">
-        当前浏览器关闭了 JavaScript。你仍可浏览全部内容，开启后可体验交互动效。
-      </p></noscript
-    >
   </body>
 </html>
