@@ -1,136 +1,187 @@
 import { chromium, expect } from "@playwright/test";
+import { mkdir } from "node:fs/promises";
+
+const baseURL = process.env.PREVIEW_URL || "http://127.0.0.1:5173/";
+await mkdir(".test-results", { recursive: true });
 const browser = await chromium.launch({
   executablePath: process.env.CHROMIUM_PATH || "/usr/bin/chromium",
   headless: true,
-  args: ["--no-sandbox"],
+  args: ["--no-sandbox", "--disable-dev-shm-usage"],
 });
-const baseURL = process.env.PREVIEW_URL || "http://127.0.0.1:5173/";
-const errors = [];
+const failures = [];
 const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
-page.on("pageerror", (e) => errors.push(e.message));
+page.on("pageerror", (error) => failures.push(error.message));
 page.on("response", (response) => {
   if (response.status() >= 400)
-    errors.push(`${response.status()} ${response.url()}`);
+    failures.push(`${response.status()}: ${response.url()}`);
 });
-await page.goto(baseURL, { waitUntil: "networkidle" });
-await page.waitForTimeout(2200);
-await expect(page.locator(".splash")).toHaveCount(0);
-await page.locator('.header a[href="#selected"]').click();
-await page.waitForTimeout(1400);
-await expect(page.locator("#selected-title")).toBeInViewport();
-await page.screenshot({ path: ".test-results/desktop-project.png" });
-await page.locator(".featured-cover-button").click();
-await page.waitForTimeout(800);
-await expect(page.locator(".case-dialog")).toBeVisible();
-await expect(page.locator("#case-title")).toHaveText("InsightAI 2026.");
-await page.screenshot({ path: ".test-results/desktop-case.png" });
-await page.locator(".case-dialog").hover();
-await page.mouse.wheel(0, 650);
-await page.waitForTimeout(400);
-expect(
-  await page.locator(".case-dialog").evaluate((el) => el.scrollTop),
-).toBeGreaterThan(0);
-await page.locator(".case-methods summary").nth(1).click();
-await expect(page.locator(".case-methods details").nth(1)).toHaveAttribute(
-  "open",
-  "",
-);
-await page.locator(".case-close").click();
-await page.waitForTimeout(800);
-await expect(page.locator(".case-dialog")).not.toBeVisible();
-await expect(page.locator(".featured-cover-button")).toBeFocused();
-await page.evaluate(() => document.querySelector("#work").scrollIntoView());
-await page.waitForTimeout(1300);
-await page.screenshot({ path: ".test-results/desktop-work.png" });
-await page.locator('[data-open="orbit"]').click();
-await page.waitForTimeout(800);
-await expect(page.locator(".project-dialog")).toBeVisible();
-await expect(page.locator("#dialog-title")).toHaveText("Orbit");
-await page.locator("#experiment-range").fill("80");
-await expect(page.locator("#control-value")).toHaveText("80%");
-await page.screenshot({ path: ".test-results/desktop-dialog.png" });
-await page.locator(".reset-experiment").click();
-await expect(page.locator("#experiment-range")).toHaveValue("50");
-await page.keyboard.press("Escape");
-await page.waitForTimeout(800);
-await expect(page.locator(".project-dialog")).not.toBeVisible();
-await expect(page.locator('[data-open="orbit"]')).toBeFocused();
-await page.mouse.wheel(0, 1700);
-await page.waitForTimeout(1700);
-await expect(page.locator('[data-open="field"]')).toBeInViewport();
-await page.locator('[data-open="field"]').click();
-await page.waitForTimeout(800);
-await expect(page.locator("#dialog-title")).toHaveText("Field");
-await page.locator(".dialog-close").click();
-await page.waitForTimeout(800);
-await page.locator('.header nav a[href="#about"]').evaluate((a) => a.click());
-await page.waitForTimeout(1400);
-await expect(page.locator("#about-title")).toBeInViewport();
-await expect(page.locator(".identity-card img")).toHaveJSProperty(
-  "complete",
-  true,
-);
-await page.screenshot({ path: ".test-results/desktop-about.png" });
-await page.evaluate(() => document.querySelector("#contact").scrollIntoView());
-await page.waitForTimeout(1200);
-await page.screenshot({ path: ".test-results/desktop-contact.png" });
-// All content stays readable without animations; all three experiments work on touch layouts.
-await page.emulateMedia({ reducedMotion: "reduce" });
-await page.setViewportSize({ width: 390, height: 844 });
-await page.goto(baseURL, { waitUntil: "networkidle" });
-await page.locator(".menu-toggle").click();
-await expect(page.locator(".mobile-nav")).toBeVisible();
-await page.locator('.mobile-nav a[href="#about"]').click();
-await expect(page.locator(".mobile-nav")).not.toBeVisible();
-await expect(page.locator("#about-title")).toBeInViewport();
-await page.locator(".case-text-open").click();
-await expect(page.locator(".case-dialog")).toBeVisible();
-await page.screenshot({ path: ".test-results/mobile-case.png" });
-expect(
+const capture = (name, fullPage = false) =>
+  page.screenshot({ path: `.test-results/${name}.png`, fullPage });
+try {
+  await page.goto(baseURL, { waitUntil: "networkidle" });
+  await expect(page.locator(".splash")).toHaveCount(0, { timeout: 5000 });
+  await page.waitForTimeout(700);
+  await expect(page.locator("#hero-title")).toContainText("Curious");
+  await capture("desktop-hero");
+  await page.locator('.header a[href="#selected"]').click();
+  await expect(page.locator("#selected-title")).toBeInViewport();
+  await page.locator('[data-project-tab="0"]').click();
+  await expect(page.locator('[data-scene="0"]')).toBeVisible();
+  await page.locator("#influence-weight").fill("75");
+  await expect(page.locator("#network-weight")).toHaveText("75%");
+  await expect(page.locator("#content-weight")).toHaveText("25%");
+  await page.waitForTimeout(500);
+  await capture("desktop-project");
+  // Scroll-driven narration must actually follow the visible chapter.
   await page
-    .locator(".case-dialog")
-    .evaluate((el) => el.scrollWidth <= el.clientWidth),
-).toBeTruthy();
-await page.keyboard.press("Escape");
-await expect(page.locator(".case-dialog")).not.toBeVisible();
-for (const project of ["orbit", "form", "field"]) {
-  await page.locator(`[data-open="${project}"]`).click();
-  await expect(page.locator(".project-dialog")).toBeVisible();
-  await page.locator("#experiment-range").fill("75");
-  await expect(page.locator("#control-value")).toHaveText("75%");
-  await page.locator(".dialog-close").click();
-  await expect(page.locator(".project-dialog")).not.toBeVisible();
-}
-for (const width of [320, 390, 768, 1024, 1440]) {
-  await page.setViewportSize({ width, height: 900 });
+    .locator('[data-step="1"]')
+    .evaluate((el) => el.scrollIntoView({ block: "center" }));
+  await expect(page.locator('[data-project-tab="1"]')).toHaveAttribute(
+    "aria-selected",
+    "true",
+  );
+  await expect(page.locator('[data-scene="1"]')).toBeVisible();
+  await page.locator('[data-project-tab="2"]').click();
+  await expect(page.locator('[data-scene="2"]')).toBeVisible();
+  await expect(page.locator("[data-agent-replay]")).toBeEnabled({
+    timeout: 5000,
+  });
+  await page.locator("[data-agent-replay]").click();
+  await expect(page.locator("[data-agent-replay]")).toBeEnabled({
+    timeout: 5000,
+  });
+  await capture("desktop-agent");
+  await page.locator('[data-project-tab="2"]').focus();
+  await page.keyboard.press("Home");
+  await expect(page.locator('[data-project-tab="0"]')).toBeFocused();
+  await expect(page.locator('[data-scene="0"]')).toBeVisible();
+
+  await page.locator('.header a[href="#about"]').click();
+  await expect(page.locator("#about-title")).toBeInViewport();
+  await page.locator("[data-research-toggle]").click();
+  await expect(page.locator("[data-research-toggle]")).toHaveAttribute(
+    "aria-pressed",
+    "true",
+  );
+  await page.locator("[data-research-toggle]").click();
+  await expect(page.locator("[data-research-toggle]")).toHaveAttribute(
+    "aria-pressed",
+    "false",
+  );
+  await capture("desktop-atlas");
+  await page.locator('[data-atlas-tab="music"]').click();
+  await expect(page.locator("#atlas-music")).toBeVisible();
+  await expect(page.locator("#atlas-research")).not.toBeVisible();
+  await page.locator("#rhythm-range").fill("82");
+  await expect(page.locator("#rhythm-value")).toContainText("82");
+  await expect(page.locator(".sound-bar")).toHaveCount(37);
+  await page.locator("[data-music-toggle]").click();
+  await expect(page.locator("[data-music-toggle]")).toHaveAttribute(
+    "aria-pressed",
+    "true",
+  );
+  const stillWave = await page
+    .locator(".sound-bar")
+    .evaluateAll((bars) => bars.map((bar) => bar.getAttribute("height")));
+  await page.waitForTimeout(180);
   expect(
-    await page.evaluate(
+    await page
+      .locator(".sound-bar")
+      .evaluateAll((bars) => bars.map((bar) => bar.getAttribute("height"))),
+  ).toEqual(stillWave);
+  await page.locator("[data-music-toggle]").click();
+  await expect(page.locator("[data-music-toggle]")).toHaveAttribute(
+    "aria-pressed",
+    "false",
+  );
+  await capture("desktop-music");
+  await page.locator('[data-atlas-tab="court"]').click();
+  await expect(page.locator("#atlas-court")).toBeVisible();
+  await page.locator("[data-rally]").click();
+  await expect(page.locator("#rally-status")).toContainText("这一拍", {
+    timeout: 5000,
+  });
+  await capture("desktop-court");
+  await page.locator('[data-atlas-tab="court"]').focus();
+  await page.keyboard.press("Home");
+  await expect(page.locator('[data-atlas-tab="research"]')).toBeFocused();
+  await expect(page.locator("#atlas-research")).toBeVisible();
+
+  // Live preference changes must stop decorative motion without breaking controls.
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await expect(page.locator("html")).toHaveAttribute("data-motion", "reduced");
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(baseURL, { waitUntil: "networkidle" });
+  await capture("mobile-hero");
+  await page.locator(".menu-toggle").click();
+  await expect(page.locator(".mobile-nav")).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(page.locator(".mobile-nav")).not.toBeVisible();
+  await expect(page.locator(".menu-toggle")).toBeFocused();
+  await page.locator(".menu-toggle").click();
+  await page.locator('.mobile-nav a[href="#selected"]').click();
+  await expect(page.locator(".mobile-nav")).not.toBeVisible();
+  await expect(page.locator("#selected-title")).toBeInViewport();
+  await page.locator('[data-project-tab="2"]').click();
+  await expect(page.locator('[data-scene="2"]')).toBeVisible();
+  await page.locator("[data-agent-replay]").click();
+  await expect(page.locator("[data-agent-replay]")).toBeEnabled();
+  await capture("mobile-project");
+  await page.locator('[data-atlas-tab="music"]').click();
+  await page.locator("#rhythm-range").fill("35");
+  await expect(page.locator("#rhythm-value")).toContainText("35");
+  await page.locator('[data-atlas-tab="court"]').click();
+  await page.locator("[data-rally]").click();
+  await expect(page.locator("#rally-status")).toContainText("这一拍");
+  await capture("mobile-court");
+  await page.locator('[data-atlas-tab="research"]').click();
+
+  for (const width of [320, 390, 768, 1024, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.waitForTimeout(120);
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth,
+      ),
+      `horizontal overflow at ${width}px`,
+    ).toBeTruthy();
+  }
+  expect(
+    await page
+      .locator("img")
+      .evaluateAll((images) =>
+        images.every((img) => img.complete && img.naturalWidth > 0),
+      ),
+  ).toBeTruthy();
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.evaluate(() => scrollTo(0, 0));
+  await capture("desktop-full", true);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.evaluate(() => scrollTo(0, 0));
+  await capture("mobile-full", true);
+  expect(failures).toEqual([]);
+
+  const noJS = await browser.newPage({
+    javaScriptEnabled: false,
+    viewport: { width: 390, height: 844 },
+  });
+  await noJS.goto(baseURL);
+  await expect(noJS.locator("#hero-title")).toBeVisible();
+  await expect(noJS.locator(".splash")).not.toBeVisible();
+  await expect(noJS.locator(".story-chapter")).toHaveCount(3);
+  for (const interest of ["research", "music", "court"]) {
+    await expect(noJS.locator(`#atlas-${interest}`)).toBeVisible();
+  }
+  expect(
+    await noJS.evaluate(
       () => document.documentElement.scrollWidth <= innerWidth,
     ),
-    `horizontal overflow at ${width}px`,
+    "no-JS mobile overflow",
   ).toBeTruthy();
+  await noJS.close();
+  console.log(
+    "PASS: scroll narrative, project/atlas tabs and keyboard access, weights, agent replay, research lens, music control, rally replay, mobile navigation, live reduced-motion change, 320–1440px layouts, no-JS content, images and runtime errors.",
+  );
+} finally {
+  await browser.close();
 }
-await page.setViewportSize({ width: 390, height: 844 });
-await page.screenshot({
-  path: ".test-results/mobile-full.png",
-  fullPage: true,
-});
-await page.setViewportSize({ width: 1440, height: 1000 });
-await page.screenshot({
-  path: ".test-results/desktop-full.png",
-  fullPage: true,
-});
-expect(errors).toEqual([]);
-// Content and internal navigation do not depend on JS.
-const noJS = await browser.newPage({
-  javaScriptEnabled: false,
-  viewport: { width: 390, height: 844 },
-});
-await noJS.goto(baseURL);
-await expect(noJS.locator("#hero-title")).toBeVisible();
-await expect(noJS.locator(".splash")).not.toBeVisible();
-await expect(noJS.locator("#about-title")).toHaveText(/youka/);
-console.log(
-  "PASS: project story + scrolling + accordion, desktop navigation, shared transitions, sliders/reset, Escape/focus return, mobile menu, 3 experiments, reduced motion, 5 responsive widths, no-JS content, no runtime errors.",
-);
-await browser.close();
