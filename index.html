@@ -3,23 +3,23 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#faf8f4" />
+    <meta name="theme-color" content="#f5f3e9" />
     <meta
       name="description"
       content="你好，我是 Youka。关注 AI 应用、开发者社区数据挖掘与回归实证分析，在这里分享代表项目 Community 以及屏幕之外的日常探索。"
     />
-    <title>Youka · AI、数据挖掘与日常探索</title>
+    <title>Youka — Curious by nature.</title>
     <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml" />
     <link
       rel="preload"
-      href="./assets/font-6.woff2"
+      href="./assets/font-1.woff2"
       as="font"
       type="font/woff2"
       crossorigin
     />
-    <link rel="stylesheet" href="./styles.css?v=421c1f44adc9" />
-    <link rel="stylesheet" href="./script.css?v=1a72e3168803" />
-    <script type="module" src="./script.js?v=4248123d144e"></script>
+    <link rel="stylesheet" href="./styles.css?v=273a94c33d4d" />
+    <link rel="stylesheet" href="./script.css?v=2d0c22477eab" />
+    <script type="module" src="./script.js?v=f1ce3e1dbfb3"></script>
   </head>
   <body>
     <a id="skip-to-main" class="skip-link" href="#main">跳到主要内容</a>
@@ -27,949 +27,308 @@
     <header id="site-header" class="site-header">
       <div class="container header-inner">
         <a id="brand-home" class="brand" href="#top" aria-label="Youka 首页">
-          youka<span class="brand-dot" aria-hidden="true"></span>
+          youka<span class="journal-mark" aria-hidden="true"></span>
         </a>
-
+        <span class="masthead-note" lang="en">Personal journal</span>
         <nav class="primary-nav" aria-label="主导航">
-          <a id="nav-project" class="nav-link" href="#project">代表项目</a>
+          <a id="nav-project" class="nav-link" href="#project">项目</a>
           <a id="nav-perspectives" class="nav-link" href="#perspectives">关于我</a>
-          <a id="nav-contact" class="nav-link" href="#contact">交流</a>
-          <a
-            id="nav-github"
-            class="nav-github-btn"
-            href="https://github.com/youka150"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <span>GitHub</span>
-            <span aria-hidden="true">↗</span>
-          </a>
+          <a id="nav-contact" class="nav-link" href="#contact">联系</a>
+          <a id="nav-github" class="nav-external" href="https://github.com/youka150"
+             target="_blank" rel="noopener noreferrer">GitHub</a>
         </nav>
-
-        <button
-          id="menu-toggle"
-          class="menu-toggle"
-          type="button"
-          aria-expanded="false"
-          aria-controls="mobile-nav"
-          aria-label="打开菜单"
-        >
-          <span></span>
-          <span></span>
+        <button id="menu-toggle" class="menu-toggle" type="button"
+          aria-expanded="false" aria-controls="mobile-nav" aria-label="打开菜单">
+          <span></span><span></span>
         </button>
       </div>
-      <div id="scroll-progress" class="scroll-progress" aria-hidden="true"></div>
+      <nav id="mobile-nav" class="mobile-nav" aria-label="移动端导航" hidden>
+        <a href="#project" id="mobile-nav-project">项目</a>
+        <a href="#perspectives" id="mobile-nav-perspectives">关于我</a>
+        <a href="#contact" id="mobile-nav-contact">联系</a>
+        <a href="https://github.com/youka150" id="mobile-nav-github"
+           target="_blank" rel="noopener noreferrer">GitHub</a>
+      </nav>
     </header>
 
-    <nav id="mobile-nav" class="mobile-nav" aria-label="移动端导航" hidden>
-      <a id="mobile-nav-project" href="#project">
-        <span>代表项目</span>
-        <span aria-hidden="true">↘</span>
-      </a>
-      <a id="mobile-nav-perspectives" href="#perspectives">
-        <span>关于我</span>
-        <span aria-hidden="true">↘</span>
-      </a>
-      <a id="mobile-nav-contact" href="#contact">
-        <span>交流</span>
-        <span aria-hidden="true">↘</span>
-      </a>
-      <a
-        id="mobile-nav-github"
-        href="https://github.com/youka150"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        <span>GitHub (@youka150)</span>
-        <span aria-hidden="true">↗</span>
-      </a>
-    </nav>
-
-    <main id="main">
-      <!-- ==================== Section 1: Hero ==================== -->
+    <main id="main" tabindex="-1">
       <section id="top" class="hero" aria-labelledby="hero-title">
         <div class="container hero-grid">
           <div class="hero-copy">
-            <p class="hero-overline">Youka · Data, AI &amp; Everyday Rhythm</p>
-            <h1 id="hero-title" class="hero-title">
-              <span class="reveal-line"><span>把好奇心，</span></span>
-              <span class="reveal-line"
-                ><span>放进<em>真实的问题</em>里。</span></span
-              >
+            <p class="hero-greeting">你好，我是 <span lang="en">Youka</span>。</p>
+            <h1 id="hero-title" lang="en">
+              <span class="reveal-line"><span>Curious</span></span>
+              <span class="reveal-line"><span><em>by nature<span class="ink-period">.</span></em></span></span>
             </h1>
-            <p class="hero-lead">
-              你好，我是 <strong>Youka</strong>。平时折腾 AI 应用、社区数据挖掘与回归实证分析，习惯在热闹的现象背后多问一句「为什么」；离开屏幕的时候，多半戴着耳机听歌，或者在羽毛球场上接下一拍。
-            </p>
-
-            <div class="hero-actions">
-              <a id="hero-cta-project" class="btn-primary" href="#project" data-magnetic>
-                <span>浏览代表项目 Community</span>
-                <span class="btn-arrow" aria-hidden="true">↓</span>
-              </a>
-              <a
-                id="hero-cta-github"
-                class="btn-secondary"
-                href="https://github.com/youka150"
-                target="_blank"
-                rel="noopener noreferrer"
-                data-magnetic
-              >
-                <span>GitHub 主页</span>
-                <span class="btn-arrow" aria-hidden="true">↗</span>
-              </a>
+            <p class="hero-lead">我用数据研究开发者社区里的人和事。<br>离开屏幕，喜欢听歌，也打羽毛球。</p>
+            <a id="hero-cta-project" class="journal-link" href="#project" data-magnetic>
+              <span>翻看我的项目</span><span class="bookmark-mark" aria-hidden="true"></span>
+            </a>
+          </div>
+          <figure class="hero-photo">
+            <div class="photo-frame">
+              <img src="./assets/landscape.jpg" width="1800" height="1200" fetchpriority="high"
+                alt="群山和林木倒映在湖里，近处的木屋搭在水面上。">
             </div>
+            <figcaption><span>山间的湖与木屋</span><span data-photo-hint></span></figcaption>
+          </figure>
+        </div>
+      </section>
 
-            <dl class="hero-highlights">
-              <div class="highlight-item">
-                <dt>关注方向</dt>
-                <dd>
-                  <span class="nowrap">社会网络</span> ·
-                  <span class="nowrap">文本挖掘</span> ·
-                  <span class="nowrap">实证回归</span>
-                </dd>
+      <section id="project" class="project-section" aria-labelledby="project-title">
+        <div class="project-shell container">
+          <header class="project-header">
+            <p class="project-byline">本科毕业设计 <span lang="en">/ Selected work</span></p>
+            <div class="project-heading-grid">
+              <h2 id="project-title" lang="en">Community</h2>
+              <div class="project-deck">
+                <p>我从华为与昇腾开发者社区的帖子和评论入手，想看看谁在答疑，大家关心什么，哪些问题总被提起。</p>
+                <a id="project-repo-link" class="method-link" href="https://github.com/youka150/community"
+                  target="_blank" rel="noopener noreferrer">查看项目源码</a>
               </div>
-              <div class="highlight-item">
-                <dt>常用工具</dt>
-                <dd>
-                  <span class="nowrap">Next.js</span> ·
-                  <span class="nowrap">FastAPI</span> ·
-                  <span class="nowrap">PostgreSQL</span>
-                </dd>
+            </div>
+          </header>
+          <div class="stage-panel">
+            <div class="stage-tabs" role="tablist" aria-label="项目方法">
+              <button id="stage-tab-0" type="button" role="tab" aria-selected="true"
+                aria-controls="scene-0" data-stage-tab="0">关系网络</button>
+              <button id="stage-tab-1" type="button" role="tab" aria-selected="false" tabindex="-1"
+                aria-controls="scene-1" data-stage-tab="1">用户画像</button>
+              <button id="stage-tab-2" type="button" role="tab" aria-selected="false" tabindex="-1"
+                aria-controls="scene-2" data-stage-tab="2">趋势分析</button>
+            </div>
+            <div id="scene-0" class="stage-scene" role="tabpanel" aria-labelledby="stage-tab-0" data-scene="0">
+              <h3 class="method-heading">谁在连接不同的讨论？</h3>
+              <div class="method-demo">
+                <figure class="method-figure">
+                  <canvas id="network-canvas" width="680" height="360" tabindex="0"
+                    aria-label="社区互动网络，使用左右方向键或点选节点查看角色" aria-describedby="network-tooltip"></canvas>
+                  <figcaption id="network-tooltip" role="status">指向或点选节点查看角色，也可用左右方向键切换。</figcaption>
+                </figure>
+                <div class="method-controls">
+                  <fieldset class="method-options">
+                    <legend>评分侧重</legend>
+                    <button id="preset-entropy" type="button" class="is-active" aria-pressed="true" data-weight-preset="52">均衡</button>
+                    <button id="preset-topology" type="button" aria-pressed="false" data-weight-preset="82">网络结构</button>
+                    <button id="preset-content" type="button" aria-pressed="false" data-weight-preset="22">内容质量</button>
+                  </fieldset>
+                  <div class="weight-mix">
+                    <label class="weight-readout" for="influence-slider">
+                      <span>网络 <output id="topology-share" for="influence-slider">52%</output></span>
+                      <span>内容 <output id="quality-share" for="influence-slider">48%</output></span>
+                    </label>
+                    <input id="influence-slider" type="range" min="10" max="90" value="52"
+                      aria-label="调节网络结构与内容质量的权重配比" />
+                  </div>
+                </div>
+                <p class="method-caption">示例数据 · 方法演示</p>
               </div>
-              <div class="highlight-item">
-                <dt>日常状态</dt>
-                <dd>
-                  <span class="nowrap">写代码</span>、<span class="nowrap">读文献</span>、<span class="nowrap">听歌</span>、<span class="nowrap">打羽毛球</span>
-                </dd>
+              <div id="chapter-0" class="method-note" data-chapter="0">
+                <p>有人写长教程，有人常跨话题答疑。为了看见这些贡献，我把评论和回复连成图，用 PageRank、介数中心性等八项指标评分。</p>
+                <p>图上不同颜色代表不同的讨论圈，实际项目用 Louvain 算法来识别。调一下权重，看看哪些节点会被圈出来。</p>
+                <div class="method-sources">
+                  <span>相关源码</span>
+                  <a id="source-network-link" class="method-link" target="_blank" rel="noopener noreferrer"
+                    href="https://github.com/youka150/community/blob/main/python/huawei_mining_service/services/network_service.py">关系网络</a>
+                  <a id="source-scoring-link" class="method-link" target="_blank" rel="noopener noreferrer"
+                    href="https://github.com/youka150/community/blob/main/python/huawei_mining_service/scoring.py">影响力评分</a>
+                </div>
               </div>
+            </div>
+            <div id="scene-1" class="stage-scene" role="tabpanel" aria-labelledby="stage-tab-1" data-scene="1">
+              <h3 class="method-heading">同样活跃，都在聊什么？</h3>
+              <div class="method-demo">
+                <figure class="method-figure">
+                  <canvas id="cluster-canvas" width="680" height="360"
+                    aria-label="示例用户在两种特征组合下的分布"></canvas>
+                  <figcaption id="cluster-badge">行为与语义的融合投影</figcaption>
+                </figure>
+                <div class="method-controls">
+                  <fieldset class="method-options">
+                    <legend>比较特征</legend>
+                    <button id="cluster-mode-fused" type="button" class="is-active" aria-pressed="true" data-cluster-mode="fused">行为与语义</button>
+                    <button id="cluster-mode-behavior" type="button" aria-pressed="false" data-cluster-mode="behavior">仅看行为</button>
+                  </fieldset>
+                  <fieldset class="method-options">
+                    <legend>选择群体</legend>
+                    <button id="persona-chip-all" type="button" class="is-active" aria-pressed="true" data-persona="-1">全部</button>
+                    <button id="persona-chip-0" type="button" aria-pressed="false" data-persona="0">算子研究</button>
+                    <button id="persona-chip-1" type="button" aria-pressed="false" data-persona="1">工程排障</button>
+                    <button id="persona-chip-2" type="button" aria-pressed="false" data-persona="2">案例分享</button>
+                    <button id="persona-chip-3" type="button" aria-pressed="false" data-persona="3">潜力用户</button>
+                  </fieldset>
+                  <p id="cluster-insight-text" class="method-readout" role="status">加入语义特征后，可以按讨论方向观察这些示例用户。</p>
+                </div>
+                <p class="method-caption">示例数据 · 方法演示</p>
+              </div>
+              <div id="chapter-1" class="method-note" data-chapter="1">
+                <p>两个人的发帖次数相近，一个常谈算子调优，另一个爱分享入门实践。把他们写过的文字也算进去，能看见两种不同的兴趣。</p>
+                <p>项目把多语言句向量与发帖、获赞等行为特征结合，用 PCA 和 KMeans 划分群体。切换图中的特征组合，就能比较两种分组方式。</p>
+                <div class="method-sources">
+                  <span>相关源码</span>
+                  <a id="source-cluster-link" class="method-link" target="_blank" rel="noopener noreferrer"
+                    href="https://github.com/youka150/community/blob/main/python/huawei_mining_service/services/clustering_service.py">特征融合</a>
+                  <a id="source-topic-link" class="method-link" target="_blank" rel="noopener noreferrer"
+                    href="https://github.com/youka150/community/blob/main/python/huawei_mining_service/services/bertopic_service.py">主题模型</a>
+                </div>
+              </div>
+            </div>
+            <div id="scene-2" class="stage-scene" role="tabpanel" aria-labelledby="stage-tab-2" data-scene="2">
+              <h3 class="method-heading">哪些问题值得跟进？</h3>
+              <div class="method-demo">
+                <fieldset class="method-options">
+                  <legend>演示议题</legend>
+                  <button id="agent-query-0" type="button" class="is-active" aria-pressed="true" data-agent-topic="0">昇腾算子迁移</button>
+                  <button id="agent-query-1" type="button" aria-pressed="false" data-agent-topic="1">鸿蒙端侧推理</button>
+                </fieldset>
+                <ol class="agent-pipeline" aria-label="趋势分析的步骤">
+                  <li class="agent-node" data-agent-step="0"><strong>拆解问题</strong><span>列出待查的方向与关键词</span></li>
+                  <li class="agent-node" data-agent-step="1"><strong>检索线索</strong><span>对照社区讨论和外部资料</span></li>
+                  <li class="agent-node" data-agent-step="2"><strong>核对证据</strong><span>为缺少依据的判断补充检索</span></li>
+                  <li class="agent-node" data-agent-step="3"><strong>整理报告</strong><span>逐段汇总发现和依据</span></li>
+                </ol>
+                <div id="agent-trace-log" class="method-readout agent-log" role="status" aria-live="polite">
+                  <p>选择议题，查看一次分析的过程。</p>
+                </div>
+                <button id="agent-replay-btn" class="method-link" type="button">重新演示</button>
+                <p class="method-caption">示例数据 · 方法演示</p>
+              </div>
+              <div id="chapter-2" class="method-note" data-chapter="2">
+                <p>从社区里的讨论出发，我想知道哪些问题一直有人问。趋势 Agent 会把一个议题拆小，查找相关资料，再回头检查哪些判断还缺证据。</p>
+                <p>这里用两个示例重现它的查找过程。实际服务会按需补搜，通过 SSE 逐段返回报告，也会从核心用户的帖子里归纳产品改进线索。</p>
+                <div class="method-sources">
+                  <span>相关源码</span>
+                  <a id="source-agent-link" class="method-link" target="_blank" rel="noopener noreferrer"
+                    href="https://github.com/youka150/community/blob/main/src/lib/agents/TrendAgent.js">趋势 Agent</a>
+                  <a id="source-hotspot-link" class="method-link" target="_blank" rel="noopener noreferrer"
+                    href="https://github.com/youka150/community/blob/main/python/huawei_mining_service/services/hotspot_service.py">热点分析</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <details class="project-build">
+            <summary>技术与实现</summary>
+            <dl>
+              <div><dt>数据</dt><dd>两个开发者社区的帖子和多级评论经清洗后存入 PostgreSQL，由 Drizzle 管理。也支持导入自己的表格。</dd></div>
+              <div><dt>分析</dt><dd>FastAPI 调用 NetworkX 计算图指标，配合 BERTopic 等方法做主题建模和语义分析。</dd></div>
+              <div><dt>界面</dt><dd>用 Next.js 15 与 React 19 展示关系图和分析结果，管理员、数据工程师和访客各有对应视图。</dd></div>
             </dl>
-          </div>
-
-          <div class="hero-stage" data-reveal>
-            <canvas
-              id="hero-canvas"
-              class="hero-canvas"
-              width="620"
-              height="595"
-              aria-label="信号与连接交互画布：移动指针或点击可激起涟漪并点亮邻近连接"
-            ></canvas>
-            <div class="hero-stage-bar">
-              <span>移动指针或轻点画布，拨动节点连接</span>
-              <button id="hero-pulse-btn" class="stage-pulse-btn" type="button">
-                <span>激起涟漪</span>
-              </button>
-            </div>
-          </div>
+          </details>
         </div>
       </section>
 
-      <!-- ==================== Section 2: Project Showcase ==================== -->
-      <section
-        id="project"
-        class="project-section"
-        aria-labelledby="project-title"
-      >
-        <div class="project-shell">
-          <div class="container">
-            <header class="project-header" data-reveal>
-              <span class="section-kicker">Selected Project</span>
-              <div class="project-heading-grid">
-                <div>
-                  <h2 id="project-title" class="project-title">
-                    Community
-                    <span class="project-subtitle"
-                      >华为与昇腾开发者社区数据分析平台</span
-                    >
-                  </h2>
-                </div>
-                <p class="project-summary">
-                  当技术社区积累了成千上万条帖子与评论，只看发帖量和热度榜很容易漏掉真正有价值的声音。这个全栈系统把图网络计算、多语言语义聚类和带反思机制的趋势
-                  Agent 串在一起，用来定位关键连接者、用户群体特征以及值得跟进的产品痛点。
-                </p>
-              </div>
-
-              <div class="project-toolbar">
-                <ul class="tech-tags" aria-label="项目技术栈">
-                  <li>Next.js 15</li>
-                  <li>React 19</li>
-                  <li>FastAPI</li>
-                  <li>PostgreSQL</li>
-                  <li>Drizzle ORM</li>
-                  <li>NetworkX</li>
-                  <li>BERTopic</li>
-                  <li>Trend Agent</li>
-                </ul>
-                <a
-                  id="project-repo-link"
-                  class="btn-harbor"
-                  href="https://github.com/youka150/community"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <span>查看项目源码</span>
-                  <span aria-hidden="true">↗</span>
-                </a>
-              </div>
-            </header>
-
-            <div class="project-workbench">
-              <!-- Left Narrative Chapters -->
-              <div class="chapter-list">
-                <article
-                  id="chapter-0"
-                  class="chapter-card is-active"
-                  data-chapter="0"
-                >
-                  <span class="chapter-step-num">01 · 网络与影响力评估</span>
-                  <h3>不只看谁发帖多，更看谁在<span class="nowrap">连接社区</span></h3>
-                  <p>
-                    把评论与回复关系构建成有向加权图，综合 PageRank、出入度、介数中心性，以及评论里的代码块、列表结构与技术深度等八个维度打分。既支持用信息熵权法客观赋权，也能在前端按业务侧重实时调整权重，配合
-                    Louvain 算法识别自然形成的讨论圈。
-                  </p>
-                  <div class="chapter-links">
-                    <a
-                      id="source-network-link"
-                      class="code-link"
-                      href="https://github.com/youka150/community/blob/main/python/huawei_mining_service/services/network_service.py"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <span>network_service.py</span>
-                      <span aria-hidden="true">↗</span>
-                    </a>
-                    <a
-                      id="source-scoring-link"
-                      class="code-link"
-                      href="https://github.com/youka150/community/blob/main/python/huawei_mining_service/scoring.py"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <span>scoring.py</span>
-                      <span aria-hidden="true">↗</span>
-                    </a>
-                  </div>
-                </article>
-
-                <article id="chapter-1" class="chapter-card" data-chapter="1">
-                  <span class="chapter-step-num">02 · 行为与语义融合画像</span>
-                  <h3>把「怎么互动」和「具体聊什么」合在一起看</h3>
-                  <p>
-                    同样是高频活跃用户，有人深耕底层算子排障，有人擅长整理入门实践。系统将发帖频次、获赞表现等行为特征，与
-                    384 维多语言句向量经 PCA 降维后融合做 KMeans 聚类；即便运行环境未加载语义模型，也能平滑降级到纯行为聚类。
-                  </p>
-                  <div class="chapter-links">
-                    <a
-                      id="source-cluster-link"
-                      class="code-link"
-                      href="https://github.com/youka150/community/blob/main/python/huawei_mining_service/services/clustering_service.py"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <span>clustering_service.py</span>
-                      <span aria-hidden="true">↗</span>
-                    </a>
-                    <a
-                      id="source-topic-link"
-                      class="code-link"
-                      href="https://github.com/youka150/community/blob/main/python/huawei_mining_service/services/bertopic_service.py"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <span>bertopic_service.py</span>
-                      <span aria-hidden="true">↗</span>
-                    </a>
-                  </div>
-                </article>
-
-                <article id="chapter-2" class="chapter-card" data-chapter="2">
-                  <span class="chapter-step-num">03 · 反思式 Agent 与痛点挖掘</span>
-                  <h3>先检索、再自检补搜，最后<span class="nowrap">流式交付洞察</span></h3>
-                  <p>
-                    一方面从核心贡献者的语义簇中提炼产品改进机会，并通过语义相似度发现尚未出圈的潜力新星；另一方面构建了多步趋势分析
-                    Agent：拆解问题维度后调用 Tavily / Bocha 检索，自动评估证据缺口并触发补搜，最终通过 SSE 流式生成分析报告。
-                  </p>
-                  <div class="chapter-links">
-                    <a
-                      id="source-agent-link"
-                      class="code-link"
-                      href="https://github.com/youka150/community/blob/main/src/lib/agents/TrendAgent.js"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <span>TrendAgent.js</span>
-                      <span aria-hidden="true">↗</span>
-                    </a>
-                    <a
-                      id="source-hotspot-link"
-                      class="code-link"
-                      href="https://github.com/youka150/community/blob/main/python/huawei_mining_service/services/hotspot_service.py"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <span>hotspot_service.py</span>
-                      <span aria-hidden="true">↗</span>
-                    </a>
-                  </div>
-                </article>
-              </div>
-
-              <!-- Right Interactive Simulation Stage -->
-              <div class="stage-panel">
-                <div
-                  class="stage-tabs"
-                  role="tablist"
-                  aria-label="切换 Community 核心算法演示"
-                >
-                  <button
-                    id="stage-tab-0"
-                    class="stage-tab"
-                    type="button"
-                    role="tab"
-                    aria-selected="true"
-                    aria-controls="scene-0"
-                    data-stage-tab="0"
-                  >
-                    01 关系网络
-                  </button>
-                  <button
-                    id="stage-tab-1"
-                    class="stage-tab"
-                    type="button"
-                    role="tab"
-                    aria-selected="false"
-                    aria-controls="scene-1"
-                    tabindex="-1"
-                    data-stage-tab="1"
-                  >
-                    02 融合画像
-                  </button>
-                  <button
-                    id="stage-tab-2"
-                    class="stage-tab"
-                    type="button"
-                    role="tab"
-                    aria-selected="false"
-                    aria-controls="scene-2"
-                    tabindex="-1"
-                    data-stage-tab="2"
-                  >
-                    03 趋势 Agent
-                  </button>
-                </div>
-
-                <div class="stage-body">
-                  <!-- Scene 0: Interactive Force Network -->
-                  <div
-                    id="scene-0"
-                    class="stage-scene"
-                    role="tabpanel"
-                    aria-labelledby="stage-tab-0"
-                    data-scene="0"
-                  >
-                    <div class="canvas-frame">
-                      <canvas
-                        id="network-canvas"
-                        width="680"
-                        height="425"
-                        aria-label="有向加权互动网络示意：悬停节点可查看其在社群中的连接特征"
-                      ></canvas>
-                      <div class="canvas-status-pill">
-                        <span id="network-tooltip" class="canvas-badge"
-                          >悬停节点查看角色特征 · 当前高亮综合排名前三</span
-                        >
-                      </div>
-                    </div>
-
-                    <div class="stage-controls">
-                      <div class="control-row">
-                        <span class="control-label">评分权重配置</span>
-                        <div class="chip-group" role="group" aria-label="权重预设">
-                          <button
-                            id="preset-entropy"
-                            class="chip-btn is-active"
-                            type="button"
-                            data-weight-preset="52"
-                          >
-                            熵权均衡
-                          </button>
-                          <button
-                            id="preset-topology"
-                            class="chip-btn"
-                            type="button"
-                            data-weight-preset="82"
-                          >
-                            侧重网络枢纽
-                          </button>
-                          <button
-                            id="preset-content"
-                            class="chip-btn"
-                            type="button"
-                            data-weight-preset="22"
-                          >
-                            侧重内容质量
-                          </button>
-                        </div>
-                      </div>
-
-                      <input
-                        id="influence-slider"
-                        class="range-slider"
-                        type="range"
-                        min="10"
-                        max="90"
-                        value="52"
-                        aria-label="调节网络结构与内容质量的权重配比"
-                      />
-
-                      <div class="slider-metrics">
-                        <span
-                          >网络拓扑权重<output id="topology-share"
-                            >52%</output
-                          ></span
-                        >
-                        <span
-                          >内容质量权重<output id="quality-share"
-                            >48%</output
-                          ></span
-                        >
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- Scene 1: Interactive PCA + KMeans Embedding -->
-                  <div
-                    id="scene-1"
-                    class="stage-scene"
-                    role="tabpanel"
-                    aria-labelledby="stage-tab-1"
-                    data-scene="1"
-                    hidden
-                  >
-                    <div class="canvas-frame">
-                      <canvas
-                        id="cluster-canvas"
-                        width="680"
-                        height="425"
-                        aria-label="用户特征空间投影：对比仅用行为频次与融合语义向量后的聚类效果"
-                      ></canvas>
-                      <div class="canvas-status-pill">
-                        <span id="cluster-badge" class="canvas-badge"
-                          >PCA 降维 + KMeans 融合视图</span
-                        >
-                      </div>
-                    </div>
-
-                    <div class="stage-controls">
-                      <div class="control-row">
-                        <span class="control-label">特征空间切面</span>
-                        <div class="chip-group" role="group" aria-label="聚类特征模式">
-                          <button
-                            id="cluster-mode-fused"
-                            class="chip-btn is-active"
-                            type="button"
-                            data-cluster-mode="fused"
-                          >
-                            行为 × 语义融合
-                          </button>
-                          <button
-                            id="cluster-mode-behavior"
-                            class="chip-btn"
-                            type="button"
-                            data-cluster-mode="behavior"
-                          >
-                            仅看活跃频次
-                          </button>
-                        </div>
-                      </div>
-
-                      <div class="chip-group" role="group" aria-label="筛选典型群体">
-                        <button
-                          id="persona-chip-all"
-                          class="chip-btn is-active"
-                          type="button"
-                          data-persona="-1"
-                        >
-                          全部群体
-                        </button>
-                        <button
-                          id="persona-chip-0"
-                          class="chip-btn"
-                          type="button"
-                          data-persona="0"
-                        >
-                          算子与框架深耕
-                        </button>
-                        <button
-                          id="persona-chip-1"
-                          class="chip-btn"
-                          type="button"
-                          data-persona="1"
-                        >
-                          工程排障桥梁
-                        </button>
-                        <button
-                          id="persona-chip-2"
-                          class="chip-btn"
-                          type="button"
-                          data-persona="2"
-                        >
-                          实践案例分享
-                        </button>
-                        <button
-                          id="persona-chip-3"
-                          class="chip-btn"
-                          type="button"
-                          data-persona="3"
-                        >
-                          高潜新星
-                        </button>
-                      </div>
-
-                      <p id="cluster-insight-text" class="scene-readout">
-                        融合 384 维句向量后，原本在活跃度上相近的用户会按真实讨论领域自然分离，便于识别细分领域的答疑核心与潜力贡献者。
-                      </p>
-                    </div>
-                  </div>
-
-                  <!-- Scene 2: Reflective Trend Agent Simulator -->
-                  <div
-                    id="scene-2"
-                    class="stage-scene"
-                    role="tabpanel"
-                    aria-labelledby="stage-tab-2"
-                    data-scene="2"
-                    hidden
-                  >
-                    <div class="stage-controls">
-                      <div class="control-row">
-                        <span class="control-label">分析议题示例</span>
-                        <div class="chip-group" role="group" aria-label="选择演示议题">
-                          <button
-                            id="agent-query-0"
-                            class="chip-btn is-active"
-                            type="button"
-                            data-agent-topic="0"
-                          >
-                            昇腾算子迁移痛点
-                          </button>
-                          <button
-                            id="agent-query-1"
-                            class="chip-btn"
-                            type="button"
-                            data-agent-topic="1"
-                          >
-                            鸿蒙端侧推理实践
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="agent-pipeline" aria-label="趋势 Agent 四阶段流程">
-                      <div class="agent-node" data-agent-step="0">
-                        <div class="agent-node-head">
-                          <span class="agent-node-step">STEP 01</span>
-                          <span class="agent-node-state" aria-hidden="true"></span>
-                        </div>
-                        <strong>拆解分析维度</strong>
-                        <small>将模糊问题转化为可检索的子方向与关键词</small>
-                      </div>
-
-                      <div class="agent-node" data-agent-step="1">
-                        <div class="agent-node-head">
-                          <span class="agent-node-step">STEP 02</span>
-                          <span class="agent-node-state" aria-hidden="true"></span>
-                        </div>
-                        <strong>多源检索与聚合</strong>
-                        <small>结合社区高赞讨论与外部检索提取核心观点</small>
-                      </div>
-
-                      <div class="agent-node" data-agent-step="2">
-                        <div class="agent-node-head">
-                          <span class="agent-node-step">STEP 03 · REFLECT</span>
-                          <span class="agent-node-state" aria-hidden="true"></span>
-                        </div>
-                        <strong>反思检查与补搜</strong>
-                        <small>核对证据完整度，针对缺口追加检索</small>
-                      </div>
-
-                      <div class="agent-node" data-agent-step="3">
-                        <div class="agent-node-head">
-                          <span class="agent-node-step">STEP 04 · SSE</span>
-                          <span class="agent-node-state" aria-hidden="true"></span>
-                        </div>
-                        <strong>流式合成报告</strong>
-                        <small>实时推送阶段进展、情绪分布与可执行建议</small>
-                      </div>
-                    </div>
-
-                    <div class="agent-trace-box">
-                      <div
-                        id="agent-trace-log"
-                        class="agent-trace-lines"
-                        role="status"
-                        aria-live="polite"
-                      >
-                        <p>
-                          <strong>就绪：</strong>点击下方按钮可完整回放从维度规划、反思补搜到流式输出的执行轨迹。
-                        </p>
-                      </div>
-                      <div class="control-row">
-                        <span class="scene-readout">对应源码：src/lib/agents/TrendAgent.js</span>
-                        <button
-                          id="agent-replay-btn"
-                          class="chip-btn is-active"
-                          type="button"
-                        >
-                          回放执行过程 ↻
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Full-Stack Architecture Summary -->
-            <div class="architecture-strip" data-reveal>
-              <div class="arch-step">
-                <span>01 · DATA WORKBENCH</span>
-                <strong>数据导入与治理</strong>
-                <p>支持双社区帖子评论规范化清洗，并提供在线表格导入与自助探索工作台。</p>
-              </div>
-              <div class="arch-step">
-                <span>02 · STORAGE LAYER</span>
-                <strong>PostgreSQL &amp; Drizzle</strong>
-                <p>统一管理帖子、多级评论、上传数据集与持久化趋势报告。</p>
-              </div>
-              <div class="arch-step">
-                <span>03 · MINING ENGINE</span>
-                <strong>FastAPI 算法服务</strong>
-                <p>独立承载 NetworkX 图指标、LDA / BERTopic 主题建模与向量聚类计算。</p>
-              </div>
-              <div class="arch-step">
-                <span>04 · INTERACTIVE UI</span>
-                <strong>Next.js 15 多角色视图</strong>
-                <p>面向管理员、数据工程师与普通访客提供差异化看板与力导向图交互。</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ==================== Section 3: Personal Studio ==================== -->
-      <section
-        id="perspectives"
-        class="perspectives-section"
-        aria-labelledby="perspectives-title"
-      >
+      <section id="perspectives" class="perspectives-section" aria-labelledby="perspectives-title">
         <div class="container">
-          <header class="perspectives-header" data-reveal>
-            <div>
-              <span class="section-kicker">Beyond the Code</span>
-              <h2 id="perspectives-title" class="section-title">
-                代码之外，<span class="nowrap">构成我的三件事</span>
-              </h2>
+          <header class="perspectives-header">
+            <div class="perspectives-intro">
+              <p class="notes-kicker" lang="en">Field notes</p>
+              <h2 id="perspectives-title">日常手记<span>。</span></h2>
+              <p>平时做数据分析，也喜欢听歌、打羽毛球。<br />这里放了三件可以亲手试试的小事。</p>
             </div>
-            <p class="section-lead">
-              跑回归模型、听歌放空、去球场挥拍——这几件看似不搭界的事，其实一直在帮我保持同一种状态：既愿意耐下心拆解细节，也留得住对生活的敏锐感受。
-            </p>
+            <img class="notes-forest" src="./assets/forest.jpg"
+              width="1000" height="666" loading="lazy" decoding="async"
+              alt="日光照进树林，落在一条小径上" />
           </header>
 
-          <div
-            class="lens-switcher"
-            role="tablist"
-            aria-label="切换个人兴趣切面"
-          >
-            <button
-              id="lens-tab-research"
-              class="lens-tab"
-              type="button"
-              role="tab"
-              aria-selected="true"
-              aria-controls="lens-panel-research"
-              data-lens-tab="research"
-            >
-              <div class="lens-tab-text">
-                <strong>实证与追问</strong>
-                <small>看清条件，再下判断</small>
-              </div>
-              <span class="lens-tab-num">01</span>
-            </button>
-
-            <button
-              id="lens-tab-music"
-              class="lens-tab"
-              type="button"
-              role="tab"
-              aria-selected="false"
-              aria-controls="lens-panel-music"
-              tabindex="-1"
-              data-lens-tab="music"
-            >
-              <div class="lens-tab-text">
-                <strong>音乐与留白</strong>
-                <small>让紧绷的逻辑慢下来</small>
-              </div>
-              <span class="lens-tab-num">02</span>
-            </button>
-
-            <button
-              id="lens-tab-court"
-              class="lens-tab"
-              type="button"
-              role="tab"
-              aria-selected="false"
-              aria-controls="lens-panel-court"
-              tabindex="-1"
-              data-lens-tab="court"
-            >
-              <div class="lens-tab-text">
-                <strong>球场与当下</strong>
-                <small>把注意力交给下一拍</small>
-              </div>
-              <span class="lens-tab-num">03</span>
-            </button>
+          <div class="lens-switcher" role="tablist" aria-label="选择一则手记">
+            <button id="lens-tab-research" type="button" role="tab" aria-selected="true"
+              aria-controls="lens-panel-research" data-lens-tab="research">做研究</button>
+            <button id="lens-tab-music" type="button" role="tab" aria-selected="false" tabindex="-1"
+              aria-controls="lens-panel-music" data-lens-tab="music">听音乐</button>
+            <button id="lens-tab-court" type="button" role="tab" aria-selected="false" tabindex="-1"
+              aria-controls="lens-panel-court" data-lens-tab="court">打羽毛球</button>
           </div>
 
           <div class="lens-panels">
-            <!-- Panel 1: Empirical Regression / Simpson's Paradox -->
-            <section
-              id="lens-panel-research"
-              class="lens-panel"
-              role="tabpanel"
-              aria-labelledby="lens-tab-research"
-              data-lens-panel="research"
-            >
+            <section id="lens-panel-research" class="lens-panel" role="tabpanel"
+              aria-labelledby="lens-tab-research" data-lens-panel="research">
               <div class="lens-copy">
-                <h3>看到表面相关时，<span class="nowrap">先别急着写结论</span></h3>
-                <p>
-                  学习数据分析与回归实证研究让我养成了一个职业习惯：两个变量放在一起看似显著正相关，一旦控制了背后的分组或混杂因素，方向甚至可能完全反转。
-                </p>
-                <p>
-                  正是这种「拨开表象找机制」的过程，让我对用户行为和经验研究一直保持着热情。点一下按钮，看看把隐含分组放进视野后会发生什么。
-                </p>
-
+                <h3>一张图里的两种趋势</h3>
+                <p>做回归时，我常问一句：如果把样本分开看呢？这张散点图里，所有点合起来向上，分开之后，三组的趋势却都向下。</p>
                 <div class="lens-controls">
-                  <div class="lens-btn-row">
-                    <button
-                      id="regression-toggle-btn"
-                      class="btn-tactile"
-                      type="button"
-                      aria-pressed="false"
-                    >
-                      <span class="btn-label">引入分组控制变量</span>
-                      <span class="btn-icon" aria-hidden="true">⇄</span>
-                    </button>
-                  </div>
-                  <p id="regression-readout" class="lens-readout" role="status">
-                    当前为混合样本回归：忽略个体异质性时，整体拟合线呈现明显的正向趋势。
-                  </p>
+                  <button id="regression-toggle-btn" class="note-action" type="button" aria-pressed="false">
+                    <span class="btn-icon" aria-hidden="true">⇄</span><span class="btn-label">分组看样本</span>
+                  </button>
+                  <p id="regression-readout" class="lens-readout" role="status">现在显示全部样本的拟合线。</p>
                 </div>
               </div>
-
-              <div class="lens-stage">
-                <canvas
-                  id="regression-canvas"
-                  width="660"
-                  height="430"
-                  aria-label="辛普森悖论与分层回归交互示意：点击切换整体拟合与控制分组后的回归斜率"
-                ></canvas>
-              </div>
+              <figure class="lens-figure">
+                <div class="lens-stage">
+                  <canvas id="regression-canvas" width="660" height="330" role="img"
+                    aria-label="示意散点图，合并样本时趋势向上，各组内部趋势向下。"></canvas>
+                </div>
+                <figcaption>回归笔记 · 模拟样本</figcaption>
+              </figure>
             </section>
 
-            <!-- Panel 2: Music & Harmonic Resonance -->
-            <section
-              id="lens-panel-music"
-              class="lens-panel"
-              role="tabpanel"
-              aria-labelledby="lens-tab-music"
-              data-lens-panel="music"
-            >
+            <section id="lens-panel-music" class="lens-panel" role="tabpanel"
+              aria-labelledby="lens-tab-music" data-lens-panel="music">
               <div class="lens-copy">
-                <h3>给高强度思考留一段呼吸的间隙</h3>
-                <p>
-                  连着写代码或推导逻辑久了，思维很容易变得僵硬。戴上耳机听几首喜欢的歌，是我每天最固定的放松时刻——不需要分析曲式，只是顺着鼓点和旋律待一会儿，注意力就会重新变得清澈。
-                </p>
-
+                <h3>给耳朵放个假</h3>
+                <p>写代码写累了，我会戴上耳机听几首歌。这里把节奏画成了弦线，拨一下，看看它们怎么起伏。</p>
                 <div class="lens-controls">
-                  <div class="lens-btn-row" role="group" aria-label="节奏氛围预设">
-                    <button
-                      id="tempo-slow"
-                      class="light-chip"
-                      type="button"
-                      data-tempo-preset="32"
-                    >
-                      慢板舒缓
-                    </button>
-                    <button
-                      id="tempo-mid"
-                      class="light-chip is-active"
-                      type="button"
-                      data-tempo-preset="58"
-                    >
-                      日常律动
-                    </button>
-                    <button
-                      id="tempo-bright"
-                      class="light-chip"
-                      type="button"
-                      data-tempo-preset="86"
-                    >
-                      轻快明亮
-                    </button>
+                  <div class="note-options" role="group" aria-label="选择速度">
+                    <button id="tempo-slow" type="button" data-tempo-preset="32" aria-pressed="false">慢板</button>
+                    <button id="tempo-mid" type="button" data-tempo-preset="58" aria-pressed="true">舒缓</button>
+                    <button id="tempo-bright" type="button" data-tempo-preset="86" aria-pressed="false">轻快</button>
                   </div>
-
-                  <div class="lens-btn-row">
-                    <input
-                      id="tempo-slider"
-                      class="light-range"
-                      type="range"
-                      min="20"
-                      max="100"
-                      value="58"
-                      aria-label="调节波形律动速率"
-                    />
-                    <output id="tempo-output" class="lens-readout">58 BPM</output>
+                  <div class="note-tempo">
+                    <input id="tempo-slider" type="range" min="20" max="100" value="58" aria-label="弦线节奏" />
+                    <output id="tempo-output" for="tempo-slider">58 BPM</output>
                   </div>
-
-                  <div class="lens-btn-row">
-                    <button
-                      id="music-toggle-btn"
-                      class="btn-tactile"
-                      type="button"
-                      aria-pressed="false"
-                    >
-                      <span class="btn-label">暂停律动画面</span>
-                      <span class="btn-icon" aria-hidden="true">Ⅱ</span>
-                    </button>
-                  </div>
+                  <button id="music-toggle-btn" class="note-action" type="button" aria-pressed="false">
+                    <span class="btn-icon" aria-hidden="true">Ⅱ</span><span class="btn-label">暂停律动</span>
+                  </button>
                 </div>
               </div>
-
-              <div class="lens-stage">
-                <canvas
-                  id="music-canvas"
-                  width="660"
-                  height="430"
-                  aria-label="谐波弦线律动示意：滑过画布可拨动弦波幅度"
-                ></canvas>
-              </div>
+              <figure class="lens-figure">
+                <div class="lens-stage">
+                  <canvas id="music-canvas" width="660" height="330" role="button" tabindex="0"
+                    aria-label="拨动弦线，可轻点或按回车、空格" aria-describedby="music-caption"></canvas>
+                </div>
+                <figcaption id="music-caption">滑过或轻点弦线拨弦 · 纯视觉，无声音</figcaption>
+              </figure>
             </section>
 
-            <!-- Panel 3: Badminton & Court Trajectory -->
-            <section
-              id="lens-panel-court"
-              class="lens-panel"
-              role="tabpanel"
-              aria-labelledby="lens-tab-court"
-              data-lens-panel="court"
-            >
+            <section id="lens-panel-court" class="lens-panel" role="tabpanel"
+              aria-labelledby="lens-tab-court" data-lens-panel="court">
               <div class="lens-copy">
-                <h3>球过网的那一刻，只专注眼前的来回</h3>
-                <p>
-                  羽毛球最吸引我的地方在于它极快的反馈节奏。预判对手出球、垫步启动、引拍击球，每一次回合都在帮我把发散的思绪收回到当下。
-                </p>
-                <p>
-                  你可以切换常见的球路组合，也可以直接点击右侧球场的任意落点发出一拍。
-                </p>
-
+                <h3>再接一拍</h3>
+                <p>打羽毛球时，要顾的事很具体：看球、挪步、接住下一拍。选一条球路，或者在场地图上给自己挑个落点。</p>
                 <div class="lens-controls">
-                  <div class="lens-btn-row" role="group" aria-label="选择回合球路">
-                    <button
-                      id="shot-clear"
-                      class="light-chip is-active"
-                      type="button"
-                      data-shot-type="clear"
-                    >
-                      高远球拉吊
-                    </button>
-                    <button
-                      id="shot-drop"
-                      class="light-chip"
-                      type="button"
-                      data-shot-type="drop"
-                    >
-                      劈吊接挑球
-                    </button>
-                    <button
-                      id="shot-drive"
-                      class="light-chip"
-                      type="button"
-                      data-shot-type="drive"
-                    >
-                      中场平抽挡
-                    </button>
+                  <div class="note-options" role="group" aria-label="选择球路">
+                    <button id="shot-clear" type="button" data-shot-type="clear" aria-pressed="true">高远球</button>
+                    <button id="shot-drop" type="button" data-shot-type="drop" aria-pressed="false">劈吊</button>
+                    <button id="shot-drive" type="button" data-shot-type="drive" aria-pressed="false">平抽挡</button>
                   </div>
-
-                  <div class="lens-btn-row">
-                    <button id="rally-play-btn" class="btn-tactile" type="button">
-                      <span class="btn-label">演示多拍回合</span>
-                      <span class="btn-icon" aria-hidden="true">↗</span>
-                    </button>
-                  </div>
-
-                  <p id="court-readout" class="lens-readout" role="status">
-                    点击按钮演示完整回合，或直接轻点球场任意区域指定落点。
-                  </p>
+                  <button id="rally-play-btn" class="note-action" type="button"><span>重演这一回合</span></button>
+                  <p id="court-readout" class="lens-readout" role="status">高远球从后场起，落向对面的底线。</p>
                 </div>
               </div>
-
-              <div class="lens-stage">
-                <canvas
-                  id="court-canvas"
-                  width="660"
-                  height="430"
-                  aria-label="羽毛球场回合轨迹交互画布：点击球场任意位置可向该落点击球"
-                ></canvas>
-              </div>
+              <figure class="lens-figure">
+                <div class="lens-stage">
+                  <canvas id="court-canvas" width="660" height="330" role="button" tabindex="0"
+                    aria-label="选择击球落点，方向键移动，回车或空格击球" aria-describedby="court-caption"></canvas>
+                </div>
+                <figcaption id="court-caption">点选落点发球 · 也可用方向键选点，回车击球</figcaption>
+              </figure>
             </section>
           </div>
         </div>
       </section>
 
-      <!-- ==================== Section 4: Contact ==================== -->
-      <section
-        id="contact"
-        class="contact-section"
-        aria-labelledby="contact-title"
-      >
-        <div class="container">
-          <div class="contact-card" data-reveal>
-            <div class="contact-copy">
-              <span class="section-kicker">Get in Touch</span>
-              <h2 id="contact-title" class="contact-title">
-                保持好奇，<span class="nowrap">欢迎随时交流</span>
-              </h2>
-              <p>
-                如果你也对开发者社区分析、AI Agent 工程实践或实证研究方法感兴趣，欢迎逛逛我的
-                GitHub 仓库，一起碰撞新想法。
-              </p>
-            </div>
-
-            <div class="contact-actions">
-              <a
-                id="contact-github-btn"
-                class="btn-primary"
-                href="https://github.com/youka150"
-                target="_blank"
-                rel="noopener noreferrer"
-                data-magnetic
-              >
-                <span>访问 GitHub (@youka150)</span>
-                <span class="btn-arrow" aria-hidden="true">↗</span>
-              </a>
-              <a
-                id="contact-community-btn"
-                class="btn-secondary"
-                href="https://github.com/youka150/community"
-                target="_blank"
-                rel="noopener noreferrer"
-                data-magnetic
-              >
-                <span>Community 项目仓库</span>
-                <span class="btn-arrow" aria-hidden="true">↗</span>
-              </a>
-            </div>
+      <section id="contact" class="contact-section" aria-labelledby="contact-title">
+        <div class="container contact-inner">
+          <div>
+            <p class="contact-label">联系我</p>
+            <h2 id="contact-title" lang="en">Say <em>hello<span class="ink-period">.</span></em></h2>
+          </div>
+          <div class="contact-copy">
+            <p>想聊聊社区数据、交换一首歌，<br>或者打个招呼？在 GitHub 可以找到我。</p>
+            <a id="contact-github-btn" class="journal-link" href="https://github.com/youka150"
+              target="_blank" rel="noopener noreferrer" data-magnetic>
+              <span>GitHub · @youka150</span>
+            </a>
           </div>
         </div>
       </section>
@@ -978,7 +337,7 @@
     <footer class="site-footer">
       <div class="container footer-inner">
         <span>© <span id="year">2026</span> Youka</span>
-        <a id="back-to-top" class="back-top-link" href="#top">回到顶部 ↑</a>
+        <a id="back-to-top" class="back-top-link" href="#top">回到页首</a>
       </div>
     </footer>
   </body>

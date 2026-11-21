@@ -1,16 +1,12 @@
 import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import Lenis from "lenis";
-import "lenis/dist/lenis.css";
-
-gsap.registerPlugin(ScrollTrigger);
+import "../project.css";
+import "../interests.css";
+import { setupPointerDetails } from "./pointer.js";
 
 const $ = (selector, root = document) => root.querySelector(selector);
 const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
 
 const motionQuery = matchMedia("(prefers-reduced-motion: reduce)");
-const desktopWorkbenchQuery = matchMedia("(min-width: 1025px)");
-const finePointerQuery = matchMedia("(pointer: fine)");
 
 document.documentElement.classList.add("js");
 
@@ -19,76 +15,28 @@ if (yearEl) {
   yearEl.textContent = String(new Date().getFullYear());
 }
 
-/* ==========================================================================
-   1. Smooth Scrolling, Scroll Progress & Header Navigation
-   ========================================================================== */
-let lenis;
-
 function syncMotionMode() {
-  lenis?.destroy();
-  lenis = undefined;
-
-  const reduced = motionQuery.matches;
-  document.documentElement.dataset.motion = reduced ? "reduced" : "full";
-  document.documentElement.style.scrollBehavior = reduced ? "auto" : "";
-
-  if (!reduced) {
-    lenis = new Lenis({
-      duration: 0.9,
-      smoothWheel: true,
-      syncTouch: false,
-      anchors: { offset: -88 },
-    });
-    lenis.on("scroll", ScrollTrigger.update);
-  }
+  document.documentElement.dataset.motion = motionQuery.matches ? "reduced" : "full";
 }
-
 syncMotionMode();
-gsap.ticker.add((time) => {
-  lenis?.raf(time * 1000);
-});
-gsap.ticker.lagSmoothing(0);
 
-const siteHeader = $("#site-header");
-const scrollProgress = $("#scroll-progress");
-const primaryNavLinks = $$(".primary-nav .nav-link");
-const trackedSections = ["project", "perspectives", "contact"]
-  .map((id) => document.getElementById(id))
-  .filter(Boolean);
-
-function updateHeaderAndProgress() {
-  const scrolled = window.scrollY > 16;
-  siteHeader?.classList.toggle("is-scrolled", scrolled);
-
-  if (scrollProgress) {
-    const scrollable = Math.max(
-      1,
-      document.documentElement.scrollHeight - window.innerHeight,
-    );
-    const ratio = Math.min(1, Math.max(0, window.scrollY / scrollable));
-    scrollProgress.style.transform = `scaleX(${ratio.toFixed(4)})`;
-  }
-
-  const probeY = window.innerHeight * 0.35;
-  let activeId = "";
-  for (const section of trackedSections) {
-    const rect = section.getBoundingClientRect();
-    if (rect.top <= probeY && rect.bottom >= 120) {
-      activeId = section.id;
-      break;
-    }
-  }
-  primaryNavLinks.forEach((link) => {
-    link.classList.toggle(
-      "is-active",
-      Boolean(activeId) && link.getAttribute("href") === `#${activeId}`,
-    );
+const sectionLinks = $$(".primary-nav .nav-link");
+const navSections = sectionLinks.map((link) => document.querySelector(link.hash));
+function updateCurrentSection() {
+  const readingLine = window.innerHeight * 0.36;
+  const atEnd = window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 2;
+  const current = atEnd ? navSections.at(-1) : navSections.find((section) => {
+    const bounds = section.getBoundingClientRect();
+    return bounds.top <= readingLine && bounds.bottom > readingLine;
   });
+  for (const link of sectionLinks) {
+    if (link.hash === `#${current?.id}`) link.setAttribute("aria-current", "location");
+    else link.removeAttribute("aria-current");
+  }
 }
-
-window.addEventListener("scroll", updateHeaderAndProgress, { passive: true });
-window.addEventListener("resize", updateHeaderAndProgress, { passive: true });
-updateHeaderAndProgress();
+window.addEventListener("scroll", updateCurrentSection, { passive: true });
+window.addEventListener("resize", updateCurrentSection, { passive: true });
+updateCurrentSection();
 
 /* Mobile Drawer */
 const menuToggle = $("#menu-toggle");
@@ -135,25 +83,7 @@ if (menuToggle && mobileNav) {
   });
 }
 
-/* Magnetic Tactile Buttons (desktop fine pointer only) */
-if (finePointerQuery.matches) {
-  $$("[data-magnetic]").forEach((el) => {
-    const xTo = gsap.quickTo(el, "x", { duration: 0.35, ease: "power3.out" });
-    const yTo = gsap.quickTo(el, "y", { duration: 0.35, ease: "power3.out" });
-    el.addEventListener("pointermove", (event) => {
-      if (motionQuery.matches) return;
-      const rect = el.getBoundingClientRect();
-      const dx = (event.clientX - (rect.left + rect.width / 2)) * 0.14;
-      const dy = (event.clientY - (rect.top + rect.height / 2)) * 0.2;
-      xTo(dx);
-      yTo(dy);
-    });
-    el.addEventListener("pointerleave", () => {
-      xTo(0);
-      yTo(0);
-    });
-  });
-}
+setupPointerDetails();
 
 /* Keyboard Roving Tab Helper */
 function bindTabKeyboard(tabs, onActivate) {
@@ -218,283 +148,11 @@ function setupResponsiveCanvas(canvas, onResize) {
 }
 
 /* ==========================================================================
-   2. Hero Canvas — Interactive Signal & Resonance Field
-   ========================================================================== */
-const heroCanvas = $("#hero-canvas");
-const heroPulseBtn = $("#hero-pulse-btn");
-let renderHeroSnapshot = () => {};
-let syncHeroLoop = () => {};
-
-if (heroCanvas) {
-  const palette = ["#dd5a2c", "#257275", "#1e333b"];
-  const nodeCount = 36;
-  const nodes = Array.from({ length: nodeCount }, (_, i) => {
-    const angle = (i / nodeCount) * Math.PI * 2;
-    const band = 0.13 + ((i * 7) % 12) * 0.027;
-    return {
-      nx: 0.5 + Math.cos(angle) * band * 1.12,
-      ny: 0.48 + Math.sin(angle) * band,
-      vx: 0,
-      vy: 0,
-      phaseX: i * 0.83 + 0.4,
-      phaseY: i * 1.17 + 1.1,
-      speed: 0.36 + (i % 5) * 0.08,
-      radius: i % 5 === 0 ? 6.2 : 3.2 + (i % 3) * 1.05,
-      family: i % 3,
-      x: 0,
-      y: 0,
-    };
-  });
-
-  const ripples = [];
-  const pointer = { x: 0, y: 0, active: false };
-  let heroVisible = true;
-  let heroTicking = false;
-  let simTime = 1.8;
-
-  const getSurface = setupResponsiveCanvas(heroCanvas, () => {
-    drawHeroFrame(0);
-  });
-
-  function spawnRipple(x, y, strength = 1) {
-    const { width, height } = getSurface();
-    const rx = x ?? width * (0.38 + Math.random() * 0.24);
-    const ry = y ?? height * (0.38 + Math.random() * 0.24);
-    ripples.push({ x: rx, y: ry, r: 6, maxR: Math.max(width, height) * 0.62, alpha: 0.85 });
-
-    nodes.forEach((n) => {
-      const dx = n.x - rx;
-      const dy = n.y - ry;
-      const dist = Math.hypot(dx, dy) || 1;
-      if (dist < 210) {
-        const push = ((1 - dist / 210) * 3.4 * strength) / dist;
-        n.vx += dx * push;
-        n.vy += dy * push;
-      }
-    });
-
-    if (motionQuery.matches) {
-      drawHeroFrame(0);
-    }
-  }
-
-  function drawHeroFrame(dt) {
-    const { width, height, ctx } = getSurface();
-    if (!ctx || width < 10) return;
-
-    ctx.clearRect(0, 0, width, height);
-
-    const cx = width * 0.5;
-    const cy = height * 0.48;
-    const minDim = Math.min(width, height);
-
-    // Subtle concentric orbital guides
-    ctx.save();
-    ctx.strokeStyle = "rgba(24, 38, 43, 0.065)";
-    ctx.lineWidth = 1;
-    [0.2, 0.34, 0.47].forEach((ratio) => {
-      ctx.beginPath();
-      ctx.arc(cx, cy, minDim * ratio, 0, Math.PI * 2);
-      ctx.stroke();
-    });
-    ctx.restore();
-
-    if (!motionQuery.matches && dt > 0) {
-      simTime += dt;
-    }
-
-    // Update node positions
-    nodes.forEach((n, idx) => {
-      const anchorX =
-        width * n.nx + Math.sin(simTime * n.speed + n.phaseX) * (width * 0.065);
-      const anchorY =
-        height * n.ny + Math.cos(simTime * n.speed * 0.9 + n.phaseY) * (height * 0.065);
-
-      if (motionQuery.matches || dt === 0) {
-        n.x = anchorX + n.vx * 6;
-        n.y = anchorY + n.vy * 6;
-        n.vx *= 0.6;
-        n.vy *= 0.6;
-      } else {
-        n.vx += (anchorX - n.x) * 0.045;
-        n.vy += (anchorY - n.y) * 0.045;
-
-        if (pointer.active) {
-          const dx = pointer.x - n.x;
-          const dy = pointer.y - n.y;
-          const dist = Math.hypot(dx, dy);
-          if (dist < 165 && dist > 8) {
-            const pull = (1 - dist / 165) * 0.22;
-            n.vx += (dx / dist) * pull;
-            n.vy += (dy / dist) * pull;
-          }
-        }
-
-        n.vx *= 0.88;
-        n.vy *= 0.88;
-        n.x = (n.x || anchorX) + n.vx;
-        n.y = (n.y || anchorY) + n.vy;
-      }
-
-      // Keep inside soft padding
-      const pad = 26;
-      n.x = Math.max(pad, Math.min(width - pad, n.x || anchorX));
-      n.y = Math.max(pad, Math.min(height - pad, n.y || anchorY));
-      n.index = idx;
-    });
-
-    // Draw proximity connections & traveling signal pulses
-    const maxEdgeDist = minDim * 0.29;
-    for (let i = 0; i < nodes.length; i++) {
-      const a = nodes[i];
-      for (let j = i + 1; j < nodes.length; j++) {
-        const b = nodes[j];
-        const dx = b.x - a.x;
-        const dy = b.y - a.y;
-        const dist = Math.hypot(dx, dy);
-        if (dist > maxEdgeDist) continue;
-
-        const closeness = 1 - dist / maxEdgeDist;
-        let nearPointer = false;
-        if (pointer.active) {
-          const midX = (a.x + b.x) * 0.5;
-          const midY = (a.y + b.y) * 0.5;
-          nearPointer = Math.hypot(midX - pointer.x, midY - pointer.y) < 130;
-        }
-
-        ctx.beginPath();
-        ctx.moveTo(a.x, a.y);
-        ctx.lineTo(b.x, b.y);
-        ctx.lineWidth = nearPointer ? 1.35 : 0.9;
-        ctx.strokeStyle = nearPointer
-          ? `rgba(221, 90, 44, ${(0.22 + closeness * 0.45).toFixed(3)})`
-          : `rgba(28, 52, 58, ${(0.06 + closeness * 0.24).toFixed(3)})`;
-        ctx.stroke();
-
-        // Subtle signal packet along select resonant pairs
-        if ((i + j) % 9 === 0 && closeness > 0.35 && !motionQuery.matches) {
-          const t = (simTime * 0.55 + i * 0.13) % 1;
-          const px = a.x + dx * t;
-          const py = a.y + dy * t;
-          ctx.beginPath();
-          ctx.arc(px, py, 2.1, 0, Math.PI * 2);
-          ctx.fillStyle = "rgba(221, 90, 44, 0.72)";
-          ctx.fill();
-        }
-      }
-    }
-
-    // Draw expanding ripples
-    for (let i = ripples.length - 1; i >= 0; i--) {
-      const rp = ripples[i];
-      ctx.beginPath();
-      ctx.arc(rp.x, rp.y, rp.r, 0, Math.PI * 2);
-      ctx.strokeStyle = `rgba(221, 90, 44, ${(rp.alpha * 0.48).toFixed(3)})`;
-      ctx.lineWidth = 1.5;
-      ctx.stroke();
-
-      if (!motionQuery.matches) {
-        rp.r += 3.6;
-        rp.alpha *= 0.965;
-        if (rp.alpha < 0.03 || rp.r > rp.maxR) {
-          ripples.splice(i, 1);
-        }
-      } else {
-        ripples.splice(i, 1);
-      }
-    }
-
-    // Draw nodes
-    nodes.forEach((n) => {
-      const color = palette[n.family];
-      const highlight =
-        pointer.active && Math.hypot(n.x - pointer.x, n.y - pointer.y) < 120;
-
-      if (n.radius > 4.5 || highlight) {
-        ctx.beginPath();
-        ctx.arc(n.x, n.y, n.radius + (highlight ? 6.5 : 4.5), 0, Math.PI * 2);
-        ctx.fillStyle =
-          n.family === 0
-            ? "rgba(221, 90, 44, 0.14)"
-            : "rgba(37, 114, 117, 0.13)";
-        ctx.fill();
-      }
-
-      ctx.beginPath();
-      ctx.arc(n.x, n.y, highlight ? n.radius * 1.2 : n.radius, 0, Math.PI * 2);
-      ctx.fillStyle = color;
-      ctx.fill();
-    });
-  }
-
-  let prevHeroTime = performance.now();
-  function tickHero() {
-    const now = performance.now();
-    const dt = Math.min(0.05, (now - prevHeroTime) / 1000);
-    prevHeroTime = now;
-    drawHeroFrame(dt);
-  }
-
-  syncHeroLoop = () => {
-    const shouldRun =
-      heroVisible && !motionQuery.matches && !document.hidden;
-    if (shouldRun && !heroTicking) {
-      prevHeroTime = performance.now();
-      gsap.ticker.add(tickHero);
-      heroTicking = true;
-    } else if (!shouldRun && heroTicking) {
-      gsap.ticker.remove(tickHero);
-      heroTicking = false;
-    }
-  };
-
-  renderHeroSnapshot = () => drawHeroFrame(0);
-
-  heroCanvas.addEventListener("pointermove", (event) => {
-    const rect = heroCanvas.getBoundingClientRect();
-    pointer.x = event.clientX - rect.left;
-    pointer.y = event.clientY - rect.top;
-    pointer.active = true;
-    if (motionQuery.matches) drawHeroFrame(0);
-  });
-
-  heroCanvas.addEventListener("pointerleave", () => {
-    pointer.active = false;
-    if (motionQuery.matches) drawHeroFrame(0);
-  });
-
-  heroCanvas.addEventListener("click", (event) => {
-    const rect = heroCanvas.getBoundingClientRect();
-    spawnRipple(event.clientX - rect.left, event.clientY - rect.top, 1.15);
-  });
-
-  heroPulseBtn?.addEventListener("click", () => {
-    spawnRipple(undefined, undefined, 1.25);
-  });
-
-  if ("IntersectionObserver" in window) {
-    const io = new IntersectionObserver(
-      (entries) => {
-        heroVisible = entries[0].isIntersecting;
-        syncHeroLoop();
-      },
-      { threshold: 0.05 },
-    );
-    io.observe(heroCanvas);
-  }
-
-  drawHeroFrame(0);
-  syncHeroLoop();
-}
-
-/* ==========================================================================
-   3. Project Showcase — Scrollytelling & Three Live Algorithm Stages
+   3. Community — Interactive Method Notes
    ========================================================================== */
 const stageTabs = $$("[data-stage-tab]");
 const stageScenes = $$("[data-scene]");
-const chapterCards = $$("[data-chapter]");
 let activeStage = 0;
-let manualStageLockUntil = 0;
 let agentAutoPlayed = false;
 
 /* --- Scene 0: Interactive Directed Weighted Network --- */
@@ -504,22 +162,21 @@ const influenceSlider = $("#influence-slider");
 const topologyOutput = $("#topology-share");
 const qualityOutput = $("#quality-share");
 const weightPresetBtns = $$("[data-weight-preset]");
-let syncNetworkLoop = () => {};
 let drawNetworkStatic = () => {};
 
 if (networkCanvas) {
-  const communityColors = ["#6ec6c2", "#e8a86b", "#dfd9cc"];
+  const communityColors = ["#47634c", "#ab5839", "#6b737e"];
   const netNodes = [
-    { id: 0, label: "算子核心答主", group: 0, nx: 0.34, ny: 0.38, topo: 0.94, qual: 0.88, desc: "高频解答算子编译与精度调优，连接度与代码块深度俱佳" },
-    { id: 1, label: "跨圈排障桥梁", group: 1, nx: 0.54, ny: 0.48, topo: 0.97, qual: 0.64, desc: "高介数中心性枢纽，串联底层框架与上层应用讨论圈" },
-    { id: 2, label: "深度教程作者", group: 2, nx: 0.72, ny: 0.31, topo: 0.58, qual: 0.98, desc: "发帖量适中但长文结构严谨，附完整复现表格与脚本" },
-    { id: 3, label: "推理部署实践者", group: 0, nx: 0.22, ny: 0.25, topo: 0.68, qual: 0.79, desc: "聚焦模型量化与端云协同，获赞转化率稳定" },
-    { id: 4, label: "框架维护协作者", group: 0, nx: 0.25, ny: 0.6, topo: 0.83, qual: 0.74, desc: "稳定跟进版本迁移疑问，入度权重靠前" },
-    { id: 5, label: "日志诊断达人", group: 1, nx: 0.47, ny: 0.74, topo: 0.79, qual: 0.71, desc: "擅长定位驱动与环境报错，回应速度极快" },
-    { id: 6, label: "案例评测博主", group: 2, nx: 0.81, ny: 0.57, topo: 0.51, qual: 0.92, desc: "输出多篇性能基准对比报告，内容创新度评分突出" },
-    { id: 7, label: "社区活跃提问者", group: 1, nx: 0.62, ny: 0.73, topo: 0.73, qual: 0.42, desc: "发起大量真实业务场景讨论，激发多轮互动" },
-    { id: 8, label: "内核调优探索者", group: 0, nx: 0.14, ny: 0.44, topo: 0.46, qual: 0.84, desc: "专注细分算子流水线优化，单篇技术密度高" },
-    { id: 9, label: "入门引导志愿者", group: 2, nx: 0.68, ny: 0.16, topo: 0.64, qual: 0.66, desc: "高频整理新手常见配置清单，友善度评分高" },
+    { id: 0, label: "算子答主", group: 0, nx: 0.34, ny: 0.38, topo: 0.94, qual: 0.88, desc: "常回答算子编译问题，也会贴出调试代码" },
+    { id: 1, label: "跨组答疑者", group: 1, nx: 0.54, ny: 0.48, topo: 0.97, qual: 0.64, desc: "同时参与框架和应用讨论，把两边遇到的报错联系起来" },
+    { id: 2, label: "教程作者", group: 2, nx: 0.72, ny: 0.31, topo: 0.58, qual: 0.98, desc: "发帖不多，教程里通常附有复现步骤和脚本" },
+    { id: 3, label: "部署开发者", group: 0, nx: 0.22, ny: 0.25, topo: 0.68, qual: 0.79, desc: "分享量化模型在不同设备上的部署记录" },
+    { id: 4, label: "框架维护者", group: 0, nx: 0.25, ny: 0.6, topo: 0.83, qual: 0.74, desc: "跟进版本迁移，经常收到其他用户的回复" },
+    { id: 5, label: "日志分析者", group: 1, nx: 0.47, ny: 0.74, topo: 0.79, qual: 0.71, desc: "从调试日志里查找驱动与环境报错的原因" },
+    { id: 6, label: "评测作者", group: 2, nx: 0.81, ny: 0.57, topo: 0.51, qual: 0.92, desc: "在相同条件下测试模型性能，分享对比记录" },
+    { id: 7, label: "提问者", group: 1, nx: 0.62, ny: 0.73, topo: 0.73, qual: 0.42, desc: "描述自己遇到的问题，并在回复中补充测试结果" },
+    { id: 8, label: "内核开发者", group: 0, nx: 0.14, ny: 0.44, topo: 0.46, qual: 0.84, desc: "记录算子流水线的性能瓶颈和调优方法" },
+    { id: 9, label: "入门指南作者", group: 2, nx: 0.68, ny: 0.16, topo: 0.64, qual: 0.66, desc: "整理初次安装时容易漏掉的配置步骤" },
     { id: 10, label: "多模态实验者", group: 2, nx: 0.86, ny: 0.36, topo: 0.42, qual: 0.81, desc: "分享视觉与语音模型移植踩坑记录" },
     { id: 11, label: "环境适配贡献者", group: 1, nx: 0.38, ny: 0.62, topo: 0.62, qual: 0.58, desc: "连接容器镜像与多卡通信排障话题" },
     { id: 12, label: "活跃开发者 A", group: 0, nx: 0.36, ny: 0.18, topo: 0.49, qual: 0.52, desc: "持续参与算子专题问答互动" },
@@ -534,262 +191,191 @@ if (networkCanvas) {
     [6, 1, 0.6], [10, 6, 0.68], [12, 13, 0.5], [11, 5, 0.65],
   ];
 
-  let topoWeight = 0.52;
-  let hoveredNodeId = -1;
-  let netTime = 0;
-  let projectInView = false;
-  let netTicking = false;
+  let pointedNode = -1;
+  let pinnedNode = -1;
+  const initialHint = networkTooltip?.textContent.trim() || "指向或轻点一个节点，查看它连接了谁。";
+  const surface = setupResponsiveCanvas(networkCanvas, drawNetwork);
 
-  netNodes.forEach((n) => {
-    n.curRadius = 8;
-  });
-
-  const getNetSurface = setupResponsiveCanvas(networkCanvas, () => {
-    renderNetwork(0);
-  });
-
-  function computeRankedNodes() {
-    const scored = netNodes.map((n) => ({
-      ...n,
-      score: topoWeight * n.topo + (1 - topoWeight) * n.qual,
-    }));
-    scored.sort((a, b) => b.score - a.score);
-    const rankMap = new Map();
-    scored.forEach((item, idx) => rankMap.set(item.id, { rank: idx + 1, score: item.score }));
-    return rankMap;
-  }
-
-  function renderNetwork(dt) {
-    const { width, height, ctx } = getNetSurface();
-    if (!ctx || width < 10) return;
-
+  function drawNetwork() {
+    const { width, height, ctx } = surface();
+    if (!ctx || width < 10 || height < 10) return;
     ctx.clearRect(0, 0, width, height);
-    if (!motionQuery.matches && dt > 0) netTime += dt;
 
-    const rankMap = computeRankedNodes();
-
-    // Compute pixel positions with gentle breathing
-    netNodes.forEach((n, idx) => {
-      const driftX = motionQuery.matches ? 0 : Math.sin(netTime * 0.9 + idx * 1.3) * 3.2;
-      const driftY = motionQuery.matches ? 0 : Math.cos(netTime * 0.8 + idx * 0.9) * 3.2;
-      n.x = width * n.nx + driftX;
-      n.y = height * (0.16 + n.ny * 0.76) + driftY;
-
-      const info = rankMap.get(n.id);
-      const targetR = 4.5 + info.score * 10.5 + (info.rank <= 3 ? 2.5 : 0);
-      n.curRadius = motionQuery.matches
-        ? targetR
-        : n.curRadius + (targetR - n.curRadius) * 0.16;
+    const selected = pointedNode >= 0 ? pointedNode : pinnedNode;
+    const neighbours = new Set([selected]);
+    netEdges.forEach(([from, to]) => {
+      if (from === selected) neighbours.add(to);
+      if (to === selected) neighbours.add(from);
     });
 
-    // Soft Louvain community regions
-    const clusterCenters = [
-      { x: width * 0.26, y: height * 0.42, r: Math.min(width, height) * 0.27, color: "rgba(110, 198, 194, 0.06)" },
-      { x: width * 0.51, y: height * 0.61, r: Math.min(width, height) * 0.25, color: "rgba(232, 168, 107, 0.06)" },
-      { x: width * 0.76, y: height * 0.39, r: Math.min(width, height) * 0.24, color: "rgba(223, 217, 204, 0.05)" },
-    ];
-    clusterCenters.forEach((c) => {
-      ctx.beginPath();
-      ctx.arc(c.x, c.y, c.r, 0, Math.PI * 2);
-      ctx.fillStyle = c.color;
-      ctx.fill();
-    });
+    // One ink per community. A thin ring distinguishes the three highest scores.
+    const unit = Math.min(1, width / 510);
+    for (const n of netNodes) {
+      n.x = width * n.nx;
+      n.y = height * (0.06 + n.ny * 1.08);
+      n.radius = unit * (3.5 + n.score * 8 + (n.rank <= 3 ? 1.5 : 0));
+    }
 
-    // Directed weighted edges
-    netEdges.forEach(([srcId, dstId, w], edgeIdx) => {
-      const a = netNodes[srcId];
-      const b = netNodes[dstId];
-      const isConnected =
-        hoveredNodeId === -1 || hoveredNodeId === srcId || hoveredNodeId === dstId;
+    for (const [from, to, weight] of netEdges) {
+      const a = netNodes[from];
+      const b = netNodes[to];
+      const highlighted = from === selected || to === selected;
+      const bendX = (a.x + b.x) / 2 - (b.y - a.y) * 0.08;
+      const bendY = (a.y + b.y) / 2 + (b.x - a.x) * 0.08;
+      const angle = Math.atan2(b.y - bendY, b.x - bendX);
+      const tipX = b.x - Math.cos(angle) * (b.radius + 3);
+      const tipY = b.y - Math.sin(angle) * (b.radius + 3);
 
+      ctx.strokeStyle = highlighted ? "#a6482e" : "#50634b";
+      ctx.globalAlpha = highlighted ? 0.9 : selected < 0 ? 0.32 + weight * 0.25 : 0.12;
+      ctx.lineWidth = highlighted ? 1.7 : 0.6 + weight * 0.75;
       ctx.beginPath();
-      const midX = (a.x + b.x) * 0.5 - (b.y - a.y) * 0.08;
-      const midY = (a.y + b.y) * 0.5 + (b.x - a.x) * 0.08;
       ctx.moveTo(a.x, a.y);
-      ctx.quadraticCurveTo(midX, midY, b.x, b.y);
-
-      const baseAlpha = hoveredNodeId === -1 ? 0.16 + topoWeight * 0.24 : isConnected ? 0.68 : 0.06;
-      ctx.strokeStyle =
-        hoveredNodeId !== -1 && isConnected
-          ? `rgba(110, 198, 194, ${baseAlpha.toFixed(3)})`
-          : `rgba(224, 232, 230, ${(baseAlpha * w).toFixed(3)})`;
-      ctx.lineWidth = isConnected && hoveredNodeId !== -1 ? 1.7 : 1 + w * 0.6;
+      ctx.quadraticCurveTo(bendX, bendY, tipX, tipY);
       ctx.stroke();
+      const arrow = highlighted ? 6 : 4;
+      ctx.beginPath();
+      ctx.moveTo(tipX - arrow * Math.cos(angle - 0.55), tipY - arrow * Math.sin(angle - 0.55));
+      ctx.lineTo(tipX, tipY);
+      ctx.lineTo(tipX - arrow * Math.cos(angle + 0.55), tipY - arrow * Math.sin(angle + 0.55));
+      ctx.stroke();
+    }
 
-      // Traveling signal particle along active edges
-      if (!motionQuery.matches && edgeIdx % 3 === 0 && isConnected) {
-        const t = (netTime * (0.36 + w * 0.2) + edgeIdx * 0.21) % 1;
-        const inv = 1 - t;
-        const px = inv * inv * a.x + 2 * inv * t * midX + t * t * b.x;
-        const py = inv * inv * a.y + 2 * inv * t * midY + t * t * b.y;
+    for (const n of netNodes) {
+      const focus = n.id === selected;
+      ctx.globalAlpha = selected < 0 || neighbours.has(n.id) ? 1 : 0.25;
+      ctx.fillStyle = communityColors[n.group];
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, n.radius, 0, 2 * Math.PI);
+      ctx.fill();
+      if (focus || n.rank <= 3) {
+        ctx.strokeStyle = focus ? "#a6482e" : communityColors[n.group];
+        ctx.lineWidth = focus ? 2 : 0.9;
         ctx.beginPath();
-        ctx.arc(px, py, 2, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(110, 198, 194, 0.8)";
-        ctx.fill();
-      }
-    });
-
-    // Draw nodes & top-3 badges
-    netNodes.forEach((n) => {
-      const info = rankMap.get(n.id);
-      const isTop3 = info.rank <= 3;
-      const isHovered = hoveredNodeId === n.id;
-      const dimmed =
-        hoveredNodeId !== -1 &&
-        !isHovered &&
-        !netEdges.some(
-          ([s, d]) =>
-            (s === hoveredNodeId && d === n.id) ||
-            (d === hoveredNodeId && s === n.id),
-        );
-
-      ctx.save();
-      ctx.globalAlpha = dimmed ? 0.28 : 1;
-
-      if (isTop3 || isHovered) {
-        ctx.beginPath();
-        ctx.arc(n.x, n.y, n.curRadius + (isHovered ? 8 : 5.5), 0, Math.PI * 2);
-        ctx.strokeStyle = isHovered
-          ? "rgba(232, 168, 107, 0.75)"
-          : "rgba(110, 198, 194, 0.42)";
-        ctx.lineWidth = 1.4;
+        ctx.arc(n.x, n.y, n.radius + (focus ? 5 : 3), 0, 2 * Math.PI);
         ctx.stroke();
       }
-
-      ctx.beginPath();
-      ctx.arc(n.x, n.y, n.curRadius, 0, Math.PI * 2);
-      ctx.fillStyle = communityColors[n.group];
-      ctx.fill();
-
-      if (isTop3 || isHovered) {
-        ctx.font = '600 11.5px "Manrope", "PingFang SC", sans-serif';
-        ctx.fillStyle = "#f4f0e8";
-        ctx.textAlign = "center";
-        ctx.fillText(
-          `#${info.rank} ${n.label}`,
-          n.x,
-          n.y - n.curRadius - 9,
-        );
-      }
-
-      ctx.restore();
-    });
-  }
-
-  let prevNetTime = performance.now();
-  function tickNetwork() {
-    const now = performance.now();
-    const dt = Math.min(0.05, (now - prevNetTime) / 1000);
-    prevNetTime = now;
-    renderNetwork(dt);
-  }
-
-  syncNetworkLoop = () => {
-    const shouldRun =
-      projectInView &&
-      activeStage === 0 &&
-      !motionQuery.matches &&
-      !document.hidden;
-    if (shouldRun && !netTicking) {
-      prevNetTime = performance.now();
-      gsap.ticker.add(tickNetwork);
-      netTicking = true;
-    } else if (!shouldRun && netTicking) {
-      gsap.ticker.remove(tickNetwork);
-      netTicking = false;
     }
-  };
+    ctx.globalAlpha = 1;
 
-  drawNetworkStatic = () => {
-    getNetSurface().resize();
-    renderNetwork(0);
-  };
+    // On narrow diagrams label just the leading node. Any node can be inspected.
+    const labelCount = width < 450 ? 1 : 3;
+    const labelled = selected >= 0
+      ? [netNodes[selected]]
+      : netNodes.filter((node) => node.rank <= labelCount);
+    ctx.font = '500 13px "DM Sans", "PingFang SC", sans-serif';
+    ctx.textAlign = "center";
+    ctx.lineJoin = "round";
+    for (const n of labelled) {
+      const text = n.label;
+      const half = ctx.measureText(text).width / 2 + 2;
+      const x = Math.max(half, Math.min(width - half, n.x));
+      const y = Math.max(15, n.y - n.radius - 10);
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = "#f5f3e9";
+      ctx.strokeText(text, x, y);
+      ctx.fillStyle = "#243c30";
+      ctx.fillText(text, x, y);
+    }
+  }
 
-  function setWeightValue(rawPercent) {
-    const pct = Math.min(90, Math.max(10, Number(rawPercent) || 52));
-    topoWeight = pct / 100;
+  function updateNodeReadout() {
+    const node = netNodes[pointedNode >= 0 ? pointedNode : pinnedNode];
+    if (!networkTooltip) return;
+    const text = node
+      ? `${node.label} · 综合第 ${node.rank} 位。${node.desc}。`
+      : initialHint;
+    if (networkTooltip.textContent !== text) networkTooltip.textContent = text;
+  }
+
+  function setWeightValue(percent) {
+    const pct = Math.min(90, Math.max(10, Number(percent)));
+    const topologyWeight = pct / 100;
+    netNodes.forEach((n) => {
+      n.score = topologyWeight * n.topo + (1 - topologyWeight) * n.qual;
+    });
+    [...netNodes].sort((a, b) => b.score - a.score).forEach((n, index) => {
+      n.rank = index + 1;
+    });
     if (influenceSlider) {
       influenceSlider.value = String(pct);
-      influenceSlider.setAttribute(
-        "aria-valuetext",
-        `网络拓扑权重 ${pct}%，内容质量权重 ${100 - pct}%`,
-      );
+      influenceSlider.setAttribute("aria-valuetext", `网络 ${pct}%，内容 ${100 - pct}%`);
     }
     if (topologyOutput) topologyOutput.textContent = `${pct}%`;
     if (qualityOutput) qualityOutput.textContent = `${100 - pct}%`;
-
     weightPresetBtns.forEach((btn) => {
-      btn.classList.toggle("is-active", Number(btn.dataset.weightPreset) === pct);
+      const active = Number(btn.dataset.weightPreset) === pct;
+      btn.classList.toggle("is-active", active);
+      btn.setAttribute("aria-pressed", String(active));
     });
-
-    renderNetwork(0);
+    updateNodeReadout();
+    drawNetwork();
   }
 
-  influenceSlider?.addEventListener("input", () => {
-    setWeightValue(influenceSlider.value);
-  });
-
-  weightPresetBtns.forEach((btn) => {
-    btn.addEventListener("click", () => {
-      setWeightValue(btn.dataset.weightPreset);
-    });
-  });
-
-  function handleNetworkPointer(clientX, clientY) {
+  function hitNode(event) {
     const rect = networkCanvas.getBoundingClientRect();
-    const mx = clientX - rect.left;
-    const my = clientY - rect.top;
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
     let found = -1;
-    let bestDist = 28;
-    netNodes.forEach((n) => {
-      const d = Math.hypot(mx - (n.x || 0), my - (n.y || 0));
-      if (d < bestDist) {
-        bestDist = d;
+    let nearest = Infinity;
+    for (const n of netNodes) {
+      const distance = Math.hypot(x - n.x, y - n.y);
+      if (distance <= Math.max(17, n.radius + 7) && distance < nearest) {
         found = n.id;
+        nearest = distance;
       }
-    });
-
-    if (found !== hoveredNodeId) {
-      hoveredNodeId = found;
-      if (networkTooltip) {
-        if (found >= 0) {
-          const rankMap = computeRankedNodes();
-          const info = rankMap.get(found);
-          networkTooltip.textContent = `${netNodes[found].label}（综合 #${info.rank}）：${netNodes[found].desc}`;
-        } else {
-          networkTooltip.textContent = "悬停节点查看角色特征 · 当前高亮综合排名前三";
-        }
-      }
-      renderNetwork(0);
     }
+    return found;
   }
 
-  networkCanvas.addEventListener("pointermove", (e) => {
-    handleNetworkPointer(e.clientX, e.clientY);
-  });
-  networkCanvas.addEventListener("click", (e) => {
-    handleNetworkPointer(e.clientX, e.clientY);
-  });
-  networkCanvas.addEventListener("pointerleave", () => {
-    hoveredNodeId = -1;
-    if (networkTooltip) {
-      networkTooltip.textContent = "悬停节点查看角色特征 · 当前高亮综合排名前三";
-    }
-    renderNetwork(0);
-  });
-
-  if ("IntersectionObserver" in window) {
-    const io = new IntersectionObserver(
-      (entries) => {
-        projectInView = entries[0].isIntersecting;
-        syncNetworkLoop();
-      },
-      { threshold: 0.05 },
-    );
-    io.observe($(".project-shell") || networkCanvas);
+  function pointAt(id) {
+    if (pointedNode === id) return;
+    pointedNode = id;
+    networkCanvas.style.cursor = id >= 0 ? "pointer" : "";
+    updateNodeReadout();
+    drawNetwork();
   }
 
-  setWeightValue(52);
+  networkCanvas.addEventListener("pointermove", (event) => {
+    if (event.pointerType !== "touch") pointAt(hitNode(event));
+  });
+  networkCanvas.addEventListener("pointerleave", () => pointAt(-1));
+  networkCanvas.addEventListener("click", (event) => {
+    const hit = hitNode(event);
+    pinnedNode = pinnedNode === hit ? -1 : hit;
+    pointedNode = -1;
+    updateNodeReadout();
+    drawNetwork();
+  });
+  networkCanvas.addEventListener("keydown", (event) => {
+    const count = netNodes.length;
+    const current = pointedNode >= 0 ? pointedNode : pinnedNode;
+    switch (event.key) {
+      case "ArrowRight":
+      case "ArrowDown":
+        pinnedNode = (current + 1) % count;
+        break;
+      case "ArrowLeft":
+      case "ArrowUp":
+        pinnedNode = current < 0 ? count - 1 : (current + count - 1) % count;
+        break;
+      case "Home": pinnedNode = 0; break;
+      case "End": pinnedNode = count - 1; break;
+      case "Escape": pinnedNode = -1; break;
+      default: return;
+    }
+    event.preventDefault();
+    pointedNode = -1;
+    updateNodeReadout();
+    drawNetwork();
+  });
+
+  influenceSlider?.addEventListener("input", () => setWeightValue(influenceSlider.value));
+  weightPresetBtns.forEach((btn) => {
+    btn.addEventListener("click", () => setWeightValue(btn.dataset.weightPreset));
+  });
+  drawNetworkStatic = () => surface().resize();
+  setWeightValue(influenceSlider?.value || 52);
 }
 
 /* --- Scene 1: Interactive PCA + KMeans Behavioral × Semantic Projection --- */
@@ -803,32 +389,32 @@ let drawClusterStatic = () => {};
 if (clusterCanvas) {
   const personaMeta = [
     {
-      name: "算子与框架深耕",
-      color: "#6ec6c2",
+      name: "算子研究",
+      color: "#496b51",
       cx: 0.25,
       cy: 0.34,
-      insight: "算子与框架深耕群：发帖中代码块与底层 API 引用密集，语义高度聚焦编译优化与算子迁移。",
+      insight: "算子研究组，帖子常谈编译优化、底层接口和算子迁移。",
     },
     {
-      name: "工程排障桥梁",
-      color: "#e8a86b",
+      name: "工程排障",
+      color: "#ac7440",
       cx: 0.73,
       cy: 0.32,
-      insight: "工程排障桥梁群：跨帖回复频次高，语义覆盖环境部署、驱动兼容与多卡通信报错。",
+      insight: "工程排障组，常跨帖解答环境部署、驱动兼容与多卡通信问题。",
     },
     {
-      name: "实践案例分享",
-      color: "#df7a52",
+      name: "案例分享",
+      color: "#994c3b",
       cx: 0.31,
       cy: 0.73,
-      insight: "实践案例分享群：长文比例与获赞均值突出，围绕端侧推理、模型微调输出完整复现流程。",
+      insight: "案例分享组，常分享从环境配置到模型运行的完整步骤。",
     },
     {
-      name: "高潜新星",
-      color: "#b8d4a3",
+      name: "潜力用户",
+      color: "#67758a",
       cx: 0.71,
       cy: 0.72,
-      insight: "高潜新星群：近期注册或总帖量尚少，但语义向量与核心答主高度邻近，具备成长为社区骨干的潜力。",
+      insight: "潜力用户组，发帖还少，讨论的技术问题已经与核心答主相近。",
     },
   ];
 
@@ -854,12 +440,14 @@ if (clusterCanvas) {
       fy,
       bx,
       by,
-      size: 4 + (i % 3) * 1.3,
+      size: 2.8 + (i % 3) * 1.1,
     };
   });
 
   const blendState = { t: 1 }; // 1 = fused, 0 = behavior-only
+  let mode = "fused";
   let selectedPersona = -1;
+  let pointedPersona = -1;
   let clusterTween;
 
   const getClusterSurface = setupResponsiveCanvas(clusterCanvas, () => {
@@ -872,10 +460,11 @@ if (clusterCanvas) {
 
     ctx.clearRect(0, 0, width, height);
     const t = blendState.t;
+    const highlighted = pointedPersona >= 0 ? pointedPersona : selectedPersona;
 
     // Subtle projection axes
     ctx.save();
-    ctx.strokeStyle = "rgba(244, 240, 232, 0.08)";
+    ctx.strokeStyle = "#9ca58f";
     ctx.lineWidth = 1;
     ctx.beginPath();
     ctx.moveTo(38, height - 30);
@@ -885,9 +474,9 @@ if (clusterCanvas) {
     ctx.stroke();
 
     ctx.font = '500 11.5px "Manrope", "PingFang SC", sans-serif';
-    ctx.fillStyle = "rgba(190, 206, 208, 0.62)";
+    ctx.fillStyle = "#59695b";
     ctx.fillText(
-      t > 0.5 ? "PCA 主成分 1（行为 × 语义融合）" : "行为维度：发帖与回复频次 →",
+      t > 0.5 ? "第一主成分" : "活跃度",
       50,
       height - 11,
     );
@@ -896,9 +485,9 @@ if (clusterCanvas) {
     // Cluster hulls & labels when in fused mode
     if (t > 0.08) {
       personaMeta.forEach((meta, gIdx) => {
-        const isHighlighted = selectedPersona === -1 || selectedPersona === gIdx;
-        const alpha = t * (isHighlighted ? 0.13 : 0.03);
-        const strokeAlpha = t * (isHighlighted ? 0.42 : 0.1);
+        const isHighlighted = highlighted === -1 || highlighted === gIdx;
+        const alpha = t * (isHighlighted ? 0.045 : 0.015);
+        const strokeAlpha = t * (isHighlighted ? 0.64 : 0.18);
         const cx = width * meta.cx;
         const cy = height * meta.cy;
         const rx = width * 0.155;
@@ -919,8 +508,8 @@ if (clusterCanvas) {
         ctx.setLineDash([]);
 
         ctx.globalAlpha = t * (isHighlighted ? 0.92 : 0.32);
-        ctx.font = '600 12px "Manrope", "PingFang SC", sans-serif';
-        ctx.fillStyle = "#f4f0e8";
+        ctx.font = '500 13px "Manrope", "PingFang SC", sans-serif';
+        ctx.fillStyle = "#243c30";
         ctx.textAlign = "center";
         ctx.fillText(meta.name, cx, cy - ry - 7);
         ctx.restore();
@@ -934,14 +523,14 @@ if (clusterCanvas) {
       const x = width * nx;
       const y = height * ny;
 
-      const isFocused = selectedPersona === -1 || selectedPersona === pt.group;
+      const isFocused = highlighted === -1 || highlighted === pt.group;
       ctx.save();
       ctx.globalAlpha = isFocused ? 0.92 : 0.18;
       ctx.beginPath();
-      ctx.arc(x, y, isFocused && selectedPersona === pt.group ? pt.size + 1.5 : pt.size, 0, Math.PI * 2);
+      ctx.arc(x, y, isFocused && highlighted === pt.group ? pt.size + 1.5 : pt.size, 0, Math.PI * 2);
       ctx.fillStyle =
-        t < 0.25 && selectedPersona === -1
-          ? "#9fb6b9"
+        t < 0.25 && highlighted === -1
+          ? "#657563"
           : personaMeta[pt.group].color;
       ctx.fill();
       ctx.restore();
@@ -949,40 +538,42 @@ if (clusterCanvas) {
   }
 
   drawClusterStatic = () => {
+    if (motionQuery.matches) {
+      clusterTween?.kill();
+      blendState.t = mode === "fused" ? 1 : 0;
+    }
     getClusterSurface().resize();
-    renderClusters();
   };
 
-  function setClusterMode(mode) {
+  function updateClusterReadout() {
+    if (!clusterInsightText) return;
+    clusterInsightText.textContent = personaMeta[selectedPersona]?.insight ||
+      (mode === "fused"
+        ? "加入帖子内容后，讨论相近话题的点聚在一起。点选一组，看看他们聊什么。"
+        : "只看发帖和回复频次，不同话题的用户会挤在同一条带上。");
+  }
+
+  function setClusterMode(nextMode) {
+    mode = nextMode;
+    pointedPersona = -1;
+    clusterCanvas.style.cursor = "";
     const target = mode === "fused" ? 1 : 0;
     clusterModeBtns.forEach((btn) => {
-      btn.classList.toggle("is-active", btn.dataset.clusterMode === mode);
+      const active = btn.dataset.clusterMode === mode;
+      btn.classList.toggle("is-active", active);
+      btn.setAttribute("aria-pressed", String(active));
     });
-
-    if (clusterBadge) {
-      clusterBadge.textContent =
-        mode === "fused"
-          ? "PCA 降维 + KMeans 融合视图"
-          : "纯行为统计视图（语义未介入时的回退基线）";
-    }
-
-    if (clusterInsightText && selectedPersona === -1) {
-      clusterInsightText.textContent =
-        mode === "fused"
-          ? "融合 384 维句向量后，原本在活跃度上相近的用户会按真实讨论领域自然分离，便于识别细分领域的答疑核心与潜力贡献者。"
-          : "仅按发帖频次与获赞统计时，不同技术方向的开发者混杂在同一条活跃度带上，难以区分各自的专长角色。";
-    }
-
+    if (clusterBadge) clusterBadge.textContent = mode === "fused"
+      ? "按行为与讨论内容分组"
+      : "仅按活跃度排列";
+    updateClusterReadout();
     clusterTween?.kill();
-    if (motionQuery.matches) {
+    if (motionQuery.matches || blendState.t === target) {
       blendState.t = target;
       renderClusters();
     } else {
       clusterTween = gsap.to(blendState, {
-        t: target,
-        duration: 0.68,
-        ease: "power3.inOut",
-        onUpdate: renderClusters,
+        t: target, duration: 0.45, ease: "power2.inOut", onUpdate: renderClusters,
       });
     }
   }
@@ -990,43 +581,52 @@ if (clusterCanvas) {
   function selectPersona(idx) {
     selectedPersona = idx;
     personaChips.forEach((chip) => {
-      chip.classList.toggle("is-active", Number(chip.dataset.persona) === idx);
+      const active = Number(chip.dataset.persona) === idx;
+      chip.classList.toggle("is-active", active);
+      chip.setAttribute("aria-pressed", String(active));
     });
-
-    if (clusterInsightText) {
-      if (idx >= 0 && personaMeta[idx]) {
-        clusterInsightText.textContent = personaMeta[idx].insight;
-      } else {
-        const isFused = blendState.t >= 0.5;
-        clusterInsightText.textContent = isFused
-          ? "融合 384 维句向量后，原本在活跃度上相近的用户会按真实讨论领域自然分离，便于识别细分领域的答疑核心与潜力贡献者。"
-          : "仅按发帖频次与获赞统计时，不同技术方向的开发者混杂在同一条活跃度带上，难以区分各自的专长角色。";
-      }
-    }
+    updateClusterReadout();
     renderClusters();
   }
 
   clusterModeBtns.forEach((btn) => {
     btn.addEventListener("click", () => setClusterMode(btn.dataset.clusterMode));
   });
-
-  personaChips.forEach((chip) => {
-    chip.addEventListener("click", () => selectPersona(Number(chip.dataset.persona)));
+  personaChips.forEach((btn) => {
+    btn.addEventListener("click", () => selectPersona(Number(btn.dataset.persona)));
   });
 
-  clusterCanvas.addEventListener("click", (event) => {
-    if (blendState.t < 0.5) return;
+  function hitPersona(event) {
+    if (mode !== "fused" || blendState.t < 0.94) return -1;
     const rect = clusterCanvas.getBoundingClientRect();
     const mx = (event.clientX - rect.left) / rect.width;
     const my = (event.clientY - rect.top) / rect.height;
-    let hit = -1;
-    personaMeta.forEach((meta, idx) => {
-      if (Math.hypot(mx - meta.cx, my - meta.cy) < 0.18) hit = idx;
-    });
+    return personaMeta.findIndex(({ cx, cy }) =>
+      Math.hypot((mx - cx) / 0.155, (my - cy) / 0.165) <= 1);
+  }
+
+  clusterCanvas.addEventListener("pointermove", (event) => {
+    if (event.pointerType === "touch") return;
+    const hit = hitPersona(event);
+    if (hit === pointedPersona) return;
+    pointedPersona = hit;
+    clusterCanvas.style.cursor = hit < 0 ? "" : "pointer";
+    renderClusters();
+  });
+  clusterCanvas.addEventListener("pointerleave", () => {
+    pointedPersona = -1;
+    clusterCanvas.style.cursor = "";
+    renderClusters();
+  });
+  clusterCanvas.addEventListener("click", (event) => {
+    if (mode !== "fused") return;
+    const hit = hitPersona(event);
+    pointedPersona = -1;
     selectPersona(hit === selectedPersona ? -1 : hit);
   });
 
-  renderClusters();
+  selectPersona(-1);
+  setClusterMode("fused");
 }
 
 /* --- Scene 2: Reflective Trend Agent Simulator --- */
@@ -1038,85 +638,66 @@ let activeAgentTopic = 0;
 let agentTimeline;
 
 const agentScenarios = [
-  {
-    steps: [
-      "<strong>01 维度拆解：</strong>围绕「昇腾算子迁移痛点」拆出动态 Shape 适配、精度对齐与报错排查三个子维度。",
-      "<strong>02 社区与外部检索：</strong>聚合昇腾板块高赞问答与外部技术博客，定位高频算子编译耗时讨论。",
-      "<strong>03 反思补搜闭环：</strong>自检发现缺少近期版本工具链对比证据，自动追加检索 msit 精度比对实测反馈。",
-      "<strong>04 SSE 流式交付：</strong>生成结构化洞察报告——置顶动态 Shape 排障清单与文档改进优先级建议。",
-    ],
-  },
-  {
-    steps: [
-      "<strong>01 维度拆解：</strong>围绕「鸿蒙端侧推理实践」拆出轻量化部署、NPU 调用延迟与内存占用三个观察切面。",
-      "<strong>02 社区与外部检索：</strong>提取华为开发者社区端侧 AI 高互动帖，汇总量化压缩常见问答。",
-      "<strong>03 反思补搜闭环：</strong>检测到端侧多模态场景样本偏少，触发二次补搜，补充语音与图像小模型落地案例。",
-      "<strong>04 SSE 流式交付：</strong>完成趋势报告流式输出，标记近期快速升温的端侧推理开发模板需求。",
-    ],
-  },
+  [
+    "把昇腾算子迁移拆成动态 Shape、精度对齐和报错排查三个问题。",
+    "检索社区问答与技术文档，按问题整理讨论线索。",
+    "发现工具链版本信息不足，再补查 msit 精度比对案例。",
+    "将昇腾算子迁移的排障路径与证据写入报告，逐段返回。",
+  ],
+  [
+    "从部署、调用延迟与内存占用三个角度梳理鸿蒙端侧推理。",
+    "从开发者讨论中整理量化压缩的实践问题。",
+    "图像与语音案例不足，带着这两个条件再检索一次。",
+    "按场景整理鸿蒙端侧推理的实践案例，逐段返回报告。",
+  ],
 ];
 
 function playAgentSimulation() {
   if (!agentNodes.length || !agentTraceLog) return;
   agentTimeline?.kill();
-
-  const lines = agentScenarios[activeAgentTopic]?.steps || agentScenarios[0].steps;
-  agentNodes.forEach((node) => node.classList.remove("is-running", "is-done"));
-  agentTraceLog.innerHTML = "";
-
-  const finalize = () => {
-    agentNodes.forEach((node) => {
-      node.classList.remove("is-running");
-      node.classList.add("is-done");
+  const steps = agentScenarios[activeAgentTopic];
+  const showStep = (index, complete = false) => {
+    agentNodes.forEach((node, stepIndex) => {
+      node.classList.toggle("is-running", !complete && stepIndex === index);
+      node.classList.toggle("is-done", complete || stepIndex < index);
     });
-    agentTraceLog.innerHTML = lines.map((line) => `<p>${line}</p>`).join("");
+    agentTraceLog.textContent = steps[index];
+  };
+  const finish = () => {
+    showStep(steps.length - 1, true);
     if (agentReplayBtn) agentReplayBtn.disabled = false;
   };
-
   if (motionQuery.matches) {
-    finalize();
+    finish();
     return;
   }
-
   if (agentReplayBtn) agentReplayBtn.disabled = true;
-  agentTimeline = gsap.timeline({ onComplete: finalize });
-
-  lines.forEach((htmlLine, idx) => {
-    agentTimeline.call(
-      () => {
-        if (idx > 0) {
-          agentNodes[idx - 1]?.classList.replace("is-running", "is-done");
-        }
-        agentNodes[idx]?.classList.add("is-running");
-        const p = document.createElement("p");
-        p.innerHTML = htmlLine;
-        agentTraceLog.appendChild(p);
-        gsap.fromTo(
-          p,
-          { opacity: 0, y: 6 },
-          { opacity: 1, y: 0, duration: 0.3, ease: "power2.out" },
-        );
-      },
-      [],
-      idx * 0.52,
-    );
+  agentTimeline = gsap.timeline({ onComplete: finish });
+  steps.forEach((_, index) => {
+    agentTimeline.call(() => showStep(index), [], index * 0.75);
   });
-  agentTimeline.to({}, { duration: 0.45 });
+  agentTimeline.to({}, { duration: 0.55 });
 }
 
+function selectAgentTopic(index) {
+  activeAgentTopic = index;
+  agentTopicBtns.forEach((btn) => {
+    const active = Number(btn.dataset.agentTopic) === index;
+    btn.classList.toggle("is-active", active);
+    btn.setAttribute("aria-pressed", String(active));
+  });
+}
 agentTopicBtns.forEach((btn) => {
   btn.addEventListener("click", () => {
-    activeAgentTopic = Number(btn.dataset.agentTopic) || 0;
-    agentTopicBtns.forEach((b) =>
-      b.classList.toggle("is-active", b === btn),
-    );
+    selectAgentTopic(Number(btn.dataset.agentTopic));
     playAgentSimulation();
   });
 });
+selectAgentTopic(0);
 
 agentReplayBtn?.addEventListener("click", playAgentSimulation);
 
-/* Stage Switching & Scroll Sync */
+/* Each tab opens one spread with its notes and diagram. */
 function showStage(index, { animate = true } = {}) {
   if (!stageScenes[index]) return;
   const changed = activeStage !== index;
@@ -1128,15 +709,12 @@ function showStage(index, { animate = true } = {}) {
     tab.tabIndex = selected ? 0 : -1;
   });
 
-  chapterCards.forEach((card) => {
-    card.classList.toggle("is-active", Number(card.dataset.chapter) === index);
-  });
-
   stageScenes.forEach((scene, sIdx) => {
+    gsap.killTweensOf(scene);
+    gsap.set(scene, { clearProps: "transform" });
     scene.hidden = sIdx !== index;
   });
 
-  syncNetworkLoop();
   if (index === 0) requestAnimationFrame(drawNetworkStatic);
   if (index === 1) requestAnimationFrame(drawClusterStatic);
   if (index === 2 && !agentAutoPlayed) {
@@ -1144,51 +722,21 @@ function showStage(index, { animate = true } = {}) {
     playAgentSimulation();
   }
 
+  if (index !== 2 && agentTimeline?.isActive()) agentTimeline.progress(1);
   if (changed && animate && !motionQuery.matches) {
     gsap.fromTo(
       stageScenes[index],
-      { opacity: 0, y: 10 },
-      { opacity: 1, y: 0, duration: 0.36, ease: "power2.out", clearProps: "opacity,transform" },
+      { y: 10 },
+      { y: 0, duration: 0.36, ease: "power2.out", clearProps: "transform" },
     );
   }
 }
 
-stageTabs.forEach((tab) => {
-  tab.addEventListener("click", () => {
-    manualStageLockUntil = performance.now() + 1200;
-    showStage(Number(tab.dataset.stageTab));
-  });
-});
-bindTabKeyboard(stageTabs, (tab) => {
-  manualStageLockUntil = performance.now() + 1200;
+function activateStageTab(tab) {
   showStage(Number(tab.dataset.stageTab));
-});
-
-chapterCards.forEach((card) => {
-  card.addEventListener("click", (event) => {
-    if (event.target.closest("a")) return;
-    manualStageLockUntil = performance.now() + 1000;
-    showStage(Number(card.dataset.chapter));
-  });
-});
-
-// Sync sticky stage with chapter reading position on wide screens
-const responsiveMedia = gsap.matchMedia();
-responsiveMedia.add("(min-width: 1025px)", () => {
-  chapterCards.forEach((card) => {
-    ScrollTrigger.create({
-      trigger: card,
-      start: "top 56%",
-      end: "bottom 44%",
-      onToggle: (self) => {
-        if (self.isActive && performance.now() > manualStageLockUntil) {
-          showStage(Number(card.dataset.chapter));
-        }
-      },
-    });
-  });
-});
-
+}
+stageTabs.forEach((tab) => tab.addEventListener("click", () => activateStageTab(tab)));
+bindTabKeyboard(stageTabs, activateStageTab);
 showStage(0, { animate: false });
 
 /* ==========================================================================
@@ -1197,9 +745,8 @@ showStage(0, { animate: false });
 const lensTabs = $$("[data-lens-tab]");
 const lensPanels = $$("[data-lens-panel]");
 let currentLens = "research";
-let activeViewTransition;
 
-/* --- Lens 1: Stratified Regression / Simpson's Paradox Canvas --- */
+// Synthetic samples have opposite pooled and within-group slopes.
 const regressionCanvas = $("#regression-canvas");
 const regressionToggleBtn = $("#regression-toggle-btn");
 const regressionReadout = $("#regression-readout");
@@ -1207,183 +754,119 @@ let drawRegressionStatic = () => {};
 
 if (regressionCanvas) {
   const strata = [
-    { name: "轻度参与组", color: "#257275", cx: 0.27, cy: 0.67 },
-    { name: "常规活跃组", color: "#dd5a2c", cx: 0.51, cy: 0.48 },
-    { name: "核心深耕组", color: "#263840", cx: 0.75, cy: 0.29 },
+    { name: "A 组", color: "#526a4e", x: 0.27, y: 0.67 },
+    { name: "B 组", color: "#a6482e", x: 0.51, y: 0.48 },
+    { name: "C 组", color: "#344f5f", x: 0.75, y: 0.29 },
   ];
+  const points = strata.flatMap((group, index) =>
+    Array.from({ length: 12 }, (_, k) => {
+      const offset = (k - 5.5) / 5.5;
+      const jitter = (((k * 13 + index * 7) % 9) - 4) * 0.011;
+      return { x: group.x + offset * 0.125, y: group.y + offset * 0.082 + jitter, index };
+    }),
+  );
 
-  // Construct classic Simpson's paradox: each group slopes DOWN in canvas-Y?
-  // Note: Canvas Y grows downward (top=high Y-value, bottom=low Y-value).
-  // Pooled trend: higher X -> higher value (smaller canvas Y, upward right!).
-  // Within each stratum: higher X -> LOWER value (larger canvas Y, downward right!).
-  const regPoints = [];
-  strata.forEach((s, gIdx) => {
-    for (let k = 0; k < 12; k++) {
-      const offset = (k - 5.5) / 5.5; // -1 .. 1
-      const jitter = (((k * 13 + gIdx * 7) % 9) - 4) * 0.011;
-      const nx = s.cx + offset * 0.125;
-      // Within group: as nx increases, canvas ny increases -> downward slope in math coordinates!
-      const ny = s.cy + offset * 0.082 + jitter;
-      regPoints.push({ group: gIdx, nx, ny });
-    }
-  });
+  function fitLine(samples) {
+    const meanX = samples.reduce((sum, p) => sum + p.x, 0) / samples.length;
+    const meanY = samples.reduce((sum, p) => sum + p.y, 0) / samples.length;
+    const covariance = samples.reduce((sum, p) => sum + (p.x - meanX) * (p.y - meanY), 0);
+    const variance = samples.reduce((sum, p) => sum + (p.x - meanX) ** 2, 0);
+    return (x) => meanY + (covariance / variance) * (x - meanX);
+  }
 
-  const regState = { stratified: false, mix: 0 };
-  let regTween;
+  const pooledFit = fitLine(points);
+  const groupFits = strata.map((_, i) => fitLine(points.filter((p) => p.index === i)));
+  const view = { grouped: false, mix: 0 };
+  let fitTween;
 
-  const getRegSurface = setupResponsiveCanvas(regressionCanvas, () => {
-    renderRegression();
-  });
-
-  function renderRegression() {
-    const { width, height, ctx } = getRegSurface();
+  const surface = setupResponsiveCanvas(regressionCanvas, drawRegression);
+  function drawRegression() {
+    const { width, height, ctx } = surface();
     if (!ctx || width < 10) return;
-
+    const left = width < 420 ? 24 : 40;
+    const right = width - left;
+    const top = 24;
+    const base = height - 30;
+    const xAt = (x) => left + x * (right - left);
+    const yAt = (y) => top + y * (base - top);
+    const mix = view.mix;
     ctx.clearRect(0, 0, width, height);
-    const m = regState.mix;
-
-    const padL = 54;
-    const padR = 34;
-    const padT = 34;
-    const padB = 46;
-    const plotW = width - padL - padR;
-    const plotH = height - padT - padB;
-
-    const toX = (nx) => padL + nx * plotW;
-    const toY = (ny) => padT + ny * plotH;
-
-    // Subtle horizontal reference lines (NOT a grid wallpaper)
     ctx.save();
-    ctx.strokeStyle = "rgba(24, 38, 43, 0.07)";
-    ctx.lineWidth = 1;
-    [0.25, 0.5, 0.75].forEach((r) => {
-      const y = padT + plotH * r;
-      ctx.beginPath();
-      ctx.moveTo(padL, y);
-      ctx.lineTo(width - padR, y);
-      ctx.stroke();
-    });
-
-    // Axes
-    ctx.strokeStyle = "rgba(24, 38, 43, 0.28)";
-    ctx.lineWidth = 1.2;
-    ctx.beginPath();
-    ctx.moveTo(padL, padT);
-    ctx.lineTo(padL, height - padB);
-    ctx.lineTo(width - padR, height - padB);
-    ctx.stroke();
-
-    ctx.font = '500 12px "Manrope", "PingFang SC", sans-serif';
-    ctx.fillStyle = "rgba(92, 108, 112, 0.9)";
-    ctx.fillText("观测变量 X", width - padR - 68, height - 15);
-    ctx.fillText("结果指标 Y", padL + 10, padT + 12);
-    ctx.restore();
-
-    // Pooled OLS upward line (fades back when stratified)
-    ctx.save();
-    ctx.globalAlpha = 1 - m * 0.76;
-    ctx.strokeStyle = "#dd5a2c";
-    ctx.lineWidth = 2.2;
-    ctx.setLineDash([6, 5]);
-    ctx.beginPath();
-    ctx.moveTo(toX(0.11), toY(0.79));
-    ctx.lineTo(toX(0.9), toY(0.18));
-    ctx.stroke();
-    ctx.setLineDash([]);
-
-    if (m < 0.65) {
-      ctx.font = '600 12.5px "Manrope", "PingFang SC", sans-serif';
-      ctx.fillStyle = "#dd5a2c";
-      ctx.fillText("混合拟合：表象呈正相关 ↗", toX(0.52), toY(0.36));
+    ctx.font = '13px "DM Sans", sans-serif';
+    ctx.fillStyle = "#59695b";
+    ctx.fillText("Y", left - 6, top - 8);
+    ctx.fillText("X", right - 6, base + 18);
+    for (const fraction of [0.25, 0.5, 0.75]) {
+      ctx.fillStyle = "#243c3016";
+      ctx.fillRect(left, yAt(fraction), right - left, 1);
     }
-    ctx.restore();
+    ctx.strokeStyle = "#788373";
+    ctx.beginPath();
+    ctx.moveTo(left, top);
+    ctx.lineTo(left, base);
+    ctx.lineTo(right, base);
+    ctx.stroke();
 
-    // Stratified group ellipses & within-group negative slope lines
-    if (m > 0.04) {
-      strata.forEach((s) => {
-        ctx.save();
-        ctx.globalAlpha = m * 0.1;
-        ctx.beginPath();
-        ctx.ellipse(
-          toX(s.cx),
-          toY(s.cy),
-          plotW * 0.16,
-          plotH * 0.13,
-          0.36,
-          0,
-          Math.PI * 2,
-        );
-        ctx.fillStyle = s.color;
-        ctx.fill();
+    function drawFit(fit, x1, x2) {
+      ctx.beginPath();
+      ctx.moveTo(xAt(x1), yAt(fit(x1)));
+      ctx.lineTo(xAt(x2), yAt(fit(x2)));
+      ctx.stroke();
+    }
 
-        ctx.globalAlpha = m * 0.92;
-        ctx.strokeStyle = s.color;
-        ctx.lineWidth = 2.2;
-        ctx.beginPath();
-        ctx.moveTo(toX(s.cx - 0.14), toY(s.cy - 0.092));
-        ctx.lineTo(toX(s.cx + 0.14), toY(s.cy + 0.092));
-        ctx.stroke();
-
-        ctx.font = '600 12px "Manrope", "PingFang SC", sans-serif';
-        ctx.fillStyle = s.color;
-        ctx.fillText(s.name, toX(s.cx - 0.08), toY(s.cy - 0.135));
-        ctx.restore();
+    ctx.globalAlpha = 1 - mix * 0.8;
+    ctx.strokeStyle = "#a6482e";
+    ctx.lineWidth = 2;
+    ctx.setLineDash([5, 4]);
+    drawFit(pooledFit, 0.08, 0.94);
+    ctx.setLineDash([]);
+    if (mix > 0) {
+      ctx.globalAlpha = mix;
+      strata.forEach((group, i) => {
+        ctx.strokeStyle = group.color;
+        drawFit(groupFits[i], group.x - 0.15, group.x + 0.15);
+        ctx.fillStyle = group.color;
+        ctx.fillText(group.name, xAt(group.x) - 10, yAt(group.y - 0.15));
       });
     }
-
-    // Data points
-    regPoints.forEach((pt) => {
-      const x = toX(pt.nx);
-      const y = toY(pt.ny);
+    ctx.globalAlpha = 0.83;
+    points.forEach((p) => {
+      ctx.fillStyle = mix > 0.35 ? strata[p.index].color : "#334a37";
       ctx.beginPath();
-      ctx.arc(x, y, 4.6, 0, Math.PI * 2);
-      ctx.fillStyle = m > 0.35 ? strata[pt.group].color : "#374c53";
-      ctx.globalAlpha = 0.86;
+      ctx.arc(xAt(p.x), yAt(p.y), width < 420 ? 3.3 : 4.1, 0, Math.PI * 2);
       ctx.fill();
-      ctx.globalAlpha = 1;
     });
+    ctx.restore();
   }
 
   drawRegressionStatic = () => {
-    getRegSurface().resize();
-    renderRegression();
+    if (motionQuery.matches) {
+      fitTween?.kill();
+      view.mix = Number(view.grouped);
+    }
+    surface().resize();
+    drawRegression();
   };
 
-  function toggleStratified() {
-    regState.stratified = !regState.stratified;
-    const active = regState.stratified;
-
-    if (regressionToggleBtn) {
-      regressionToggleBtn.setAttribute("aria-pressed", String(active));
-      const labelSpan = $(".btn-label", regressionToggleBtn);
-      if (labelSpan) {
-        labelSpan.textContent = active ? "回到混合样本视角" : "引入分组控制变量";
-      }
-    }
-
-    if (regressionReadout) {
-      regressionReadout.textContent = active
-        ? "控制分组变量后：三个子群内部的真实斜率全部反转向下（辛普森悖论），机制与表象截然不同。"
-        : "当前为混合样本回归：忽略个体异质性时，整体拟合线呈现明显的正向趋势。";
-    }
-
-    regTween?.kill();
+  function toggleGrouping() {
+    view.grouped = !view.grouped;
+    regressionToggleBtn.setAttribute("aria-pressed", String(view.grouped));
+    $(".btn-label", regressionToggleBtn).textContent = view.grouped ? "合在一起看" : "分组看样本";
+    regressionReadout.textContent = view.grouped
+      ? "三组的拟合线都向下。这是一个辛普森悖论的例子。"
+      : "现在显示全部样本的拟合线。";
+    fitTween?.kill();
     if (motionQuery.matches) {
-      regState.mix = active ? 1 : 0;
-      renderRegression();
+      view.mix = Number(view.grouped);
+      drawRegression();
     } else {
-      regTween = gsap.to(regState, {
-        mix: active ? 1 : 0,
-        duration: 0.62,
-        ease: "power3.inOut",
-        onUpdate: renderRegression,
-      });
+      fitTween = gsap.to(view, { mix: Number(view.grouped), duration: 0.38, onUpdate: drawRegression });
     }
   }
 
-  regressionToggleBtn?.addEventListener("click", toggleStratified);
-  regressionCanvas.addEventListener("click", toggleStratified);
-  renderRegression();
+  regressionToggleBtn.addEventListener("click", toggleGrouping);
+  regressionCanvas.addEventListener("click", toggleGrouping);
+  drawRegression();
 }
 
 /* --- Lens 2: Harmonic Strings & Waveform Canvas --- */
@@ -1399,7 +882,7 @@ let updateMusicButtonState = () => {};
 if (musicCanvas) {
   let tempoValue = 58;
   let musicPaused = false;
-  let musicInView = false;
+  let musicInView = !("IntersectionObserver" in window);
   let musicTicking = false;
   let wavePhase = 1.4;
   let pluckBoost = 0;
@@ -1417,7 +900,7 @@ if (musicCanvas) {
 
     if (!motionQuery.matches && dt > 0) {
       wavePhase += dt * (tempoValue / 24);
-      pluckBoost *= 0.94;
+      pluckBoost *= Math.exp(-dt * 4);
     }
 
     const midY = height * 0.5;
@@ -1442,7 +925,7 @@ if (musicCanvas) {
         localBoost;
 
       const x = padX + i * step;
-      ctx.fillStyle = "rgba(37, 114, 117, 0.13)";
+      ctx.fillStyle = "rgba(80, 99, 75, 0.15)";
       ctx.beginPath();
       ctx.roundRect(x - 2.5, midY - amp * 0.5, 5, amp, 3);
       ctx.fill();
@@ -1450,9 +933,9 @@ if (musicCanvas) {
 
     // Three layered harmonic strings
     const ribbons = [
-      { color: "#dd5a2c", alpha: 0.85, freq: 2.2, amp: 0.18, speed: 1.0, width: 2.2 },
-      { color: "#257275", alpha: 0.72, freq: 3.1, amp: 0.13, speed: -0.75, width: 1.8 },
-      { color: "#243840", alpha: 0.35, freq: 1.5, amp: 0.09, speed: 0.5, width: 1.3 },
+      { color: "#a6482e", alpha: 0.85, freq: 2.2, amp: 0.18, speed: 1.0, width: 2.2 },
+      { color: "#50634b", alpha: 0.72, freq: 3.1, amp: 0.13, speed: -0.75, width: 1.8 },
+      { color: "#243c30", alpha: 0.35, freq: 1.5, amp: 0.09, speed: 0.5, width: 1.3 },
     ];
 
     ribbons.forEach((rb) => {
@@ -1523,8 +1006,8 @@ if (musicCanvas) {
       labelSpan.textContent = motionQuery.matches
         ? "已随系统设置保持静止"
         : musicPaused
-          ? "继续律动画面"
-          : "暂停律动画面";
+          ? "继续律动"
+          : "暂停律动";
     }
     if (iconSpan) {
       iconSpan.textContent = isStopped ? "▶" : "Ⅱ";
@@ -1539,7 +1022,7 @@ if (musicCanvas) {
     }
     if (tempoOutput) tempoOutput.textContent = `${tempoValue} BPM`;
     tempoPresetBtns.forEach((btn) => {
-      btn.classList.toggle("is-active", Number(btn.dataset.tempoPreset) === tempoValue);
+      btn.setAttribute("aria-pressed", String(Number(btn.dataset.tempoPreset) === tempoValue));
     });
     if (motionQuery.matches || musicPaused) {
       wavePhase = tempoValue / 14;
@@ -1558,11 +1041,25 @@ if (musicCanvas) {
     syncMusicLoop();
   });
 
-  musicCanvas.addEventListener("pointermove", (event) => {
+  function pluck(x) {
+    pluckX = Math.min(1, Math.max(0, x));
+    pluckBoost = Math.min(1.1, pluckBoost + 0.42);
+    if (musicPaused || motionQuery.matches) wavePhase += 0.31;
+    renderMusic(0);
+  }
+  function pluckAtPointer(event) {
     const rect = musicCanvas.getBoundingClientRect();
-    pluckX = Math.min(1, Math.max(0, (event.clientX - rect.left) / rect.width));
-    pluckBoost = Math.min(1.1, pluckBoost + 0.24);
-    if (motionQuery.matches || musicPaused) renderMusic(0);
+    pluck((event.clientX - rect.left) / rect.width);
+  }
+  musicCanvas.addEventListener("pointerdown", pluckAtPointer);
+  musicCanvas.addEventListener("pointermove", (event) => {
+    if (!motionQuery.matches && !musicPaused && event.pointerType !== "touch") pluckAtPointer(event);
+  });
+  musicCanvas.addEventListener("keydown", (event) => {
+    if (event.key === " " || event.key === "Enter") {
+      event.preventDefault();
+      pluck(0.5);
+    }
   });
 
   if ("IntersectionObserver" in window) {
@@ -1617,6 +1114,7 @@ if (courtCanvas) {
     },
   };
 
+  let target = null;
   let currentShotKey = "clear";
   let activeSegments = rallies.clear.shots;
   const shuttleState = { segIndex: 0, segT: 1, completed: true };
@@ -1643,18 +1141,10 @@ if (courtCanvas) {
     ctx.clearRect(0, 0, width, height);
     const box = getCourtBox(width, height);
 
-    // Court surface mat
     ctx.save();
-    ctx.fillStyle = "#e2ece8";
-    ctx.beginPath();
-    ctx.roundRect(box.x - 14, box.y - 14, box.w + 28, box.h + 28, 12);
-    ctx.fill();
-
-    ctx.fillStyle = "#d5e4df";
+    ctx.fillStyle = "#dce3d2";
     ctx.fillRect(box.x, box.y, box.w, box.h);
-
-    // Standard court geometry
-    ctx.strokeStyle = "rgba(24, 52, 54, 0.48)";
+    ctx.strokeStyle = "#758671";
     ctx.lineWidth = 1.4;
     ctx.strokeRect(box.x, box.y, box.w, box.h);
 
@@ -1689,7 +1179,7 @@ if (courtCanvas) {
     ctx.stroke();
 
     // Net line
-    ctx.strokeStyle = "#18262b";
+    ctx.strokeStyle = "#243c30";
     ctx.lineWidth = 2;
     ctx.setLineDash([5, 4]);
     ctx.beginPath();
@@ -1719,7 +1209,7 @@ if (courtCanvas) {
 
       // Draw full ghost path
       ctx.save();
-      ctx.strokeStyle = "rgba(37, 114, 117, 0.22)";
+      ctx.strokeStyle = "rgba(80, 99, 75, 0.27)";
       ctx.lineWidth = 1.4;
       ctx.setLineDash([4, 4]);
       ctx.beginPath();
@@ -1728,8 +1218,8 @@ if (courtCanvas) {
       ctx.stroke();
       ctx.setLineDash([]);
 
-      // Draw traveled glowing arc up to `eased`
-      ctx.strokeStyle = idx === shuttleState.segIndex || shuttleState.completed ? "#dd5a2c" : "rgba(221, 90, 44, 0.5)";
+      // Draw the portion of the trajectory already traveled.
+      ctx.strokeStyle = idx === shuttleState.segIndex || shuttleState.completed ? "#a6482e" : "rgba(166, 72, 46, 0.5)";
       ctx.lineWidth = 2.3;
       ctx.beginPath();
       const steps = 28;
@@ -1747,7 +1237,7 @@ if (courtCanvas) {
       if (progress >= 0.98) {
         ctx.beginPath();
         ctx.arc(ex, ey, 5.5, 0, Math.PI * 2);
-        ctx.strokeStyle = "rgba(221, 90, 44, 0.55)";
+        ctx.strokeStyle = "rgba(166, 72, 46, 0.55)";
         ctx.lineWidth = 1.5;
         ctx.stroke();
       }
@@ -1771,19 +1261,42 @@ if (courtCanvas) {
         // Shuttlecock cork + halo
         ctx.beginPath();
         ctx.arc(px, py, 11, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(221, 90, 44, 0.18)";
+        ctx.fillStyle = "rgba(166, 72, 46, 0.16)";
         ctx.fill();
 
         ctx.beginPath();
         ctx.arc(px, py, 4.8, 0, Math.PI * 2);
-        ctx.fillStyle = "#dd5a2c";
+        ctx.fillStyle = "#a6482e";
         ctx.fill();
       }
       ctx.restore();
     });
+    if (target) {
+      const [x, y] = toCourtXY(target);
+      ctx.save();
+      ctx.strokeStyle = "#243c30";
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.arc(x, y, 7, 0, Math.PI * 2);
+      ctx.moveTo(x - 12, y);
+      ctx.lineTo(x - 5, y);
+      ctx.moveTo(x + 5, y);
+      ctx.lineTo(x + 12, y);
+      ctx.moveTo(x, y - 12);
+      ctx.lineTo(x, y - 5);
+      ctx.moveTo(x, y + 5);
+      ctx.lineTo(x, y + 12);
+      ctx.stroke();
+      ctx.restore();
+    }
   }
 
   drawCourtStatic = () => {
+    if (motionQuery.matches) {
+      shuttleState.completed = true;
+      shuttleState.segT = 1;
+      shuttleState.segIndex = activeSegments.length - 1;
+    }
     getCourtSurface().resize();
     renderCourt();
   };
@@ -1837,175 +1350,123 @@ if (courtCanvas) {
   shotTypeBtns.forEach((btn) => {
     btn.addEventListener("click", () => {
       currentShotKey = btn.dataset.shotType || "clear";
-      shotTypeBtns.forEach((b) => b.classList.toggle("is-active", b === btn));
+      shotTypeBtns.forEach((item) => item.setAttribute("aria-pressed", String(item === btn)));
       const preset = rallies[currentShotKey] || rallies.clear;
       runRally(preset.shots, preset.label);
     });
   });
 
   rallyPlayBtn?.addEventListener("click", () => {
-    const preset = rallies[currentShotKey] || rallies.clear;
-    runRally(preset.shots, preset.label);
+    runRally(activeSegments, courtReadout.textContent);
   });
 
-  // Click anywhere on the court to hit directly to that target spot!
-  courtCanvas.addEventListener("click", (event) => {
+  function aimAtPointer(event) {
     const { width, height } = getCourtSurface();
     const box = getCourtBox(width, height);
     const rect = courtCanvas.getBoundingClientRect();
-    const mx = event.clientX - rect.left;
-    const my = event.clientY - rect.top;
+    const x = (event.clientX - rect.left - box.x) / box.w;
+    const y = (event.clientY - rect.top - box.y) / box.h;
+    target = x < 0 || x > 1 || y < 0 || y > 1 ? null : [x, y];
+    renderCourt();
+  }
 
-    const ux = Math.min(0.96, Math.max(0.04, (mx - box.x) / box.w));
-    const uy = Math.min(0.94, Math.max(0.06, (my - box.y) / box.h));
+  function hitTarget() {
+    if (!target) return;
+    const [x, y] = target;
+    const origin = x < 0.5 ? [0.78, 0.52] : [0.22, 0.52];
+    const depth = Math.abs(x - 0.5);
+    const zone = depth < 0.16 ? "网前" : depth > 0.34 ? "底线" : "中场";
+    shotTypeBtns.forEach((btn) => btn.setAttribute("aria-pressed", "false"));
+    runRally([{ from: origin, to: [x, y], loft: 0.08 + depth * 0.24 }], "这一拍落在" + zone + "。");
+  }
 
-    const fromRight = ux < 0.5;
-    const origin = fromRight ? [0.78, 0.52] : [0.22, 0.52];
-    const distFromNet = Math.abs(ux - 0.5);
-    const zoneLabel =
-      distFromNet < 0.16
-        ? "网前小球落点：轻巧过网，迫使对手上网挑球。"
-        : distFromNet > 0.34
-          ? "底线深区落点：充分拉开场地空间，到位干脆。"
-          : "中场结合部落点：追身平抽节奏紧凑。";
-
-    runRally(
-      [{ from: origin, to: [ux, uy], loft: 0.08 + distFromNet * 0.24 }],
-      zoneLabel,
-    );
+  courtCanvas.addEventListener("pointermove", (event) => {
+    if (event.pointerType !== "touch") aimAtPointer(event);
+  });
+  courtCanvas.addEventListener("click", (event) => {
+    aimAtPointer(event);
+    hitTarget();
+  });
+  courtCanvas.addEventListener("focus", () => {
+    target ??= [0.75, 0.5];
+    renderCourt();
+  });
+  function clearTarget() {
+    target = null;
+    renderCourt();
+  }
+  courtCanvas.addEventListener("pointerleave", clearTarget);
+  courtCanvas.addEventListener("blur", clearTarget);
+  courtCanvas.addEventListener("keydown", (event) => {
+    const directions = { ArrowLeft: [-0.08, 0], ArrowRight: [0.08, 0], ArrowUp: [0, -0.1], ArrowDown: [0, 0.1] };
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      target ??= [0.75, 0.5];
+      hitTarget();
+    } else if (directions[event.key]) {
+      event.preventDefault();
+      const [x, y] = target || [0.75, 0.5];
+      const [dx, dy] = directions[event.key];
+      target = [Math.max(0.02, Math.min(0.98, x + dx)), Math.max(0.02, Math.min(0.98, y + dy))];
+      renderCourt();
+    }
   });
 
   renderCourt();
 }
 
-/* Lens Switcher with Optional View Transitions */
-function applyLens(key) {
+function applyLens(key, animate = false) {
   currentLens = key;
   lensTabs.forEach((tab) => {
     const selected = tab.dataset.lensTab === key;
     tab.setAttribute("aria-selected", String(selected));
     tab.tabIndex = selected ? 0 : -1;
   });
-
   lensPanels.forEach((panel) => {
-    const selected = panel.dataset.lensPanel === key;
-    panel.hidden = !selected;
-    const stage = $(".lens-stage", panel);
-    if (stage) {
-      stage.style.viewTransitionName = selected ? "lens-visual" : "none";
-    }
+    panel.hidden = panel.dataset.lensPanel !== key;
   });
-
-  syncMusicLoop();
   if (key !== "court" && activeRallyTween) {
-    activeRallyTween.kill();
-    if (rallyPlayBtn) rallyPlayBtn.disabled = false;
+    activeRallyTween.progress(1).kill();
   }
+  syncMusicLoop();
 
-  requestAnimationFrame(() => {
-    if (key === "research") drawRegressionStatic();
-    if (key === "music") drawMusicStatic();
-    if (key === "court") drawCourtStatic();
-    ScrollTrigger.refresh();
-  });
+  const panel = document.getElementById("lens-panel-" + key);
+  if (key === "research") drawRegressionStatic();
+  if (key === "music") drawMusicStatic();
+  if (key === "court") drawCourtStatic();
+  if (animate && !motionQuery.matches) {
+    gsap.fromTo($(".lens-figure", panel), { opacity: 0.45 }, {
+      opacity: 1, duration: 0.24, overwrite: true, clearProps: "opacity",
+    });
+  }
 }
 
 function switchLens(tab) {
   const key = tab.dataset.lensTab;
-  if (!key || key === currentLens) return;
-
-  activeViewTransition?.skipTransition();
-  if (document.startViewTransition && !motionQuery.matches) {
-    activeViewTransition = document.startViewTransition(() => {
-      applyLens(key);
-    });
-    activeViewTransition.ready.catch(() => {});
-    activeViewTransition.finished.catch(() => {});
-  } else {
-    applyLens(key);
-    const targetPanel = $(`[data-lens-panel="${key}"]`);
-    if (targetPanel && !motionQuery.matches) {
-      gsap.fromTo(
-        targetPanel,
-        { opacity: 0, y: 10 },
-        { opacity: 1, y: 0, duration: 0.34, ease: "power2.out", clearProps: "opacity,transform" },
-      );
-    }
-  }
+  if (key && key !== currentLens) applyLens(key, true);
 }
 
-lensTabs.forEach((tab) => {
-  tab.addEventListener("click", () => switchLens(tab));
-});
+lensTabs.forEach((tab) => tab.addEventListener("click", () => switchLens(tab)));
 bindTabKeyboard(lensTabs, switchLens);
 applyLens("research");
 
-/* ==========================================================================
-   5. Entrance & Scroll-Linked Reveal Choreography
-   ========================================================================== */
-responsiveMedia.add("(prefers-reduced-motion: no-preference)", () => {
-  const heroLines = $$("#hero-title .reveal-line > span");
-  if (heroLines.length) {
-    gsap.from(heroLines, {
-      yPercent: 105,
-      duration: 0.85,
-      stagger: 0.1,
-      ease: "power3.out",
-      clearProps: "transform",
-    });
-  }
-
-  const revealBlocks = $$("[data-reveal]");
-  if (revealBlocks.length) {
-    ScrollTrigger.batch(revealBlocks, {
-      start: "top 90%",
-      once: true,
-      onEnter: (batch) => {
-        gsap.fromTo(
-          batch,
-          { opacity: 0, y: 24 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.72,
-            stagger: 0.08,
-            ease: "power3.out",
-            clearProps: "opacity,transform",
-          },
-        );
-      },
-    });
-  }
-});
-
 /* Live Reduced-Motion & Visibility Listeners */
 document.addEventListener("visibilitychange", () => {
-  syncHeroLoop();
-  syncNetworkLoop();
   syncMusicLoop();
 });
 
 motionQuery.addEventListener("change", () => {
   syncMotionMode();
   if (motionQuery.matches) {
-    activeViewTransition?.skipTransition();
-    agentTimeline?.kill();
-    if (agentReplayBtn) agentReplayBtn.disabled = false;
-    activeRallyTween?.kill();
+    if (agentTimeline?.isActive()) playAgentSimulation();
+    activeRallyTween?.progress(1).kill();
     if (rallyPlayBtn) rallyPlayBtn.disabled = false;
   }
   updateMusicButtonState();
-  syncHeroLoop();
-  syncNetworkLoop();
   syncMusicLoop();
-  renderHeroSnapshot();
   drawNetworkStatic();
   drawClusterStatic();
   drawRegressionStatic();
   drawMusicStatic();
   drawCourtStatic();
-  ScrollTrigger.refresh();
 });
-
-document.fonts?.ready.then(() => ScrollTrigger.refresh());
-window.addEventListener("load", () => ScrollTrigger.refresh(), { once: true });
