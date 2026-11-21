@@ -17,7 +17,7 @@
   font-size: 0.94rem;
 }
 .project-byline span {
-  color: var(--muted);
+  color: var(--secondary-heading);
   font: italic 1.25rem/1.2 var(--serif);
 }
 .project-heading-grid {
@@ -66,7 +66,7 @@
   border: 0;
   background: none;
   font: inherit;
-  color: var(--muted);
+  color: var(--secondary-heading);
 }
 .stage-tabs button::after {
   content: "";
@@ -160,7 +160,7 @@
   float: left;
   padding: 0.6em 0;
   margin-right: 0.3em;
-  color: var(--muted);
+  color: var(--secondary-heading);
 }
 .method-options button {
   padding: 0.6em 0;

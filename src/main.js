@@ -711,7 +711,7 @@ function showStage(index, { animate = true } = {}) {
 
   stageScenes.forEach((scene, sIdx) => {
     gsap.killTweensOf(scene);
-    gsap.set(scene, { clearProps: "opacity,transform" });
+    gsap.set(scene, { clearProps: "transform" });
     scene.hidden = sIdx !== index;
   });
 
@@ -726,8 +726,8 @@ function showStage(index, { animate = true } = {}) {
   if (changed && animate && !motionQuery.matches) {
     gsap.fromTo(
       stageScenes[index],
-      { opacity: 0, y: 10 },
-      { opacity: 1, y: 0, duration: 0.36, ease: "power2.out", clearProps: "opacity,transform" },
+      { y: 10 },
+      { y: 0, duration: 0.36, ease: "power2.out", clearProps: "transform" },
     );
   }
 }

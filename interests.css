@@ -13,7 +13,7 @@
 
 .notes-kicker {
   font: italic 1.45rem/1.1 var(--serif);
-  color: var(--muted);
+  color: var(--secondary-heading);
   margin: 0 0 0.8rem;
 }
 
@@ -71,6 +71,7 @@
 
 .lens-switcher button {
   position: relative;
+  color: var(--secondary-heading);
   padding-block: 0.65rem 0.8rem;
   font-size: 1.05rem;
   line-height: 1.45;

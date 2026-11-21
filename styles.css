@@ -90,9 +90,11 @@
 :root {
   --paper: #f5f3e9;
   --ink: #243c30;
+  --heading: #14291d;
+  --secondary-heading: #344c37;
   --muted: #59695b;
   --line: #c8ccbd;
-  --accent: #a6482e;
+  --accent: #7b3421;
   --serif: "Youka Serif", Georgia, "Songti SC", "Noto Serif CJK SC", serif;
   --sans: "DM Sans", "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
   --gutter: clamp(1.3rem, 5.7vw, 5.4rem);
@@ -106,6 +108,7 @@
 html { scroll-padding-top: calc(var(--header-h) + 1rem); }
 body { margin: 0; font-size: 1rem; line-height: 1.65; -webkit-font-smoothing: antialiased; }
 h1, h2, h3, h4, p, figure, ul, ol { margin: 0; }
+h1, h2, h3 { color: var(--heading); }
 p { line-break: strict; overflow-wrap: break-word; }
 a { color: inherit; text-decoration: none; }
 button, input { font: inherit; color: inherit; }
@@ -152,6 +155,7 @@ img, svg, canvas { display: block; max-width: 100%; }
 }
 .header-inner { min-height: var(--header-h); display: flex; align-items: center; }
 .brand {
+  color: var(--heading);
   display: inline-flex;
   align-items: flex-start;
   gap: .12em;
@@ -173,7 +177,7 @@ img, svg, canvas { display: block; max-width: 100%; }
   padding-left: 1.15rem;
   border-left: 1px solid var(--line);
   font: italic 1.22rem/1 var(--serif);
-  color: var(--muted);
+  color: var(--secondary-heading);
 }
 .primary-nav {
   display: flex;
@@ -239,7 +243,7 @@ img, svg, canvas { display: block; max-width: 100%; }
 .reveal-line > span { display: inline-block; }
 #hero-title .reveal-line + .reveal-line {
   padding-left: .22em;
-  color: #50654c;
+  color: var(--secondary-heading);
   white-space: nowrap;
 }
 .ink-period { color: var(--accent); }
@@ -315,7 +319,7 @@ img, svg, canvas { display: block; max-width: 100%; }
   gap: 3rem;
   padding-block: clamp(3.5rem, 7vw, 7rem);
 }
-.contact-label { font-size: 1rem; color: var(--muted); }
+.contact-label { font-size: 1rem; color: var(--secondary-heading); }
 #contact-title {
   font: 400 clamp(5.5rem, 8.6vw, 8.5rem)/.95 var(--serif);
   letter-spacing: -.06em;
@@ -395,6 +399,6 @@ img, svg, canvas { display: block; max-width: 100%; }
   .reveal-line + .reveal-line > span { animation-delay: .08s; }
 }
 @keyframes open-page {
-  from { opacity: .2; transform: translateY(.09em); }
-  to { opacity: 1; transform: translateY(0); }
+  from { transform: translateY(.09em); }
+  to { transform: translateY(0); }
 }
