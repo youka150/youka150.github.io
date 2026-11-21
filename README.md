@@ -1,6 +1,6 @@
 # youka.github.io
 
-Youka 的个人主页——围绕 AI 应用、开发者社区数据挖掘（[Community](https://github.com/youka150/community)）与回归实证分析构建的交互式个人空间。采用清透暖瓷与深海墨青视觉体系，结合原生 HTML5 Canvas 物理交互、GSAP / ScrollTrigger 与 Lenis 平滑滚动，直接发布于 GitHub Pages，无外部运行时 CDN 依赖。
+Youka 的个人手记，记录开发者社区分析项目 Community、回归实证研究、音乐与羽毛球。首页沿用山湖摄影、暖纸色和衬线标题，静态文件由 GitHub Pages 提供。
 
 ## 本地开发与构建
 
@@ -11,12 +11,13 @@ npm run dev
 ```
 
 - `index.html`：语义化页面结构、项目叙事与个人兴趣切面。
-- `styles.css`：设计令牌、响应式布局、毛玻璃导航与无障碍样式。
-- `src/main.js`：六组交互引擎（Hero 信号涟漪画布、有向加权影响力网络、PCA + KMeans 行为×语义融合投影、多步反思趋势 Agent 推演、辛普森悖论分层回归、谐波弦线与羽毛球场轨迹模拟）。
+- `styles.css` 定义全站排版、导航、山湖首图及响应式布局。
+- `src/main.js` 管理项目和手记中的图解、参数和键盘交互。项目页和手记的专属样式位于 `project.css` 与 `interests.css`。
+- `src/pointer.js` 与 `pointer.css` 提供照片取景与链接悬停反馈。原生锚点负责页面内导航。
 - `script.js`、`script.css`、`script.js.LEGAL.txt`：提交至仓库根目录供 GitHub Pages 直接加载的构建产物。
 - `scripts/build.mjs`：通过 esbuild 打包并为静态资源写入内容哈希版本号。
 
-> 修改 `src/main.js` 后请运行 `npm run build` 更新根目录 `script.js` 及 `index.html` 中的资源哈希。
+修改样式或交互源码后运行 `npm run build`，以刷新根目录的静态产物和资源哈希。
 
 ## 交互模块与对应工程依据
 
@@ -28,7 +29,7 @@ npm run dev
 | 02 融合画像 | 对比纯活跃频次视图与 384 维多语言句向量经 PCA + KMeans 融合后的群体分离 | `python/huawei_mining_service/services/clustering_service.py`、`bertopic_service.py` |
 | 03 趋势 Agent | 维度拆解 → 多源检索 → Reflection 证据自检补搜 → SSE 流式输出 | `src/lib/agents/TrendAgent.js`、`hotspot_service.py` |
 
-页面中的所有 Canvas 图形均为算法与概念交互示意，不连接后端数据库，也不展示虚构的实时业务数字。所有持续动画均通过 `IntersectionObserver`、`visibilitychange` 与 `prefers-reduced-motion` 按需启停；禁用 JavaScript 时全部正文仍可正常阅读。
+图中使用示例数据。项目的文字、图解、源码入口随所选方法一起切换。琴弦动画只在可见时运行，系统的减少动态效果偏好会同步生效。禁用 JavaScript 后，仍可阅读三个项目章节与三则手记。
 
 ## 自动化验证
 
