@@ -124,6 +124,18 @@ img, svg, canvas { display: block; max-width: 100%; }
   margin-inline: auto;
   padding-inline: var(--gutter);
 }
+.site-terrain {
+  position: fixed;
+  z-index: 1;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+main > section > .container, .notes-cover > .container, .site-footer > .container {
+  position: relative;
+  z-index: 2;
+}
 .sr-only {
   position: absolute;
   width: 1px;
@@ -430,6 +442,4 @@ img, svg, canvas { display: block; max-width: 100%; }
     to { clip-path: inset(0 0 100% 0); visibility: hidden; }
   }
   @keyframes uncover-signature { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0); } }
-  .notes-prints.is-entering { animation: uncover-print .8s cubic-bezier(.2,.7,.2,1) both; }
-  @keyframes uncover-print { from { clip-path: inset(0 0 86% 0); } to { clip-path: inset(-14% -6% -14% -6%); } }
 }

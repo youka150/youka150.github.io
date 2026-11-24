@@ -30,108 +30,41 @@ export function openJournal() {
     timeline.to("#hero-title", {scale: .86, transformOrigin: "left center", ease: "none"}, 0)
       .to(".hero-photo", {yPercent: 12, rotation: -1.8, ease: "none"}, 0)
       .to(".photo-negative", {scale: 1.16, yPercent: -2, ease: "none"}, 0);
-    const print = document.querySelector(".notes-prints");
-    const observer = new IntersectionObserver(entries => {
-      if (entries.some(entry => entry.isIntersecting)) {
-        print.classList.add("is-entering");
-        observer.disconnect();
-      }
-    }, {threshold: .18});
-    observer.observe(print);
-    return () => { observer.disconnect(); print.classList.remove("is-entering"); };
+    const travel = () => innerWidth > 760 ? 58 : 19;
+    for (const note of document.querySelectorAll(".notes-stories .lens-panel")) {
+      const print = note.querySelector(".note-print");
+      const image = print.querySelector("img");
+      gsap.timeline({
+        defaults: { ease: "none" },
+        scrollTrigger: {
+          trigger: note,
+          start: "top bottom",
+          end: "bottom top",
+          scrub: 0.45,
+          invalidateOnRefresh: true,
+        },
+      })
+        .fromTo(print,
+          { "--print-offset": () => `${travel()}px` },
+          { "--print-offset": () => `${-travel()}px` }, 0,
+        )
+        .fromTo(image, { yPercent: -7 }, { yPercent: 7 }, 0);
+    }
   });
 }
 
-export function setupNotebook(choose) {
-  const cover = document.querySelector(".notes-cover");
-  const list = cover.querySelector(".lens-switcher");
-  const tabs = [...list.querySelectorAll("button")];
-  const track = cover.querySelector(".print-track");
-  const prints = [...track.querySelectorAll("[data-print]")];
-  const preview = cover.querySelector(".print-preview");
-  const hover = matchMedia("(any-hover: hover) and (any-pointer: fine)");
-  const motion = matchMedia("(prefers-reduced-motion: no-preference)");
-  const marker = document.createElement("span");
-  marker.className = "tab-marker";
-  marker.setAttribute("aria-hidden", "true");
-  list.append(marker);
-  list.classList.add("has-marker");
-  let index = 0;
-  let timer;
-  let browsing = false;
-
-  function mark(i) {
-    marker.style.width = tabs[i].offsetWidth + "px";
-    marker.style.transform = "translateX(" + tabs[i].offsetLeft + "px)";
-  }
-  function restore() {
-    preview.hidden = true;
-    mark(index);
-  }
-  tabs.forEach((tab, i) => {
-    tab.addEventListener("pointerenter", event => {
-      if (event.pointerType === "touch" || !hover.matches) return;
-      mark(i);
-      if (i === index) { preview.hidden = true; return; }
-      preview.src = prints[i].src;
-      preview.hidden = false;
-    });
+export function setupSoundtrack() {
+  const audio = document.querySelector("#soundtrack-audio");
+  const select = document.querySelector("#soundtrack-track");
+  const source = document.querySelector("#soundtrack-source");
+  select.hidden = false;
+  select.addEventListener("change", () => {
+    const track = select.selectedOptions[0];
+    const wasPlaying = !audio.paused;
+    audio.src = track.value;
+    source.href = track.dataset.source;
+    if (wasPlaying) audio.play().catch(() => {});
   });
-  list.addEventListener("pointerleave", restore);
-  hover.addEventListener("change", restore);
-  const left = i => Math.min(
-    prints[i].offsetLeft - prints[0].offsetLeft,
-    track.scrollWidth - track.clientWidth,
-  );
-  function sync(key) {
-    index = prints.findIndex(print => print.dataset.print === key);
-    browsing = false;
-    clearTimeout(timer);
-    track.scrollLeft = left(index);
-    preview.style.left = (prints[index].offsetLeft - track.scrollLeft) + "px";
-    restore();
-  }
-  function settle() {
-    if (!browsing) return;
-    browsing = false;
-    let nearest = 0;
-    for (let i = 1; i < prints.length; i++) {
-      if (Math.abs(left(i) - track.scrollLeft) < Math.abs(left(nearest) - track.scrollLeft)) nearest = i;
-    }
-    choose(prints[nearest].dataset.print);
-  }
-  track.addEventListener("keydown", event => {
-    const next = {ArrowLeft: Math.max(0, index - 1), ArrowRight: Math.min(prints.length - 1, index + 1), Home: 0, End: prints.length - 1}[event.key];
-    if (next === undefined) return;
-    event.preventDefault();
-    choose(prints[next].dataset.print);
-  });
-  for (const event of ["pointerdown", "wheel"]) {
-    track.addEventListener(event, () => { browsing = true; }, {passive: true});
-  }
-  track.addEventListener("scroll", () => {
-    if (!browsing || "onscrollend" in track) return;
-    clearTimeout(timer);
-    timer = setTimeout(settle, 170);
-  }, {passive: true});
-  track.addEventListener("scrollend", settle);
-
-  function resetLight() {
-    cover.style.removeProperty("--light-x");
-    cover.style.removeProperty("--light-y");
-  }
-  cover.addEventListener("pointermove", event => {
-    if (event.pointerType === "touch" || !hover.matches || !motion.matches) return;
-    const rect = cover.getBoundingClientRect();
-    cover.style.setProperty("--light-x", (event.clientX - rect.left) + "px");
-    cover.style.setProperty("--light-y", (event.clientY - rect.top) + "px");
-  }, {passive: true});
-  cover.addEventListener("pointerleave", resetLight);
-  motion.addEventListener("change", resetLight);
-  const resize = new ResizeObserver(() => sync(prints[index].dataset.print));
-  resize.observe(track);
-  resize.observe(list);
-  return sync;
 }
 
 // Pin only when every method fits below the masthead, including at text zoom.
@@ -175,8 +108,12 @@ export function setupProjectReading(scenes, show) {
     if (!frame && distance) frame = requestAnimationFrame(read);
   }, {passive: true});
   window.addEventListener("resize", measure);
-  eligible.addEventListener("change", measure);
-  document.fonts.ready.then(measure);
+  function refreshReading() {
+    measure();
+    ScrollTrigger.refresh(true);
+  }
+  eligible.addEventListener("change", refreshReading);
+  document.fonts.ready.then(refreshReading);
   return index => {
     if (!distance) return;
     const start = window.scrollY + reader.getBoundingClientRect().top - top;

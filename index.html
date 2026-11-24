@@ -26,11 +26,12 @@
       type="font/woff2"
       crossorigin
     />
-    <link rel="stylesheet" href="./styles.css?v=3045f3c63993" />
-    <link rel="stylesheet" href="./script.css?v=b1587aa0cb55" />
-    <script type="module" src="./script.js?v=f1cef85c061d"></script>
+    <link rel="stylesheet" href="./styles.css?v=27adf6030568" />
+    <link rel="stylesheet" href="./script.css?v=96146b486e94" />
+    <script type="module" src="./script.js?v=8fa3e3f84e66"></script>
   </head>
   <body>
+    <canvas id="site-terrain" class="site-terrain" width="1" height="1" aria-hidden="true"></canvas>
     <div class="opening-cover" aria-hidden="true"><span>youka<i>✳</i></span></div>
     <a id="skip-to-main" class="skip-link" href="#main">跳到主要内容</a>
 
@@ -239,32 +240,27 @@
             <div class="perspectives-intro">
               <p class="notes-kicker" lang="en">Field notes</p>
               <h2 id="perspectives-title">日常手记<span>。</span></h2>
-              <p>做研究，听唱片，去球场。<br>左右滑动照片，或选一则手记。</p>
-              <div class="lens-switcher" role="tablist" aria-label="选择一则手记">
-                <button id="lens-tab-research" type="button" role="tab" aria-selected="true"
-                  aria-controls="lens-panel-research" data-lens-tab="research">做研究</button>
-                <button id="lens-tab-music" type="button" role="tab" aria-selected="false" tabindex="-1"
-                  aria-controls="lens-panel-music" data-lens-tab="music">听音乐</button>
-                <button id="lens-tab-court" type="button" role="tab" aria-selected="false" tabindex="-1"
-                  aria-controls="lens-panel-court" data-lens-tab="court">打羽毛球</button>
-              </div>
+              <p>做研究，听唱片，去球场。</p>
             </div>
-            <div class="notes-prints">
-              <div class="print-track" role="group" aria-label="手记配图，可用左右方向键翻动" tabindex="0">
-                <img src="./assets/notes-research.webp" data-print="research" width="512" height="1024" loading="lazy" alt="树影落在画有散点图的笔记本上">
-                <img src="./assets/notes-music.webp" data-print="music" width="512" height="1024" loading="lazy" alt="唱针和唱片上的一道斜光">
-                <img src="./assets/notes-court.webp" data-print="court" width="512" height="1024" loading="lazy" alt="羽毛球停在绿色场地的白线旁">
-              </div>
-              <img class="print-preview" alt="" hidden>
-            </div>
+            <nav class="notes-index" aria-label="日常手记目录">
+              <a href="#lens-panel-research">做研究 <span aria-hidden="true">↘</span></a>
+              <a href="#lens-panel-music">听音乐 <span aria-hidden="true">↘</span></a>
+              <a href="#lens-panel-court">打羽毛球 <span aria-hidden="true">↘</span></a>
+            </nav>
           </header>
         </div>
-        <div class="container">
-          <div class="lens-panels">
-            <section id="lens-panel-research" class="lens-panel" role="tabpanel"
-              aria-labelledby="lens-tab-research" data-lens-panel="research">
+        <div class="container notes-stories">
+          <article id="lens-panel-research" class="lens-panel" aria-labelledby="research-note-title">
+            <figure class="note-print">
+              <div class="print-frame">
+                <img src="./assets/notes-research.webp" width="512" height="1024" loading="lazy" decoding="async"
+                  alt="树影落在画有散点图的笔记本上">
+              </div>
+              <figcaption>研究手记</figcaption>
+            </figure>
+            <div class="note-story">
               <div class="lens-copy">
-                <h3>一张图里的两种趋势</h3>
+                <h3 id="research-note-title">一张图里的两种趋势</h3>
                 <p>做回归时，我常问一句：如果把样本分开看呢？这张散点图里，所有点合起来向上，分开之后，三组的趋势却都向下。</p>
                 <div class="lens-controls">
                   <button id="regression-toggle-btn" class="note-action" type="button" aria-pressed="false">
@@ -280,15 +276,49 @@
                 </div>
                 <figcaption>回归笔记 · 模拟样本</figcaption>
               </figure>
-            </section>
+            </div>
+          </article>
 
-            <section id="lens-panel-music" class="lens-panel" role="tabpanel"
-              aria-labelledby="lens-tab-music" data-lens-panel="music">
+          <article id="lens-panel-music" class="lens-panel" aria-labelledby="music-note-title">
+            <figure class="note-print">
+              <div class="print-frame">
+                <img src="./assets/notes-music.webp" width="512" height="1024" loading="lazy" decoding="async"
+                  alt="唱针和唱片上的一道斜光">
+              </div>
+              <figcaption>唱片一角</figcaption>
+            </figure>
+            <div class="note-story">
               <div class="lens-copy">
-                <h3>给耳朵放个假</h3>
-                <p>写代码写累了，我会戴上耳机听几首歌。这里把节奏画成了弦线，拨一下，看看它们怎么起伏。</p>
+                <h3 id="music-note-title">给耳朵放个假</h3>
+                <p>写代码写累了，我会戴上耳机听几首歌。</p>
+              </div>
+              <div class="note-player" role="group" aria-labelledby="soundtrack-title">
+                <h4 id="soundtrack-title">手记配乐</h4>
+                <label class="sr-only" for="soundtrack-track">选择曲目</label>
+                <select id="soundtrack-track" hidden>
+                  <option value="./assets/audio/meditation-impromptu-01.mp3"
+                    data-source="https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100163">Meditation Impromptu 01 · 钢琴</option>
+                  <option value="./assets/audio/windswept.mp3"
+                    data-source="https://incompetech.com/music/royalty-free/index.html?Search=Search&amp;isrc=USUAN1100757">Windswept · 吉他与弦乐</option>
+                </select>
+                <noscript><p class="soundtrack-credit" lang="en">Meditation Impromptu 01</p></noscript>
+                <audio id="soundtrack-audio" controls preload="none" aria-label="手记配乐播放器"
+                  src="./assets/audio/meditation-impromptu-01.mp3"></audio>
+                <p class="soundtrack-credit">
+                  <a id="soundtrack-source" href="https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100163" lang="en">Kevin MacLeod (Incompetech)</a>
+                  <span aria-hidden="true"> · </span><a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>
+                </p>
+              </div>
+              <div class="note-illustration">
+                <figure class="lens-figure">
+                  <div class="lens-stage">
+                    <canvas id="music-canvas" width="660" height="330" role="button" tabindex="0"
+                      aria-label="拨动弦线，可轻点或按回车、空格" aria-describedby="music-caption"></canvas>
+                  </div>
+                  <figcaption id="music-caption">滑过或轻点弦线，试试拨弦。</figcaption>
+                </figure>
                 <div class="lens-controls">
-                  <div class="note-options" role="group" aria-label="选择速度">
+                  <div class="note-options" role="group" aria-label="选择弦线速度">
                     <button id="tempo-slow" type="button" data-tempo-preset="32" aria-pressed="false">慢板</button>
                     <button id="tempo-mid" type="button" data-tempo-preset="58" aria-pressed="true">舒缓</button>
                     <button id="tempo-bright" type="button" data-tempo-preset="86" aria-pressed="false">轻快</button>
@@ -298,23 +328,24 @@
                     <output id="tempo-output" for="tempo-slider">58 BPM</output>
                   </div>
                   <button id="music-toggle-btn" class="note-action" type="button" aria-pressed="false">
-                    <span class="btn-icon" aria-hidden="true">Ⅱ</span><span class="btn-label">暂停律动</span>
+                    <span class="btn-icon" aria-hidden="true">Ⅱ</span><span class="btn-label">暂停弦线</span>
                   </button>
                 </div>
               </div>
-              <figure class="lens-figure">
-                <div class="lens-stage">
-                  <canvas id="music-canvas" width="660" height="330" role="button" tabindex="0"
-                    aria-label="拨动弦线，可轻点或按回车、空格" aria-describedby="music-caption"></canvas>
-                </div>
-                <figcaption id="music-caption">滑过或轻点弦线拨弦 · 纯视觉，无声音</figcaption>
-              </figure>
-            </section>
+            </div>
+          </article>
 
-            <section id="lens-panel-court" class="lens-panel" role="tabpanel"
-              aria-labelledby="lens-tab-court" data-lens-panel="court">
+          <article id="lens-panel-court" class="lens-panel" aria-labelledby="court-note-title">
+            <figure class="note-print">
+              <div class="print-frame">
+                <img src="./assets/notes-court.webp" width="512" height="1024" loading="lazy" decoding="async"
+                  alt="羽毛球停在绿色场地的白线旁">
+              </div>
+              <figcaption>球场一角</figcaption>
+            </figure>
+            <div class="note-story">
               <div class="lens-copy">
-                <h3>再接一拍</h3>
+                <h3 id="court-note-title">再接一拍</h3>
                 <p>打羽毛球时，要顾的事很具体：看球、挪步、接住下一拍。选一条球路，或者在场地图上给自己挑个落点。</p>
                 <div class="lens-controls">
                   <div class="note-options" role="group" aria-label="选择球路">
@@ -333,8 +364,8 @@
                 </div>
                 <figcaption id="court-caption">点选落点发球 · 也可用方向键选点，回车击球</figcaption>
               </figure>
-            </section>
-          </div>
+            </div>
+          </article>
         </div>
       </section>
 

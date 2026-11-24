@@ -14,7 +14,8 @@ npm run dev
 - `styles.css` 定义全站排版、导航、山湖首图及响应式布局。
 - `src/main.js` 管理项目和手记中的图解、参数和键盘交互。项目页和手记的专属样式位于 `project.css` 与 `interests.css`。
 - `src/pointer.js` 与 `pointer.css` 提供照片取景与链接悬停反馈。原生锚点负责页面内导航。能完整放下图文的宽屏按滚动位置切换三种方法，点击标签也能直接定位。
-- `src/journal.js` 控制首次开场、滚动视差、手记照片的分段滑动、悬停预览与共用指示线。手记里的研究笔记、唱片和羽毛球照片为生成的情境配图。
+- `src/journal.js` 控制首次开场、首图和手记照片的滚动视差，以及配乐选曲。三则手记按自然滚动阅读，研究笔记、唱片和羽毛球照片沿用生成的情境配图。
+- `src/terrain.js` 绘制全站背景等高线。桌面指针会拨动等高线并留下逐渐消散的波纹。触屏与减少动态效果模式使用静态底图。
 - `script.js`、`script.css`、`script.js.LEGAL.txt`：提交至仓库根目录供 GitHub Pages 直接加载的构建产物。
 - `scripts/build.mjs`：通过 esbuild 打包并为静态资源写入内容哈希版本号。
 
@@ -31,6 +32,13 @@ npm run dev
 | 03 趋势 Agent | 维度拆解 → 多源检索 → Reflection 证据自检补搜 → SSE 流式输出 | `src/lib/agents/TrendAgent.js`、`hotspot_service.py` |
 
 图中使用示例数据。项目的文字、图解、源码入口随所选方法一起切换。琴弦动画只在可见时运行，系统的减少动态效果偏好会同步生效。禁用 JavaScript 后，仍可阅读三个项目章节与三则手记。
+
+## 手记配乐
+
+两首曲目由 Kevin MacLeod (Incompetech) 创作，采用 [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)。站内文件为完整曲目，重新编码为 96 kbps MP3。播放器按需加载，访客点击播放后才会出声。
+
+- [Meditation Impromptu 01](https://www.incompetech.com/music/royalty-free/index.html?isrc=USUAN1100163)
+- [Windswept](https://incompetech.com/music/royalty-free/index.html?Search=Search&isrc=USUAN1100757)
 
 ## 自动化验证
 
