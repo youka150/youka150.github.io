@@ -20,11 +20,15 @@ try {
   ]) {
     await page.setViewportSize({ width, height });
     await page.evaluate(() => scrollTo(0, 0));
-    await page.screenshot({ path: `.test-results/${name}-hero.png` });
+    await page.locator("#site-header.over-landscape").waitFor();
+    await page.screenshot({ path: `.test-results/${name}-hero.png`, animations: "disabled" });
     await page.screenshot({
       path: `.test-results/${name}-full.png`,
       fullPage: true,
     });
+    await page.locator("#field-intro").evaluate(el => el.scrollIntoView({ behavior: "instant" }));
+    await page.locator("#site-header:not(.over-landscape)").waitFor();
+    await page.screenshot({ path: `.test-results/${name}-field.png`, animations: "disabled" });
     console.log(
       JSON.stringify({
         viewport: name,

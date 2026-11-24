@@ -2,34 +2,30 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 export function openJournal() {
-  const root = document.documentElement;
-  if (root.classList.contains("open-cover")) {
-    const cover = document.querySelector(".opening-cover");
-    const stop = new AbortController();
-    function dismiss() {
-      root.classList.remove("open-cover", "cover-ready");
-      stop.abort();
-    }
-    cover.addEventListener("animationend", event => {
-      if (event.animationName === "lift-cover") dismiss();
-    }, {signal: stop.signal});
-    for (const event of ["keydown", "pointerdown", "wheel", "pagehide"]) {
-      window.addEventListener(event, dismiss, {once: true, passive: true, signal: stop.signal});
-    }
-    matchMedia("(prefers-reduced-motion: reduce)").addEventListener("change", dismiss, {signal: stop.signal});
-    Promise.allSettled([document.fonts.ready, document.querySelector(".photo-frame img").decode()]).then(() => {
-      if (!stop.signal.aborted) root.classList.add("cover-ready");
-    });
+  const cover = document.querySelector("#top");
+  const header = document.querySelector("#site-header");
+
+  function syncMasthead() {
+    header.classList.toggle("over-landscape", cover.getBoundingClientRect().bottom > header.offsetHeight);
   }
+  syncMasthead();
+  window.addEventListener("scroll", syncMasthead, { passive: true });
+  window.addEventListener("resize", syncMasthead);
+  window.addEventListener("pageshow", syncMasthead);
 
   gsap.registerPlugin(ScrollTrigger);
   gsap.matchMedia().add("(prefers-reduced-motion: no-preference)", () => {
-    const timeline = gsap.timeline({
-      scrollTrigger: {trigger: ".hero", start: "top top", end: "bottom top", scrub: true}
+    // A ripple crosses the lake as the paper spread rises into view.
+    const crossing = gsap.timeline({
+      defaults: { ease: "none" },
+      scrollTrigger: { trigger: cover, start: "top top", end: "bottom top", scrub: true },
     });
-    timeline.to("#hero-title", {scale: .86, transformOrigin: "left center", ease: "none"}, 0)
-      .to(".hero-photo", {yPercent: 12, rotation: -1.8, ease: "none"}, 0)
-      .to(".photo-negative", {scale: 1.16, yPercent: -2, ease: "none"}, 0);
+    crossing.to(".photo-negative", { scale: 1.19, yPercent: 7, duration: 1 }, 0)
+      .to("#hero-title", { yPercent: -38, opacity: 0, duration: .55 }, 0)
+      .to(".cover-greeting", { y: -18, opacity: 0, duration: .24 }, 0)
+      .fromTo(".lake-rings", { scale: .12 }, { scale: 3.6, duration: .85 }, .015)
+      .to(".lake-rings", { opacity: .68, duration: .18 }, .015)
+      .to(".lake-rings", { opacity: 0, duration: .48 }, .25);
     const travel = () => innerWidth > 760 ? 58 : 19;
     for (const note of document.querySelectorAll(".notes-stories .lens-panel")) {
       const print = note.querySelector(".note-print");
