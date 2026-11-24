@@ -94,8 +94,8 @@ function setupMagneticLink(link) {
   link.addEventListener("pointermove", (event) => {
     if (event.pointerType === "touch" || !fineHover.matches) return;
     const point = pointIn(link, event);
-    mark.style.setProperty("--magnet-x", `${(point.x - 0.5) * 6}px`);
-    mark.style.setProperty("--magnet-y", `${(point.y - 0.5) * 4}px`);
+    mark.style.setProperty("--magnet-x", `${(point.x - 0.5) * 12}px`);
+    mark.style.setProperty("--magnet-y", `${(point.y - 0.5) * 8}px`);
   });
   const reset = () => {
     mark.style.removeProperty("--magnet-x");

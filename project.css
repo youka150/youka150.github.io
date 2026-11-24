@@ -290,28 +290,17 @@
   content: "+";
   font: 1.6rem/1 var(--serif);
 }
-.project-build[open] summary::after {
-  content: "−";
-}
 .project-build summary::-webkit-details-marker {
   display: none;
 }
-.project-build dl {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(1.25rem, 3.3vw, 4rem);
-  margin: 0;
-  padding: 0.75rem 0 1.75rem;
+.project-build h3 {
+  font: 500 clamp(1.5rem, 2.8vw, 2.25rem)/1.4 var(--serif);
+  margin: 1.45rem 0 1rem;
 }
-.project-build dt {
-  color: var(--ink);
-  font-weight: 600;
-}
-.project-build dd {
-  margin: 0.4rem 0 0;
-  color: var(--muted);
-  line-height: 1.75;
-}
+.project-build details { border-top: 1px solid var(--line); }
+.project-build details[open] summary { color: var(--accent); }
+.project-build details[open] summary::after { content: "−"; }
+.project-build details p { max-width: 46em; margin: 0 0 1.25rem; line-height: 1.85; }
 html:not(.js) .stage-tabs,
 html:not(.js) .method-demo {
   display: none;
@@ -363,9 +352,6 @@ html:not(.js) .method-note {
   }
 }
 @media (max-width: 560px) {
-  .project-build dl {
-    grid-template-columns: 1fr;
-  }
   .method-options {
     column-gap: 0.9em;
   }
@@ -377,4 +363,30 @@ html:not(.js) .method-note {
 
 @media (max-width: 800px) {
   html:not(.js) .method-heading { margin-bottom: .75em; }
+}
+
+@supports (interpolate-size: allow-keywords) {
+  @media (prefers-reduced-motion: no-preference) {
+    .project-build details { interpolate-size: allow-keywords; }
+    .project-build details::details-content {
+      overflow: clip;
+      block-size: 0;
+      transition: block-size .28s ease, content-visibility .28s allow-discrete;
+    }
+    .project-build details[open]::details-content { block-size: auto; }
+  }
+}
+
+.project-reader.pinned-reader { height: calc(var(--reader-page) + var(--reader-distance)); }
+.pinned-reader .stage-panel {
+  position: sticky;
+  top: var(--reader-top);
+  min-height: var(--reader-page);
+}
+.pinned-reader .stage-tabs::after {
+  content: "滚动阅读，或点选方法";
+  align-self: center;
+  margin-left: auto;
+  font-size: .825rem;
+  color: var(--secondary-heading);
 }

@@ -1,6 +1,6 @@
 .perspectives-section {
   color: var(--ink);
-  padding-block: clamp(3rem, 7vw, 7rem);
+  padding-bottom: clamp(3rem, 7vw, 7rem);
 }
 
 .perspectives-header {
@@ -38,14 +38,6 @@
   font-size: 1rem;
   line-height: 1.9;
   margin: 0;
-}
-
-.notes-forest {
-  width: 100%;
-  height: clamp(10rem, 17vw, 17rem);
-  display: block;
-  object-fit: cover;
-  object-position: 50% 58%;
 }
 
 .lens-switcher {
@@ -191,7 +183,6 @@
 
 @media (max-width: 760px) {
   .perspectives-header { grid-template-columns: 1fr; gap: 1.5rem; }
-  .notes-forest { height: clamp(7.25rem, 30vw, 12.5rem); }
   .lens-panel { grid-template-columns: 1fr; gap: 1.1rem; }
   .lens-stage { aspect-ratio: 1.95; }
   .lens-switcher { gap: 1.8rem; }
@@ -203,3 +194,99 @@ html:not(.js) .lens-controls,
 html:not(.js) .lens-figure { display: none; }
 html:not(.js) .lens-panel { display: block; border-top: 1px solid var(--line); padding-block: 1.75rem; }
 html:not(.js) .lens-copy > p { max-width: 44em; }
+
+.notes-cover {
+  color: #f5f3e9;
+  background: radial-gradient(ellipse 36rem 27rem at var(--light-x, 69%) var(--light-y, 38%), #294736, transparent), #11291f;
+}
+.perspectives-header {
+  grid-template-columns: .95fr 1.05fr;
+  gap: clamp(2rem, 6vw, 6rem);
+  padding-block: clamp(3.5rem, 6vw, 6rem);
+  margin-bottom: 0;
+}
+.notes-cover h2 { color: #fff9e9; font-size: clamp(3.1rem, 6vw, 6rem); }
+.notes-cover h2 span { color: #f5d4a3; }
+.notes-cover .notes-kicker { color: #e2d9b9; }
+.notes-cover .perspectives-intro > p { color: #e7eddd; }
+.notes-cover .lens-switcher {
+  position: relative;
+  max-width: max-content;
+  margin-top: clamp(1.4rem, 3.5vw, 3rem);
+  border-color: #708477;
+}
+.notes-cover .lens-switcher button { color: #d1decf; }
+.notes-cover .lens-switcher button:is([aria-selected="true"], :hover, :focus-visible) { color: #fff8e8; }
+.notes-cover .lens-switcher button::after { background: #efb88e; }
+.lens-switcher.has-marker button::after { display: none; }
+.tab-marker {
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  height: 3px;
+  background: #efb88e;
+  pointer-events: none;
+  transition: transform .3s cubic-bezier(.2,.75,.25,1), width .3s;
+}
+.notes-cover :focus-visible { outline-color: #f2cd93; }
+.notes-prints {
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  max-width: 36rem;
+  justify-self: end;
+  margin-block: -.7rem -5rem;
+}
+.notes-prints::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 2% 3% -1%;
+  background: #aea98a;
+  transform: rotate(-3deg);
+}
+.print-track {
+  display: flex;
+  gap: .65rem;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  padding: .5rem;
+  background: #f5f3e9;
+  scrollbar-width: thin;
+  scrollbar-color: #677960 #f5f3e9;
+  scroll-padding-inline: .5rem;
+}
+.print-track img, .print-preview {
+  width: 78%;
+  height: clamp(15rem, 24vw, 22rem);
+  object-fit: cover;
+}
+.print-track img { flex: none; scroll-snap-align: start; }
+.print-track img:last-child { scroll-snap-align: end; }
+.print-preview {
+  position: absolute;
+  inset: .5rem auto auto .5rem;
+  width: calc((100% - 1rem) * .78);
+  pointer-events: none;
+}
+.lens-panels { padding-top: 2.4rem; }
+@media (max-width:760px) {
+  .perspectives-header { grid-template-columns: 1fr; padding-block: 2.5rem; }
+  .notes-prints { max-width: 32rem; justify-self: start; margin: 0 0 -3.65rem; }
+  .print-track img, .print-preview { height: clamp(12rem, 42vw, 17rem); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .print-preview:not([hidden]) { animation: turn-print .24s ease-out; }
+  @keyframes turn-print { from { clip-path: inset(0 90% 0 0); } to { clip-path: inset(0); } }
+}
+::view-transition-old(root), ::view-transition-new(root) { animation: none; }
+::view-transition-group(note-figure) { animation-duration: .35s; }
+.js .lens-panel:not([hidden]) .lens-figure { view-transition-name: note-figure; }
+.js .print-track { view-transition-name: note-print; }
+::view-transition { pointer-events: none; }
+::view-transition-group(note-print) { animation-duration: .35s; }
+::view-transition-new(note-print) { animation: turn-print .35s ease-out; }
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation-duration: .01ms !important; }
+}
