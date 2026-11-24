@@ -36,7 +36,32 @@ try {
   const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
   const errors = [];
   page.on("pageerror", error => errors.push(error.message));
-  await page.goto(url, { waitUntil: "networkidle" });
+  await page.addInitScript(() => {
+    document.addEventListener("animationstart", event => {
+      if (event.animationName === "lift-cover") {
+        event.target.getAnimations().find(animation => animation.animationName === "lift-cover").pause();
+      }
+    });
+  });
+  await page.goto(url, { waitUntil: "domcontentloaded" });
+  const opening = page.locator(".opening-cover");
+  await expect(opening).toHaveCSS("animation-name", "lift-cover");
+  await expect.poll(() => opening.evaluate(element =>
+    element.getAnimations().some(animation => animation.playState === "paused"),
+  )).toBe(true);
+  const lifted = await opening.evaluate(element => {
+    const animation = element.getAnimations().find(item => item.animationName === "lift-cover");
+    const { delay, activeDuration } = animation.effect.getComputedTiming();
+    animation.currentTime = delay + activeDuration / 2;
+    const clip = getComputedStyle(element).clipPath;
+    animation.play();
+    return parseFloat(clip.match(/([\d.]+)%/)?.[1]);
+  });
+  expect(lifted).toBeGreaterThan(5);
+  expect(lifted).toBeLessThan(95);
+  await expect(opening).toBeHidden();
+  await page.reload({ waitUntil: "networkidle" });
+  await expect(opening).toHaveCSS("display", "none");
   const stage = page.locator(".cover-stage");
   await expect(page.locator("#site-header")).toHaveClass(/over-landscape/);
   const cover = await stage.boundingBox();
@@ -159,6 +184,7 @@ try {
   });
   mobile.on("pageerror", error => errors.push(error.message));
   await mobile.goto(url + "#field-intro", { waitUntil: "networkidle" });
+  await expect(mobile.locator(".opening-cover")).toHaveCSS("display", "none");
   const mobileField = mobile.locator(".field-canvas");
   await mobileField.scrollIntoViewIfNeeded();
   const mobileSize = await mobileField.boundingBox();
