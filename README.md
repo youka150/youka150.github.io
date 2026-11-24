@@ -13,7 +13,8 @@ npm run dev
 - `index.html`：语义化页面结构、项目叙事与个人兴趣切面。
 - `styles.css` 定义全站排版、导航、山湖首图及响应式布局。
 - `src/main.js` 管理项目和手记中的图解、参数和键盘交互。项目页和手记的专属样式位于 `project.css` 与 `interests.css`。
-- `src/pointer.js` 与 `pointer.css` 提供照片取景与链接悬停反馈。原生锚点负责页面内导航。
+- `src/pointer.js` 与 `pointer.css` 提供照片取景与链接悬停反馈。原生锚点负责页面内导航。能完整放下图文的宽屏按滚动位置切换三种方法，点击标签也能直接定位。
+- `src/journal.js` 控制首次开场、滚动视差、手记照片的分段滑动、悬停预览与共用指示线。手记里的研究笔记、唱片和羽毛球照片为生成的情境配图。
 - `script.js`、`script.css`、`script.js.LEGAL.txt`：提交至仓库根目录供 GitHub Pages 直接加载的构建产物。
 - `scripts/build.mjs`：通过 esbuild 打包并为静态资源写入内容哈希版本号。
 
@@ -39,6 +40,7 @@ npm run build
 # 启动预览服务后运行 Playwright 交互与多视口测试
 node scripts/interaction-check.mjs
 node scripts/visual-check.mjs
+node scripts/motion-check.mjs
 ```
 
 字体许可（Cormorant Garamond、DM Sans、Manrope，SIL Open Font License）位于 `assets/licenses/`。

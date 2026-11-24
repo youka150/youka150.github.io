@@ -1,4 +1,5 @@
 import { gsap } from "gsap";
+import { openJournal, setupNotebook, setupProjectReading } from "./journal.js";
 import "../project.css";
 import "../interests.css";
 import { setupPointerDetails } from "./pointer.js";
@@ -9,6 +10,7 @@ const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
 const motionQuery = matchMedia("(prefers-reduced-motion: reduce)");
 
 document.documentElement.classList.add("js");
+openJournal();
 
 const yearEl = $("#year");
 if (yearEl) {
@@ -732,8 +734,16 @@ function showStage(index, { animate = true } = {}) {
   }
 }
 
+const scrollToStage = setupProjectReading(stageScenes, index => {
+  if (activeStage === index) return;
+  const focusedInScene = stageScenes[activeStage]?.contains(document.activeElement);
+  showStage(index);
+  if (focusedInScene) stageTabs[index].focus({preventScroll: true});
+});
 function activateStageTab(tab) {
-  showStage(Number(tab.dataset.stageTab));
+  const index = Number(tab.dataset.stageTab);
+  showStage(index);
+  scrollToStage(index);
 }
 stageTabs.forEach((tab) => tab.addEventListener("click", () => activateStageTab(tab)));
 bindTabKeyboard(stageTabs, activateStageTab);
@@ -1415,7 +1425,8 @@ if (courtCanvas) {
   renderCourt();
 }
 
-function applyLens(key, animate = false) {
+function applyLens(key) {
+  syncPrint(key);
   currentLens = key;
   lensTabs.forEach((tab) => {
     const selected = tab.dataset.lensTab === key;
@@ -1430,21 +1441,33 @@ function applyLens(key, animate = false) {
   }
   syncMusicLoop();
 
-  const panel = document.getElementById("lens-panel-" + key);
   if (key === "research") drawRegressionStatic();
   if (key === "music") drawMusicStatic();
   if (key === "court") drawCourtStatic();
-  if (animate && !motionQuery.matches) {
-    gsap.fromTo($(".lens-figure", panel), { opacity: 0.45 }, {
-      opacity: 1, duration: 0.24, overwrite: true, clearProps: "opacity",
-    });
-  }
 }
 
-function switchLens(tab) {
-  const key = tab.dataset.lensTab;
-  if (key && key !== currentLens) applyLens(key, true);
+let noteTransition;
+let requestedLens = currentLens;
+function selectLens(key) {
+  if (key === requestedLens) return;
+  requestedLens = key;
+  noteTransition?.skipTransition();
+  const commit = () => {
+    if (requestedLens === key) applyLens(key);
+  };
+  if (!document.startViewTransition || motionQuery.matches) {
+    commit();
+    return;
+  }
+  const transition = document.startViewTransition(commit);
+  noteTransition = transition;
+  transition.ready.catch(() => {});
+  transition.finished.then(() => {
+    if (noteTransition === transition) noteTransition = undefined;
+  });
 }
+const syncPrint = setupNotebook(selectLens);
+function switchLens(tab) { selectLens(tab.dataset.lensTab); }
 
 lensTabs.forEach((tab) => tab.addEventListener("click", () => switchLens(tab)));
 bindTabKeyboard(lensTabs, switchLens);
@@ -1457,6 +1480,7 @@ document.addEventListener("visibilitychange", () => {
 
 motionQuery.addEventListener("change", () => {
   syncMotionMode();
+  if (motionQuery.matches) noteTransition?.skipTransition();
   if (motionQuery.matches) {
     if (agentTimeline?.isActive()) playAgentSimulation();
     activeRallyTween?.progress(1).kill();

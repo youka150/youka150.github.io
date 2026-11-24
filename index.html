@@ -8,6 +8,15 @@
       name="description"
       content="你好，我是 Youka。关注 AI 应用、开发者社区数据挖掘与回归实证分析，在这里分享代表项目 Community 以及屏幕之外的日常探索。"
     />
+    <script>
+      try {
+        if (!location.hash && !matchMedia("(prefers-reduced-motion: reduce)").matches &&
+            !sessionStorage.getItem("youka-cover-opened")) {
+          document.documentElement.classList.add("open-cover");
+          sessionStorage.setItem("youka-cover-opened", "1");
+        }
+      } catch {}
+    </script>
     <title>Youka — Curious by nature.</title>
     <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml" />
     <link
@@ -17,11 +26,12 @@
       type="font/woff2"
       crossorigin
     />
-    <link rel="stylesheet" href="./styles.css?v=273a94c33d4d" />
-    <link rel="stylesheet" href="./script.css?v=2d0c22477eab" />
-    <script type="module" src="./script.js?v=f1ce3e1dbfb3"></script>
+    <link rel="stylesheet" href="./styles.css?v=3045f3c63993" />
+    <link rel="stylesheet" href="./script.css?v=b1587aa0cb55" />
+    <script type="module" src="./script.js?v=f1cef85c061d"></script>
   </head>
   <body>
+    <div class="opening-cover" aria-hidden="true"><span>youka<i>✳</i></span></div>
     <a id="skip-to-main" class="skip-link" href="#main">跳到主要内容</a>
 
     <header id="site-header" class="site-header">
@@ -67,8 +77,8 @@
           </div>
           <figure class="hero-photo">
             <div class="photo-frame">
-              <img src="./assets/landscape.jpg" width="1800" height="1200" fetchpriority="high"
-                alt="群山和林木倒映在湖里，近处的木屋搭在水面上。">
+              <div class="photo-negative"><img src="./assets/landscape.jpg" width="1800" height="1200" fetchpriority="high"
+                alt="群山和林木倒映在湖里，近处的木屋搭在水面上。"></div>
             </div>
             <figcaption><span>山间的湖与木屋</span><span data-photo-hint></span></figcaption>
           </figure>
@@ -88,157 +98,168 @@
               </div>
             </div>
           </header>
-          <div class="stage-panel">
-            <div class="stage-tabs" role="tablist" aria-label="项目方法">
-              <button id="stage-tab-0" type="button" role="tab" aria-selected="true"
-                aria-controls="scene-0" data-stage-tab="0">关系网络</button>
-              <button id="stage-tab-1" type="button" role="tab" aria-selected="false" tabindex="-1"
-                aria-controls="scene-1" data-stage-tab="1">用户画像</button>
-              <button id="stage-tab-2" type="button" role="tab" aria-selected="false" tabindex="-1"
-                aria-controls="scene-2" data-stage-tab="2">趋势分析</button>
-            </div>
-            <div id="scene-0" class="stage-scene" role="tabpanel" aria-labelledby="stage-tab-0" data-scene="0">
-              <h3 class="method-heading">谁在连接不同的讨论？</h3>
-              <div class="method-demo">
-                <figure class="method-figure">
-                  <canvas id="network-canvas" width="680" height="360" tabindex="0"
-                    aria-label="社区互动网络，使用左右方向键或点选节点查看角色" aria-describedby="network-tooltip"></canvas>
-                  <figcaption id="network-tooltip" role="status">指向或点选节点查看角色，也可用左右方向键切换。</figcaption>
-                </figure>
-                <div class="method-controls">
-                  <fieldset class="method-options">
-                    <legend>评分侧重</legend>
-                    <button id="preset-entropy" type="button" class="is-active" aria-pressed="true" data-weight-preset="52">均衡</button>
-                    <button id="preset-topology" type="button" aria-pressed="false" data-weight-preset="82">网络结构</button>
-                    <button id="preset-content" type="button" aria-pressed="false" data-weight-preset="22">内容质量</button>
-                  </fieldset>
-                  <div class="weight-mix">
-                    <label class="weight-readout" for="influence-slider">
-                      <span>网络 <output id="topology-share" for="influence-slider">52%</output></span>
-                      <span>内容 <output id="quality-share" for="influence-slider">48%</output></span>
-                    </label>
-                    <input id="influence-slider" type="range" min="10" max="90" value="52"
-                      aria-label="调节网络结构与内容质量的权重配比" />
+          <div class="project-reader">
+            <div class="stage-panel">
+              <div class="stage-tabs" role="tablist" aria-label="项目方法">
+                <button id="stage-tab-0" type="button" role="tab" aria-selected="true"
+                  aria-controls="scene-0" data-stage-tab="0">关系网络</button>
+                <button id="stage-tab-1" type="button" role="tab" aria-selected="false" tabindex="-1"
+                  aria-controls="scene-1" data-stage-tab="1">用户画像</button>
+                <button id="stage-tab-2" type="button" role="tab" aria-selected="false" tabindex="-1"
+                  aria-controls="scene-2" data-stage-tab="2">趋势分析</button>
+              </div>
+              <div id="scene-0" class="stage-scene" role="tabpanel" aria-labelledby="stage-tab-0" data-scene="0">
+                <h3 class="method-heading">谁在连接不同的讨论？</h3>
+                <div class="method-demo">
+                  <figure class="method-figure">
+                    <canvas id="network-canvas" width="680" height="360" tabindex="0"
+                      aria-label="社区互动网络，使用左右方向键或点选节点查看角色" aria-describedby="network-tooltip"></canvas>
+                    <figcaption id="network-tooltip" role="status">指向或点选节点查看角色，也可用左右方向键切换。</figcaption>
+                  </figure>
+                  <div class="method-controls">
+                    <fieldset class="method-options">
+                      <legend>评分侧重</legend>
+                      <button id="preset-entropy" type="button" class="is-active" aria-pressed="true" data-weight-preset="52">均衡</button>
+                      <button id="preset-topology" type="button" aria-pressed="false" data-weight-preset="82">网络结构</button>
+                      <button id="preset-content" type="button" aria-pressed="false" data-weight-preset="22">内容质量</button>
+                    </fieldset>
+                    <div class="weight-mix">
+                      <label class="weight-readout" for="influence-slider">
+                        <span>网络 <output id="topology-share" for="influence-slider">52%</output></span>
+                        <span>内容 <output id="quality-share" for="influence-slider">48%</output></span>
+                      </label>
+                      <input id="influence-slider" type="range" min="10" max="90" value="52"
+                        aria-label="调节网络结构与内容质量的权重配比" />
+                    </div>
+                  </div>
+                  <p class="method-caption">示例数据 · 方法演示</p>
+                </div>
+                <div id="chapter-0" class="method-note" data-chapter="0">
+                  <p>有人写长教程，有人常跨话题答疑。为了看见这些贡献，我把评论和回复连成图，用 PageRank、介数中心性等八项指标评分。</p>
+                  <p>图上不同颜色代表不同的讨论圈，实际项目用 Louvain 算法来识别。调一下权重，看看哪些节点会被圈出来。</p>
+                  <div class="method-sources">
+                    <span>相关源码</span>
+                    <a id="source-network-link" class="method-link" target="_blank" rel="noopener noreferrer"
+                      href="https://github.com/youka150/community/blob/main/python/huawei_mining_service/services/network_service.py">关系网络</a>
+                    <a id="source-scoring-link" class="method-link" target="_blank" rel="noopener noreferrer"
+                      href="https://github.com/youka150/community/blob/main/python/huawei_mining_service/scoring.py">影响力评分</a>
                   </div>
                 </div>
-                <p class="method-caption">示例数据 · 方法演示</p>
               </div>
-              <div id="chapter-0" class="method-note" data-chapter="0">
-                <p>有人写长教程，有人常跨话题答疑。为了看见这些贡献，我把评论和回复连成图，用 PageRank、介数中心性等八项指标评分。</p>
-                <p>图上不同颜色代表不同的讨论圈，实际项目用 Louvain 算法来识别。调一下权重，看看哪些节点会被圈出来。</p>
-                <div class="method-sources">
-                  <span>相关源码</span>
-                  <a id="source-network-link" class="method-link" target="_blank" rel="noopener noreferrer"
-                    href="https://github.com/youka150/community/blob/main/python/huawei_mining_service/services/network_service.py">关系网络</a>
-                  <a id="source-scoring-link" class="method-link" target="_blank" rel="noopener noreferrer"
-                    href="https://github.com/youka150/community/blob/main/python/huawei_mining_service/scoring.py">影响力评分</a>
+              <div id="scene-1" class="stage-scene" role="tabpanel" aria-labelledby="stage-tab-1" data-scene="1">
+                <h3 class="method-heading">同样活跃，都在聊什么？</h3>
+                <div class="method-demo">
+                  <figure class="method-figure">
+                    <canvas id="cluster-canvas" width="680" height="360"
+                      aria-label="示例用户在两种特征组合下的分布"></canvas>
+                    <figcaption id="cluster-badge">行为与语义的融合投影</figcaption>
+                  </figure>
+                  <div class="method-controls">
+                    <fieldset class="method-options">
+                      <legend>比较特征</legend>
+                      <button id="cluster-mode-fused" type="button" class="is-active" aria-pressed="true" data-cluster-mode="fused">行为与语义</button>
+                      <button id="cluster-mode-behavior" type="button" aria-pressed="false" data-cluster-mode="behavior">仅看行为</button>
+                    </fieldset>
+                    <fieldset class="method-options">
+                      <legend>选择群体</legend>
+                      <button id="persona-chip-all" type="button" class="is-active" aria-pressed="true" data-persona="-1">全部</button>
+                      <button id="persona-chip-0" type="button" aria-pressed="false" data-persona="0">算子研究</button>
+                      <button id="persona-chip-1" type="button" aria-pressed="false" data-persona="1">工程排障</button>
+                      <button id="persona-chip-2" type="button" aria-pressed="false" data-persona="2">案例分享</button>
+                      <button id="persona-chip-3" type="button" aria-pressed="false" data-persona="3">潜力用户</button>
+                    </fieldset>
+                    <p id="cluster-insight-text" class="method-readout" role="status">加入语义特征后，可以按讨论方向观察这些示例用户。</p>
+                  </div>
+                  <p class="method-caption">示例数据 · 方法演示</p>
+                </div>
+                <div id="chapter-1" class="method-note" data-chapter="1">
+                  <p>两个人的发帖次数相近，一个常谈算子调优，另一个爱分享入门实践。把他们写过的文字也算进去，能看见两种不同的兴趣。</p>
+                  <p>项目把多语言句向量与发帖、获赞等行为特征结合，用 PCA 和 KMeans 划分群体。切换图中的特征组合，就能比较两种分组方式。</p>
+                  <div class="method-sources">
+                    <span>相关源码</span>
+                    <a id="source-cluster-link" class="method-link" target="_blank" rel="noopener noreferrer"
+                      href="https://github.com/youka150/community/blob/main/python/huawei_mining_service/services/clustering_service.py">特征融合</a>
+                    <a id="source-topic-link" class="method-link" target="_blank" rel="noopener noreferrer"
+                      href="https://github.com/youka150/community/blob/main/python/huawei_mining_service/services/bertopic_service.py">主题模型</a>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div id="scene-1" class="stage-scene" role="tabpanel" aria-labelledby="stage-tab-1" data-scene="1">
-              <h3 class="method-heading">同样活跃，都在聊什么？</h3>
-              <div class="method-demo">
-                <figure class="method-figure">
-                  <canvas id="cluster-canvas" width="680" height="360"
-                    aria-label="示例用户在两种特征组合下的分布"></canvas>
-                  <figcaption id="cluster-badge">行为与语义的融合投影</figcaption>
-                </figure>
-                <div class="method-controls">
+              <div id="scene-2" class="stage-scene" role="tabpanel" aria-labelledby="stage-tab-2" data-scene="2">
+                <h3 class="method-heading">哪些问题值得跟进？</h3>
+                <div class="method-demo">
                   <fieldset class="method-options">
-                    <legend>比较特征</legend>
-                    <button id="cluster-mode-fused" type="button" class="is-active" aria-pressed="true" data-cluster-mode="fused">行为与语义</button>
-                    <button id="cluster-mode-behavior" type="button" aria-pressed="false" data-cluster-mode="behavior">仅看行为</button>
+                    <legend>演示议题</legend>
+                    <button id="agent-query-0" type="button" class="is-active" aria-pressed="true" data-agent-topic="0">昇腾算子迁移</button>
+                    <button id="agent-query-1" type="button" aria-pressed="false" data-agent-topic="1">鸿蒙端侧推理</button>
                   </fieldset>
-                  <fieldset class="method-options">
-                    <legend>选择群体</legend>
-                    <button id="persona-chip-all" type="button" class="is-active" aria-pressed="true" data-persona="-1">全部</button>
-                    <button id="persona-chip-0" type="button" aria-pressed="false" data-persona="0">算子研究</button>
-                    <button id="persona-chip-1" type="button" aria-pressed="false" data-persona="1">工程排障</button>
-                    <button id="persona-chip-2" type="button" aria-pressed="false" data-persona="2">案例分享</button>
-                    <button id="persona-chip-3" type="button" aria-pressed="false" data-persona="3">潜力用户</button>
-                  </fieldset>
-                  <p id="cluster-insight-text" class="method-readout" role="status">加入语义特征后，可以按讨论方向观察这些示例用户。</p>
+                  <ol class="agent-pipeline" aria-label="趋势分析的步骤">
+                    <li class="agent-node" data-agent-step="0"><strong>拆解问题</strong><span>列出待查的方向与关键词</span></li>
+                    <li class="agent-node" data-agent-step="1"><strong>检索线索</strong><span>对照社区讨论和外部资料</span></li>
+                    <li class="agent-node" data-agent-step="2"><strong>核对证据</strong><span>为缺少依据的判断补充检索</span></li>
+                    <li class="agent-node" data-agent-step="3"><strong>整理报告</strong><span>逐段汇总发现和依据</span></li>
+                  </ol>
+                  <div id="agent-trace-log" class="method-readout agent-log" role="status" aria-live="polite">
+                    <p>选择议题，查看一次分析的过程。</p>
+                  </div>
+                  <button id="agent-replay-btn" class="method-link" type="button">重新演示</button>
+                  <p class="method-caption">示例数据 · 方法演示</p>
                 </div>
-                <p class="method-caption">示例数据 · 方法演示</p>
-              </div>
-              <div id="chapter-1" class="method-note" data-chapter="1">
-                <p>两个人的发帖次数相近，一个常谈算子调优，另一个爱分享入门实践。把他们写过的文字也算进去，能看见两种不同的兴趣。</p>
-                <p>项目把多语言句向量与发帖、获赞等行为特征结合，用 PCA 和 KMeans 划分群体。切换图中的特征组合，就能比较两种分组方式。</p>
-                <div class="method-sources">
-                  <span>相关源码</span>
-                  <a id="source-cluster-link" class="method-link" target="_blank" rel="noopener noreferrer"
-                    href="https://github.com/youka150/community/blob/main/python/huawei_mining_service/services/clustering_service.py">特征融合</a>
-                  <a id="source-topic-link" class="method-link" target="_blank" rel="noopener noreferrer"
-                    href="https://github.com/youka150/community/blob/main/python/huawei_mining_service/services/bertopic_service.py">主题模型</a>
-                </div>
-              </div>
-            </div>
-            <div id="scene-2" class="stage-scene" role="tabpanel" aria-labelledby="stage-tab-2" data-scene="2">
-              <h3 class="method-heading">哪些问题值得跟进？</h3>
-              <div class="method-demo">
-                <fieldset class="method-options">
-                  <legend>演示议题</legend>
-                  <button id="agent-query-0" type="button" class="is-active" aria-pressed="true" data-agent-topic="0">昇腾算子迁移</button>
-                  <button id="agent-query-1" type="button" aria-pressed="false" data-agent-topic="1">鸿蒙端侧推理</button>
-                </fieldset>
-                <ol class="agent-pipeline" aria-label="趋势分析的步骤">
-                  <li class="agent-node" data-agent-step="0"><strong>拆解问题</strong><span>列出待查的方向与关键词</span></li>
-                  <li class="agent-node" data-agent-step="1"><strong>检索线索</strong><span>对照社区讨论和外部资料</span></li>
-                  <li class="agent-node" data-agent-step="2"><strong>核对证据</strong><span>为缺少依据的判断补充检索</span></li>
-                  <li class="agent-node" data-agent-step="3"><strong>整理报告</strong><span>逐段汇总发现和依据</span></li>
-                </ol>
-                <div id="agent-trace-log" class="method-readout agent-log" role="status" aria-live="polite">
-                  <p>选择议题，查看一次分析的过程。</p>
-                </div>
-                <button id="agent-replay-btn" class="method-link" type="button">重新演示</button>
-                <p class="method-caption">示例数据 · 方法演示</p>
-              </div>
-              <div id="chapter-2" class="method-note" data-chapter="2">
-                <p>从社区里的讨论出发，我想知道哪些问题一直有人问。趋势 Agent 会把一个议题拆小，查找相关资料，再回头检查哪些判断还缺证据。</p>
-                <p>这里用两个示例重现它的查找过程。实际服务会按需补搜，通过 SSE 逐段返回报告，也会从核心用户的帖子里归纳产品改进线索。</p>
-                <div class="method-sources">
-                  <span>相关源码</span>
-                  <a id="source-agent-link" class="method-link" target="_blank" rel="noopener noreferrer"
-                    href="https://github.com/youka150/community/blob/main/src/lib/agents/TrendAgent.js">趋势 Agent</a>
-                  <a id="source-hotspot-link" class="method-link" target="_blank" rel="noopener noreferrer"
-                    href="https://github.com/youka150/community/blob/main/python/huawei_mining_service/services/hotspot_service.py">热点分析</a>
+                <div id="chapter-2" class="method-note" data-chapter="2">
+                  <p>从社区里的讨论出发，我想知道哪些问题一直有人问。趋势 Agent 会把一个议题拆小，查找相关资料，再回头检查哪些判断还缺证据。</p>
+                  <p>这里用两个示例重现它的查找过程。实际服务会按需补搜，通过 SSE 逐段返回报告，也会从核心用户的帖子里归纳产品改进线索。</p>
+                  <div class="method-sources">
+                    <span>相关源码</span>
+                    <a id="source-agent-link" class="method-link" target="_blank" rel="noopener noreferrer"
+                      href="https://github.com/youka150/community/blob/main/src/lib/agents/TrendAgent.js">趋势 Agent</a>
+                    <a id="source-hotspot-link" class="method-link" target="_blank" rel="noopener noreferrer"
+                      href="https://github.com/youka150/community/blob/main/python/huawei_mining_service/services/hotspot_service.py">热点分析</a>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-          <details class="project-build">
-            <summary>技术与实现</summary>
-            <dl>
-              <div><dt>数据</dt><dd>两个开发者社区的帖子和多级评论经清洗后存入 PostgreSQL，由 Drizzle 管理。也支持导入自己的表格。</dd></div>
-              <div><dt>分析</dt><dd>FastAPI 调用 NetworkX 计算图指标，配合 BERTopic 等方法做主题建模和语义分析。</dd></div>
-              <div><dt>界面</dt><dd>用 Next.js 15 与 React 19 展示关系图和分析结果，管理员、数据工程师和访客各有对应视图。</dd></div>
-            </dl>
-          </details>
+          <section class="project-build" aria-labelledby="implementation-title">
+            <h3 id="implementation-title">技术与实现</h3>
+            <details name="implementation"><summary>数据从哪里来</summary>
+              <p>两个开发者社区的帖子和多级评论经清洗后存入 PostgreSQL，由 Drizzle 管理。也支持导入自己的表格。</p>
+            </details>
+            <details name="implementation"><summary>怎么分析</summary>
+              <p>FastAPI 调用 NetworkX 计算图指标，配合 BERTopic 等方法做主题建模和语义分析。</p>
+            </details>
+            <details name="implementation"><summary>如何查看结果</summary>
+              <p>用 Next.js 15 与 React 19 展示关系图和分析结果，管理员、数据工程师和访客各有对应视图。</p>
+            </details>
+          </section>
         </div>
       </section>
 
       <section id="perspectives" class="perspectives-section" aria-labelledby="perspectives-title">
-        <div class="container">
-          <header class="perspectives-header">
+        <div class="notes-cover">
+          <header class="container perspectives-header">
             <div class="perspectives-intro">
               <p class="notes-kicker" lang="en">Field notes</p>
               <h2 id="perspectives-title">日常手记<span>。</span></h2>
-              <p>平时做数据分析，也喜欢听歌、打羽毛球。<br />这里放了三件可以亲手试试的小事。</p>
+              <p>做研究，听唱片，去球场。<br>左右滑动照片，或选一则手记。</p>
+              <div class="lens-switcher" role="tablist" aria-label="选择一则手记">
+                <button id="lens-tab-research" type="button" role="tab" aria-selected="true"
+                  aria-controls="lens-panel-research" data-lens-tab="research">做研究</button>
+                <button id="lens-tab-music" type="button" role="tab" aria-selected="false" tabindex="-1"
+                  aria-controls="lens-panel-music" data-lens-tab="music">听音乐</button>
+                <button id="lens-tab-court" type="button" role="tab" aria-selected="false" tabindex="-1"
+                  aria-controls="lens-panel-court" data-lens-tab="court">打羽毛球</button>
+              </div>
             </div>
-            <img class="notes-forest" src="./assets/forest.jpg"
-              width="1000" height="666" loading="lazy" decoding="async"
-              alt="日光照进树林，落在一条小径上" />
+            <div class="notes-prints">
+              <div class="print-track" role="group" aria-label="手记配图，可用左右方向键翻动" tabindex="0">
+                <img src="./assets/notes-research.webp" data-print="research" width="512" height="1024" loading="lazy" alt="树影落在画有散点图的笔记本上">
+                <img src="./assets/notes-music.webp" data-print="music" width="512" height="1024" loading="lazy" alt="唱针和唱片上的一道斜光">
+                <img src="./assets/notes-court.webp" data-print="court" width="512" height="1024" loading="lazy" alt="羽毛球停在绿色场地的白线旁">
+              </div>
+              <img class="print-preview" alt="" hidden>
+            </div>
           </header>
-
-          <div class="lens-switcher" role="tablist" aria-label="选择一则手记">
-            <button id="lens-tab-research" type="button" role="tab" aria-selected="true"
-              aria-controls="lens-panel-research" data-lens-tab="research">做研究</button>
-            <button id="lens-tab-music" type="button" role="tab" aria-selected="false" tabindex="-1"
-              aria-controls="lens-panel-music" data-lens-tab="music">听音乐</button>
-            <button id="lens-tab-court" type="button" role="tab" aria-selected="false" tabindex="-1"
-              aria-controls="lens-panel-court" data-lens-tab="court">打羽毛球</button>
-          </div>
-
+        </div>
+        <div class="container">
           <div class="lens-panels">
             <section id="lens-panel-research" class="lens-panel" role="tabpanel"
               aria-labelledby="lens-tab-research" data-lens-panel="research">

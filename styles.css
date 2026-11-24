@@ -292,6 +292,7 @@ img, svg, canvas { display: block; max-width: 100%; }
   background: #c1c8b7;
   overflow: hidden;
 }
+.photo-negative { height: 100%; width: 100%; }
 .photo-frame img {
   display: block;
   width: 100%;
@@ -401,4 +402,34 @@ img, svg, canvas { display: block; max-width: 100%; }
 @keyframes open-page {
   from { transform: translateY(.09em); }
   to { transform: translateY(0); }
+}
+
+/* The cover also clears itself if the module or the first photograph arrives late. */
+.opening-cover { display: none; }
+@media (prefers-reduced-motion: no-preference) {
+  .open-cover .opening-cover {
+    position: fixed;
+    inset: 0;
+    z-index: 80;
+    display: grid;
+    place-items: center;
+    pointer-events: none;
+    background: #183328;
+    color: #f5f3e9;
+    animation: lift-cover .68s cubic-bezier(.7,0,.2,1) 1.35s forwards;
+  }
+  .open-cover.cover-ready .opening-cover { animation-delay: .50s; }
+  .opening-cover > span {
+    font: italic clamp(5rem, 12vw, 10rem)/1 var(--serif);
+    letter-spacing: -.06em;
+    animation: uncover-signature .45s ease-out both;
+  }
+  .opening-cover i { font: normal .23em/1 var(--sans); color: #edbb8c; vertical-align: top; }
+  @keyframes lift-cover {
+    from { clip-path: inset(0); }
+    to { clip-path: inset(0 0 100% 0); visibility: hidden; }
+  }
+  @keyframes uncover-signature { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0); } }
+  .notes-prints.is-entering { animation: uncover-print .8s cubic-bezier(.2,.7,.2,1) both; }
+  @keyframes uncover-print { from { clip-path: inset(0 0 86% 0); } to { clip-path: inset(-14% -6% -14% -6%); } }
 }
