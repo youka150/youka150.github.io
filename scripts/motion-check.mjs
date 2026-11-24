@@ -43,11 +43,15 @@ try {
   expect(cover.y).toBeCloseTo(0, 0);
   expect(cover.width).toBe(1280);
   expect(cover.height).toBe(800);
-  await expect(page.locator(".hero-photo img")).toBeInViewport();
+  expect(await page.locator(".photo-frame").boundingBox()).toEqual(cover);
 
   await page.evaluate(() => scrollTo({ top: 360, behavior: "instant" }));
   await expect.poll(() => page.locator(".photo-negative").evaluate(el =>
     new DOMMatrix(getComputedStyle(el).transform).a)).toBeGreaterThan(1.02);
+  await expect.poll(() => page.locator("#hero-title").evaluate(el =>
+    Number(getComputedStyle(el).opacity))).toBeLessThan(.9);
+  await expect.poll(() => page.locator(".lake-rings").evaluate(el =>
+    Number(getComputedStyle(el).opacity))).toBeGreaterThan(.05);
 
   const field = page.locator(".field-canvas");
   await page.locator("#field-intro").evaluate(section => scrollTo({
