@@ -35,7 +35,6 @@ const capture = (name, fullPage = false) =>
 
 try {
   await page.goto(baseURL, { waitUntil: "networkidle" });
-  await page.waitForTimeout(950);
 
   await expect(page.locator("#hero-title")).toContainText(/Curious\s*by nature\./i);
   const photo = page.locator("button.photo-toggle");
@@ -55,11 +54,17 @@ try {
   await expect(photo).toHaveAttribute("aria-pressed", "false");
   await capture("desktop-hero");
 
+  await page.locator("#cover-scroll").click();
+  await expect(page).toHaveURL(/#field-intro$/);
+  await expect(page.locator("#field-pulse")).toBeInViewport();
+  await capture("desktop-field");
+
   // Navigate to Project showcase
   await page.locator("#nav-project").click();
   await expect(page.locator("#project-title")).toBeInViewport();
 
   // Stage 0: Network weights & presets
+  await page.locator("#stage-tab-0").click();
   await page.locator("#preset-topology").click();
   await expect(page.locator("#topology-share")).toHaveText("82%");
   await expect(page.locator("#quality-share")).toHaveText("18%");
@@ -249,7 +254,9 @@ try {
   const staticPhoto = noJS.locator(".hero-photo img");
   await expect(staticPhoto).toBeVisible();
   await expect.poll(() => staticPhoto.evaluate((img) => img.naturalWidth)).toBeGreaterThan(0);
-  await noJS.locator('a[href="#project"]:visible').first().click();
+  await noJS.locator("#cover-scroll").click();
+  await expect(noJS.locator("#hero-cta-project")).toBeInViewport();
+  await noJS.locator("#hero-cta-project").click();
   await expect(noJS.locator("#project-title")).toBeInViewport();
   for (const index of [0, 1, 2]) {
     await expect(noJS.locator(`#scene-${index} h3`)).toBeVisible();

@@ -8,15 +8,6 @@
       name="description"
       content="你好，我是 Youka。关注 AI 应用、开发者社区数据挖掘与回归实证分析，在这里分享代表项目 Community 以及屏幕之外的日常探索。"
     />
-    <script>
-      try {
-        if (!location.hash && !matchMedia("(prefers-reduced-motion: reduce)").matches &&
-            !sessionStorage.getItem("youka-cover-opened")) {
-          document.documentElement.classList.add("open-cover");
-          sessionStorage.setItem("youka-cover-opened", "1");
-        }
-      } catch {}
-    </script>
     <title>Youka — Curious by nature.</title>
     <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml" />
     <link
@@ -26,16 +17,15 @@
       type="font/woff2"
       crossorigin
     />
-    <link rel="stylesheet" href="./styles.css?v=27adf6030568" />
+    <link rel="stylesheet" href="./styles.css?v=a18eb789adc4" />
     <link rel="stylesheet" href="./script.css?v=96146b486e94" />
-    <script type="module" src="./script.js?v=8fa3e3f84e66"></script>
+    <script type="module" src="./script.js?v=7f1b8934dbce"></script>
   </head>
   <body>
     <canvas id="site-terrain" class="site-terrain" width="1" height="1" aria-hidden="true"></canvas>
-    <div class="opening-cover" aria-hidden="true"><span>youka<i>✳</i></span></div>
     <a id="skip-to-main" class="skip-link" href="#main">跳到主要内容</a>
 
-    <header id="site-header" class="site-header">
+    <header id="site-header" class="site-header over-landscape">
       <div class="container header-inner">
         <a id="brand-home" class="brand" href="#top" aria-label="Youka 首页">
           youka<span class="journal-mark" aria-hidden="true"></span>
@@ -64,24 +54,47 @@
 
     <main id="main" tabindex="-1">
       <section id="top" class="hero" aria-labelledby="hero-title">
-        <div class="container hero-grid">
-          <div class="hero-copy">
-            <p class="hero-greeting">你好，我是 <span lang="en">Youka</span>。</p>
-            <h1 id="hero-title" lang="en">
-              <span class="reveal-line"><span>Curious</span></span>
-              <span class="reveal-line"><span><em>by nature<span class="ink-period">.</span></em></span></span>
-            </h1>
-            <p class="hero-lead">我用数据研究开发者社区里的人和事。<br>离开屏幕，喜欢听歌，也打羽毛球。</p>
-            <a id="hero-cta-project" class="journal-link" href="#project" data-magnetic>
-              <span>翻看我的项目</span><span class="bookmark-mark" aria-hidden="true"></span>
-            </a>
-          </div>
+        <div class="cover-stage">
           <figure class="hero-photo">
             <div class="photo-frame">
               <div class="photo-negative"><img src="./assets/landscape.jpg" width="1800" height="1200" fetchpriority="high"
                 alt="群山和林木倒映在湖里，近处的木屋搭在水面上。"></div>
             </div>
-            <figcaption><span>山间的湖与木屋</span><span data-photo-hint></span></figcaption>
+            <figcaption class="cover-caption">
+              <span class="viewfinder" aria-hidden="true"></span>
+              <span>山间的湖与木屋<small data-photo-hint></small></span>
+            </figcaption>
+          </figure>
+          <div class="lake-rings" aria-hidden="true"><i></i><i></i><i></i></div>
+          <div class="container cover-type">
+            <p class="cover-greeting">你好，我是 <span lang="en">Youka</span>。</p>
+            <h1 id="hero-title" lang="en"><span>Curious</span> <em>by nature<span>.</span></em></h1>
+          </div>
+          <div class="container cover-foot">
+            <a id="cover-scroll" class="cover-scroll" href="#field-intro">
+              <span class="scroll-mark" aria-hidden="true"></span>向下翻阅
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <section id="field-intro" class="field-intro" aria-labelledby="field-title">
+        <div class="container field-layout">
+          <div class="field-copy">
+            <h2 id="field-title" lang="en">Connections<span>.</span></h2>
+            <p class="field-subtitle">兴趣的交点</p>
+            <p class="hero-lead">我用数据研究开发者社区里的人和事。<br>离开屏幕，喜欢听歌，也打羽毛球。</p>
+            <a id="hero-cta-project" class="journal-link" href="#project" data-magnetic>
+              <span>翻看我的项目</span><span class="bookmark-mark" aria-hidden="true"></span>
+            </a>
+          </div>
+          <figure class="field-figure" hidden>
+            <canvas class="field-canvas" width="640" height="400" aria-hidden="true"></canvas>
+            <figcaption>
+              <span class="field-hint">移动牵引节点，点击拨动网络</span>
+              <span class="field-touch-hint">轻触网络，拨动节点</span>
+              <button id="field-pulse" type="button"><span class="pulse-mark" aria-hidden="true"></span>泛起涟漪</button>
+            </figcaption>
           </figure>
         </div>
       </section>

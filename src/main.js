@@ -3,6 +3,7 @@ import { openJournal, setupProjectReading, setupSoundtrack } from "./journal.js"
 import "../project.css";
 import "../interests.css";
 import { setupPointerDetails } from "./pointer.js";
+import { setupFieldNetwork } from "./field-network.js";
 import { setupTerrain } from "./terrain.js";
 
 const $ = (selector, root = document) => root.querySelector(selector);
@@ -14,6 +15,11 @@ document.documentElement.classList.add("js");
 openJournal();
 setupTerrain();
 setupSoundtrack();
+const field = setupFieldNetwork($(".field-canvas"));
+if (field) {
+  $(".field-figure").hidden = false;
+  $("#field-pulse").addEventListener("click", () => field.pulse());
+}
 
 const yearEl = $("#year");
 if (yearEl) {
