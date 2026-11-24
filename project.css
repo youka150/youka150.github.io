@@ -133,6 +133,7 @@
   width: 100%;
   height: auto;
   aspect-ratio: 1.95;
+  background: #eeefe6ec;
 }
 .method-figure figcaption {
   margin: 0.45rem 0 0.95rem;

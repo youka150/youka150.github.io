@@ -25,6 +25,10 @@ function watchErrors(page) {
 
 const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
 watchErrors(page);
+const audioRequests = [];
+page.on("request", (request) => {
+  if (request.resourceType() === "media") audioRequests.push(request.url());
+});
 
 const capture = (name, fullPage = false) =>
   page.screenshot({ path: `.test-results/${name}.png`, fullPage });
@@ -119,9 +123,28 @@ try {
   await page.waitForTimeout(700);
   await capture("desktop-lens-regression");
 
-  // Lens 2: Harmonic Music Strings
-  await page.locator("#lens-tab-music").click();
-  await expect(page.locator("#lens-panel-music")).toBeVisible();
+  // The chapter links use native anchors, and the player loads only on demand.
+  await page.locator('.notes-index a[href="#lens-panel-music"]').click();
+  await expect(page).toHaveURL(/#lens-panel-music$/);
+  await expect(page.locator("#lens-panel-music")).toBeInViewport();
+  expect(audioRequests).toEqual([]);
+  const audio = page.locator("#soundtrack-audio");
+  const track = page.locator("#soundtrack-track");
+  await expect(audio).toHaveJSProperty("paused", true);
+  await audio.scrollIntoViewIfNeeded();
+  await audio.click({ position: { x: 26, y: 22 } });
+  await expect.poll(() => audio.evaluate((element) => element.currentTime)).toBeGreaterThan(0);
+  await track.selectOption({ index: 1 });
+  await expect(audio).toHaveJSProperty("paused", false);
+  await expect.poll(() => audio.evaluate((element) => element.currentSrc)).toMatch(/windswept\.mp3$/);
+  await expect.poll(() => audio.evaluate((element) => element.currentTime)).toBeGreaterThan(0);
+  await expect(page.locator("#soundtrack-source")).toHaveAttribute("href", /USUAN1100757/);
+  await audio.click({ position: { x: 26, y: 22 } });
+  await expect(audio).toHaveJSProperty("paused", true);
+  await track.selectOption({ index: 0 });
+  await expect(audio).toHaveJSProperty("paused", true);
+
+  // The visual strings retain their controls independently of audio.
   await page.locator("#tempo-bright").click();
   await expect(page.locator("#tempo-output")).toHaveText("86 BPM");
   await page.locator("#music-toggle-btn").click();
@@ -140,9 +163,9 @@ try {
   await page.waitForTimeout(300);
   await capture("desktop-lens-music");
 
-  // Lens 3: Aerodynamic Badminton Court
-  await page.locator("#lens-tab-court").click();
-  await expect(page.locator("#lens-panel-court")).toBeVisible();
+  // Third note: badminton court.
+  await page.locator('.notes-index a[href="#lens-panel-court"]').click();
+  await expect(page.locator("#lens-panel-court")).toBeInViewport();
   await page.locator("#shot-drop").click();
   await expect(page.locator("#rally-play-btn")).toBeEnabled({ timeout: 5000 });
   const court = page.locator("#court-canvas");
@@ -152,11 +175,11 @@ try {
   await expect(page.locator("#court-readout")).not.toHaveText(rallyNote);
   await capture("desktop-lens-court");
 
-  // Keyboard navigation on lens tabs
-  await page.locator("#lens-tab-court").focus();
-  await page.keyboard.press("Home");
-  await expect(page.locator("#lens-tab-research")).toBeFocused();
-  await expect(page.locator("#lens-panel-research")).toBeVisible();
+  const researchLink = page.locator('.notes-index a[href="#lens-panel-research"]');
+  await researchLink.focus();
+  await page.keyboard.press("Enter");
+  await expect(page).toHaveURL(/#lens-panel-research$/);
+  await expect(page.locator("#lens-panel-research")).toBeInViewport();
 
   // Live reduced-motion toggle & mobile checks
   await page.emulateMedia({ reducedMotion: "reduce" });
@@ -233,7 +256,11 @@ try {
   }
   for (const key of ["research", "music", "court"]) {
     await expect(noJS.locator(`#lens-panel-${key}`)).toBeVisible();
+    const print = noJS.locator(`#lens-panel-${key} .note-print img`);
+    await print.scrollIntoViewIfNeeded();
+    await expect.poll(() => print.evaluate((img) => img.naturalWidth)).toBeGreaterThan(0);
   }
+  await expect(noJS.locator("#soundtrack-audio")).toHaveJSProperty("controls", true);
   expect(
     await noJS.evaluate(
       () => document.documentElement.scrollWidth <= window.innerWidth,
@@ -244,7 +271,7 @@ try {
   expect(failures).toEqual([]);
 
   console.log(
-    "PASS: Photo zoom, project and interest controls, keyboard navigation, touch, reduced motion, responsive layouts and no-JS reading.",
+    "PASS: Photo zoom, project and note controls, audio playback and track selection, keyboard navigation, touch, reduced motion, responsive layouts and no-JS reading.",
   );
 } finally {
   await browser.close();

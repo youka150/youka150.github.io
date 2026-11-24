@@ -1,8 +1,9 @@
 import { gsap } from "gsap";
-import { openJournal, setupNotebook, setupProjectReading } from "./journal.js";
+import { openJournal, setupProjectReading, setupSoundtrack } from "./journal.js";
 import "../project.css";
 import "../interests.css";
 import { setupPointerDetails } from "./pointer.js";
+import { setupTerrain } from "./terrain.js";
 
 const $ = (selector, root = document) => root.querySelector(selector);
 const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -11,6 +12,8 @@ const motionQuery = matchMedia("(prefers-reduced-motion: reduce)");
 
 document.documentElement.classList.add("js");
 openJournal();
+setupTerrain();
+setupSoundtrack();
 
 const yearEl = $("#year");
 if (yearEl) {
@@ -752,10 +755,6 @@ showStage(0, { animate: false });
 /* ==========================================================================
    4. Personal Studio — Three Everyday Lenses
    ========================================================================== */
-const lensTabs = $$("[data-lens-tab]");
-const lensPanels = $$("[data-lens-panel]");
-let currentLens = "research";
-
 // Synthetic samples have opposite pooled and within-group slopes.
 const regressionCanvas = $("#regression-canvas");
 const regressionToggleBtn = $("#regression-toggle-btn");
@@ -985,7 +984,6 @@ if (musicCanvas) {
 
   syncMusicLoop = () => {
     const shouldRun =
-      currentLens === "music" &&
       musicInView &&
       !musicPaused &&
       !motionQuery.matches &&
@@ -1016,8 +1014,8 @@ if (musicCanvas) {
       labelSpan.textContent = motionQuery.matches
         ? "已随系统设置保持静止"
         : musicPaused
-          ? "继续律动"
-          : "暂停律动";
+          ? "继续弦线"
+          : "暂停弦线";
     }
     if (iconSpan) {
       iconSpan.textContent = isStopped ? "▶" : "Ⅱ";
@@ -1080,8 +1078,7 @@ if (musicCanvas) {
       },
       { threshold: 0.05 },
     );
-    const musicPanel = $("#lens-panel-music");
-    if (musicPanel) io.observe(musicPanel);
+    io.observe(musicCanvas);
   }
 
   setTempo(58);
@@ -1425,54 +1422,6 @@ if (courtCanvas) {
   renderCourt();
 }
 
-function applyLens(key) {
-  syncPrint(key);
-  currentLens = key;
-  lensTabs.forEach((tab) => {
-    const selected = tab.dataset.lensTab === key;
-    tab.setAttribute("aria-selected", String(selected));
-    tab.tabIndex = selected ? 0 : -1;
-  });
-  lensPanels.forEach((panel) => {
-    panel.hidden = panel.dataset.lensPanel !== key;
-  });
-  if (key !== "court" && activeRallyTween) {
-    activeRallyTween.progress(1).kill();
-  }
-  syncMusicLoop();
-
-  if (key === "research") drawRegressionStatic();
-  if (key === "music") drawMusicStatic();
-  if (key === "court") drawCourtStatic();
-}
-
-let noteTransition;
-let requestedLens = currentLens;
-function selectLens(key) {
-  if (key === requestedLens) return;
-  requestedLens = key;
-  noteTransition?.skipTransition();
-  const commit = () => {
-    if (requestedLens === key) applyLens(key);
-  };
-  if (!document.startViewTransition || motionQuery.matches) {
-    commit();
-    return;
-  }
-  const transition = document.startViewTransition(commit);
-  noteTransition = transition;
-  transition.ready.catch(() => {});
-  transition.finished.then(() => {
-    if (noteTransition === transition) noteTransition = undefined;
-  });
-}
-const syncPrint = setupNotebook(selectLens);
-function switchLens(tab) { selectLens(tab.dataset.lensTab); }
-
-lensTabs.forEach((tab) => tab.addEventListener("click", () => switchLens(tab)));
-bindTabKeyboard(lensTabs, switchLens);
-applyLens("research");
-
 /* Live Reduced-Motion & Visibility Listeners */
 document.addEventListener("visibilitychange", () => {
   syncMusicLoop();
@@ -1480,7 +1429,6 @@ document.addEventListener("visibilitychange", () => {
 
 motionQuery.addEventListener("change", () => {
   syncMotionMode();
-  if (motionQuery.matches) noteTransition?.skipTransition();
   if (motionQuery.matches) {
     if (agentTimeline?.isActive()) playAgentSimulation();
     activeRallyTween?.progress(1).kill();
