@@ -2,6 +2,24 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 export function openJournal() {
+  const root = document.documentElement;
+  if (root.classList.contains("open-cover")) {
+    const opening = document.querySelector(".opening-cover");
+    const listeners = new AbortController();
+    const options = { signal: listeners.signal };
+    function dismiss() {
+      root.classList.remove("open-cover");
+      listeners.abort();
+    }
+    opening.addEventListener("animationend", event => {
+      if (event.animationName === "lift-cover") dismiss();
+    }, options);
+    for (const event of ["keydown", "pointerdown", "wheel", "pagehide"]) {
+      window.addEventListener(event, dismiss, { ...options, passive: true });
+    }
+    matchMedia("(prefers-reduced-motion: reduce)").addEventListener("change", dismiss, options);
+  }
+
   const cover = document.querySelector("#top");
   const header = document.querySelector("#site-header");
 

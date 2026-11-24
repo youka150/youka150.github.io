@@ -9,6 +9,16 @@
       content="你好，我是 Youka。关注 AI 应用、开发者社区数据挖掘与回归实证分析，在这里分享代表项目 Community 以及屏幕之外的日常探索。"
     />
     <title>Youka — Curious by nature.</title>
+    <script>
+      try {
+        const coverKey = "youka-lake-cover-opened";
+        if (!location.hash && matchMedia("(prefers-reduced-motion: no-preference)").matches &&
+            !sessionStorage.getItem(coverKey)) {
+          document.documentElement.classList.add("open-cover");
+          sessionStorage.setItem(coverKey, "1");
+        }
+      } catch {}
+    </script>
     <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml" />
     <link
       rel="preload"
@@ -17,11 +27,12 @@
       type="font/woff2"
       crossorigin
     />
-    <link rel="stylesheet" href="./styles.css?v=a18eb789adc4" />
-    <link rel="stylesheet" href="./script.css?v=96146b486e94" />
-    <script type="module" src="./script.js?v=7f1b8934dbce"></script>
+    <link rel="stylesheet" href="./styles.css?v=b47f7aad7065" />
+    <link rel="stylesheet" href="./script.css?v=68da8abad6b1" />
+    <script type="module" src="./script.js?v=d9eaf853bbed"></script>
   </head>
   <body>
+    <div class="opening-cover" aria-hidden="true"><span>youka<i class="journal-mark"></i></span></div>
     <canvas id="site-terrain" class="site-terrain" width="1" height="1" aria-hidden="true"></canvas>
     <a id="skip-to-main" class="skip-link" href="#main">跳到主要内容</a>
 

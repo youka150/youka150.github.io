@@ -274,14 +274,14 @@ if (networkCanvas) {
     const labelled = selected >= 0
       ? [netNodes[selected]]
       : netNodes.filter((node) => node.rank <= labelCount);
-    ctx.font = '500 13px "DM Sans", "PingFang SC", sans-serif';
+    ctx.font = '500 15px "DM Sans", "PingFang SC", sans-serif';
     ctx.textAlign = "center";
     ctx.lineJoin = "round";
     for (const n of labelled) {
       const text = n.label;
       const half = ctx.measureText(text).width / 2 + 2;
       const x = Math.max(half, Math.min(width - half, n.x));
-      const y = Math.max(15, n.y - n.radius - 10);
+      const y = Math.max(18, n.y - n.radius - 10);
       ctx.lineWidth = 4;
       ctx.strokeStyle = "#f5f3e9";
       ctx.strokeText(text, x, y);
@@ -484,8 +484,8 @@ if (clusterCanvas) {
     ctx.lineTo(38, 26);
     ctx.stroke();
 
-    ctx.font = '500 11.5px "Manrope", "PingFang SC", sans-serif';
-    ctx.fillStyle = "#59695b";
+    ctx.font = '500 14px "Manrope", "PingFang SC", sans-serif';
+    ctx.fillStyle = "#48594b";
     ctx.fillText(
       t > 0.5 ? "第一主成分" : "活跃度",
       50,
@@ -519,7 +519,7 @@ if (clusterCanvas) {
         ctx.setLineDash([]);
 
         ctx.globalAlpha = t * (isHighlighted ? 0.92 : 0.32);
-        ctx.font = '500 13px "Manrope", "PingFang SC", sans-serif';
+        ctx.font = '500 15px "Manrope", "PingFang SC", sans-serif';
         ctx.fillStyle = "#243c30";
         ctx.textAlign = "center";
         ctx.fillText(meta.name, cx, cy - ry - 7);
@@ -807,8 +807,8 @@ if (regressionCanvas) {
     const mix = view.mix;
     ctx.clearRect(0, 0, width, height);
     ctx.save();
-    ctx.font = '13px "DM Sans", sans-serif';
-    ctx.fillStyle = "#59695b";
+    ctx.font = '15px "DM Sans", sans-serif';
+    ctx.fillStyle = "#48594b";
     ctx.fillText("Y", left - 6, top - 8);
     ctx.fillText("X", right - 6, base + 18);
     for (const fraction of [0.25, 0.5, 0.75]) {

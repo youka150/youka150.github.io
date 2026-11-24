@@ -92,9 +92,12 @@
   --ink: #243c30;
   --heading: #14291d;
   --secondary-heading: #344c37;
-  --muted: #59695b;
+  --muted: #48594b;
   --line: #c8ccbd;
   --accent: #7b3421;
+  --cover-ink: #fffaf0;
+  --cover-accent: #f4d3ab;
+  --cover-text-shadow: 0 1px 5px rgb(9 20 17 / .8);
   --serif: "Youka Serif", Georgia, "Songti SC", "Noto Serif CJK SC", serif;
   --sans: "DM Sans", "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
   --gutter: clamp(1.3rem, 5.7vw, 5.4rem);
@@ -171,7 +174,8 @@ html:not(.js) .site-header { position: absolute; width: 100%; }
 .site-header.over-landscape {
   background: transparent;
   box-shadow: none;
-  color: #fffaf0;
+  color: var(--cover-ink);
+  text-shadow: var(--cover-text-shadow);
 }
 .over-landscape .header-inner { position: relative; }
 .over-landscape .header-inner::after {
@@ -183,13 +187,13 @@ html:not(.js) .site-header { position: absolute; width: 100%; }
 }
 .over-landscape .brand, .over-landscape .masthead-note { color: inherit; }
 .over-landscape .masthead-note { border-color: rgb(255 250 240 / .48); }
-.over-landscape .journal-mark { background: #eec59b; }
-.over-landscape :is(.nav-link, .nav-external):is(:hover, :focus-visible, [aria-current]) { color: #ffe3bf; }
+.over-landscape .journal-mark { background: var(--cover-accent); }
+.over-landscape :is(.nav-link, .nav-external):is(:hover, :focus-visible, [aria-current]) { color: var(--cover-accent); }
 .over-landscape :is(.nav-link, .nav-external)::after { background: currentColor; }
 .over-landscape :focus-visible { outline-color: currentColor; }
 .over-landscape .menu-toggle span { background: currentColor; }
 .over-landscape:has(.menu-toggle[aria-expanded="true"]) { background: #23392f; }
-.mobile-nav { color: var(--ink); }
+.mobile-nav { color: var(--ink); text-shadow: none; }
 
 .header-inner { min-height: var(--header-h); display: flex; align-items: center; }
 .brand {
@@ -248,12 +252,46 @@ html:not(.js) .site-header { position: absolute; width: 100%; }
 .nav-external { font-weight: 500; }
 .menu-toggle, .mobile-nav { display: none; }
 
+.opening-cover { display: none; }
+@media (prefers-reduced-motion: no-preference) {
+  .open-cover .opening-cover {
+    position: fixed;
+    inset: 0;
+    z-index: 30;
+    display: grid;
+    place-items: center;
+    pointer-events: none;
+    color: var(--cover-ink);
+    background: #142a23;
+    animation: lift-cover .82s cubic-bezier(.72, 0, .2, 1) .32s both;
+  }
+  .opening-cover > span {
+    font: italic 400 clamp(5rem, 12vw, 10rem)/1 var(--serif);
+    letter-spacing: -.06em;
+    animation: uncover-signature .32s ease-out both;
+  }
+  .opening-cover .journal-mark {
+    font-size: .68em;
+    margin: .62em 0 0 .12em;
+    vertical-align: top;
+    background: var(--cover-accent);
+  }
+  @keyframes lift-cover {
+    from { clip-path: inset(0); }
+    to { clip-path: inset(0 0 100% 0); visibility: hidden; }
+  }
+  @keyframes uncover-signature {
+    from { clip-path: inset(0 100% 0 0); }
+    to { clip-path: inset(0); }
+  }
+}
+
 /* The photograph is the cover. The following spread takes its place as it scrolls away. */
 .hero {
   position: relative;
   z-index: 2;
   background: #23392f;
-  color: #fffaf0;
+  color: var(--cover-ink);
 }
 .cover-stage {
   position: relative;
@@ -275,9 +313,10 @@ html:not(.js) .site-header { position: absolute; width: 100%; }
   inset: 0;
   pointer-events: none;
   background:
-    linear-gradient(180deg, rgb(15 28 26 / .54), transparent 24%, transparent 60%, rgb(12 28 25 / .68)),
+    linear-gradient(180deg, rgb(12 24 22 / .78), transparent 27%, transparent 63%, rgb(11 24 22 / .82)),
     linear-gradient(90deg, rgb(15 34 30 / .55), rgb(20 38 33 / .28) 36%, transparent 72%);
 }
+.cover-type, .cover-scroll, .cover-caption { text-shadow: var(--cover-text-shadow); }
 .cover-type {
   position: absolute;
   inset: auto 0 23%;
@@ -300,7 +339,7 @@ html:not(.js) .site-header { position: absolute; width: 100%; }
 }
 #hero-title > span, #hero-title em { display: block; }
 #hero-title em { margin: .07em 0 0 .22em; font-weight: 400; white-space: nowrap; }
-#hero-title em span { color: #eec59b; }
+#hero-title em span { color: var(--cover-accent); }
 .cover-foot, .cover-caption { position: absolute; bottom: 0; height: 5.8rem; }
 .cover-foot {
   inset-inline: 0;
@@ -320,8 +359,8 @@ html:not(.js) .site-header { position: absolute; width: 100%; }
   gap: .85rem;
   align-items: center;
   min-height: 44px;
-  font-size: .9rem;
-  letter-spacing: .07em;
+  font-size: 1rem;
+  letter-spacing: .025em;
 }
 .scroll-mark {
   display: grid;
@@ -350,11 +389,12 @@ html:not(.js) .site-header { position: absolute; width: 100%; }
   align-items: center;
   gap: .8rem;
   pointer-events: none;
-  font-size: .88rem;
-  letter-spacing: .05em;
+  font-size: 1rem;
+  letter-spacing: .025em;
   line-height: 1.5;
 }
-.cover-caption small { display: block; margin-top: .1em; font-size: .76rem; color: #e8e6db; }
+.cover-caption small { display: block; margin-top: .14em; font-size: .9375rem; color: var(--cover-ink); }
+.cover-caption small:empty { display: none; }
 .viewfinder {
   display: inline-block;
   width: 1.45rem;
@@ -412,13 +452,14 @@ html:not(.js) .site-header { position: absolute; width: 100%; }
 .field-canvas { width: 100%; height: auto; aspect-ratio: 1.6; cursor: crosshair; touch-action: pan-y pinch-zoom; }
 .field-figure figcaption {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
+  gap: .25rem 1rem;
   border-top: 1px solid var(--line);
   margin-top: .8rem;
   color: var(--muted);
-  font-size: .875rem;
+  font-size: 1rem;
 }
 #field-pulse { display: inline-flex; min-height: 44px; align-items: center; gap: .5rem; color: var(--accent); }
 #field-pulse:hover { text-decoration: underline; text-underline-offset: .25em; }
@@ -479,7 +520,7 @@ html:not(.js) .site-header { position: absolute; width: 100%; }
   gap: 2rem;
   padding-block: .8rem;
   color: var(--muted);
-  font-size: .85rem;
+  font-size: .9375rem;
   position: relative;
 }
 .footer-inner::before {
@@ -527,10 +568,11 @@ html:not(.js) .site-header { position: absolute; width: 100%; }
   .cover-type { bottom: 25%; }
   .lake-rings { left: 24%; top: 86%; }
   #hero-title { font-size: clamp(5.2rem, 17.8vw, 8.2rem); }
-  .cover-greeting { font-size: .94rem; margin-bottom: 1.6rem; }
+  .cover-greeting { margin-bottom: 1.6rem; }
   .cover-foot, .cover-caption { height: 5rem; }
-  .cover-caption { font-size: .82rem; gap: .55rem; }
+  .cover-caption { gap: .45rem; }
   .cover-scroll { gap: .55rem; }
+  .cover-caption .viewfinder { width: 1.15rem; }
   .field-layout { grid-template-columns: 1fr; gap: 2rem; padding-block: calc(var(--header-h) + 2rem) 3.25rem; }
   #field-title { font-size: clamp(3.8rem, 13vw, 6.3rem); }
   .field-subtitle { margin: .5rem 0 1rem; }

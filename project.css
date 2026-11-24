@@ -113,11 +113,11 @@
   align-items: baseline;
   gap: 0.25em 1em;
   margin-top: 1.3rem;
-  font-size: 0.94rem;
+  font-size: 1rem;
 }
 .method-sources > span,
 .method-caption {
-  font-size: 0.8125rem;
+  font-size: .9375rem;
   color: var(--muted);
 }
 .method-note { grid-area: notes; }
@@ -139,7 +139,7 @@
   margin: 0.45rem 0 0.95rem;
   min-height: 1.65em;
   color: var(--muted);
-  font-size: 0.875rem;
+  font-size: 1rem;
   line-height: 1.65;
 }
 .method-controls {
@@ -183,7 +183,7 @@
   display: flex;
   justify-content: space-between;
   gap: 1rem;
-  font-size: 0.875rem;
+  font-size: 1rem;
   color: var(--muted);
 }
 .weight-readout output {
@@ -237,7 +237,7 @@
 }
 .method-readout {
   color: var(--muted);
-  font-size: 0.9375rem;
+  font-size: 1rem;
 }
 .agent-pipeline {
   list-style: decimal-leading-zero;
@@ -259,7 +259,7 @@
   display: inline-block;
   margin-left: 1.15em;
   color: var(--muted);
-  font-size: 0.875rem;
+  font-size: 1rem;
 }
 .agent-node.is-running strong,
 .agent-node.is-running::marker {
@@ -388,6 +388,6 @@ html:not(.js) .method-note {
   content: "滚动阅读，或点选方法";
   align-self: center;
   margin-left: auto;
-  font-size: .825rem;
+  font-size: .9375rem;
   color: var(--secondary-heading);
 }
