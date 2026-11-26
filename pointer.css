@@ -35,6 +35,31 @@
   box-shadow: inset 0 0 0 7px #243c3099;
 }
 
+.cover-tap-ripple {
+  position: absolute;
+  z-index: 2;
+  width: clamp(8rem, 33vw, 15rem);
+  aspect-ratio: 1.9;
+  translate: -50% -50%;
+  border: 1px solid #fff0cd;
+  border-radius: 50%;
+  box-shadow: 0 0 .55rem #f9d28d70, inset 0 0 .35rem #f9d28d60;
+  opacity: 0;
+  pointer-events: none;
+}
+.cover-tap-ripple::before, .cover-tap-ripple::after {
+  content: "";
+  position: absolute;
+  inset: 16%;
+  border: 1px solid #ffe5afad;
+  border-radius: 50%;
+}
+.cover-tap-ripple::after {
+  inset: 30%;
+  border: 0;
+  background: radial-gradient(ellipse, #fff3c577, transparent 72%);
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .photo-frame img {
     transition: transform 440ms cubic-bezier(.2, .7, .25, 1);

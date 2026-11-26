@@ -3,6 +3,7 @@ import "../pointer.css";
 const fineHover = matchMedia(
   "(any-hover: hover) and (any-pointer: fine) and (prefers-reduced-motion: no-preference)",
 );
+const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
 
 function pointIn(element, event) {
   const bounds = element.getBoundingClientRect();
@@ -27,6 +28,8 @@ function setupPhoto(figure) {
   let zoomed = false;
   let x = 0.5;
   let y = 0.5;
+  let activationPointer;
+  let rippleAnimation;
   function aim(atX, atY) {
     x = Math.max(0, Math.min(1, atX));
     y = Math.max(0, Math.min(1, atY));
@@ -41,12 +44,40 @@ function setupPhoto(figure) {
   }
   setZoom(false);
 
+  function showRipple(point) {
+    rippleAnimation?.cancel();
+    const ripple = document.createElement("span");
+    ripple.className = "cover-tap-ripple";
+    ripple.setAttribute("aria-hidden", "true");
+    ripple.style.left = `${point.x * 100}%`;
+    ripple.style.top = `${point.y * 100}%`;
+    frame.append(ripple);
+
+    const reduced = reducedMotion.matches;
+    const animation = ripple.animate([
+      { transform: `scale(${reduced ? .4 : .16})`, opacity: 1 },
+      { transform: `scale(${reduced ? .4 : 1.45})`, opacity: 0 },
+    ], { duration: reduced ? 180 : 620, easing: "cubic-bezier(.25, .62, .3, 1)" });
+    rippleAnimation = animation;
+    const remove = () => {
+      ripple.remove();
+      if (rippleAnimation === animation) rippleAnimation = undefined;
+    };
+    animation.finished.then(remove, remove);
+  }
+  reducedMotion.addEventListener("change", () => rippleAnimation?.cancel());
+
+  toggle.addEventListener("pointerdown", (event) => {
+    activationPointer = event.pointerType;
+  }, { passive: true });
+  toggle.addEventListener("pointercancel", () => { activationPointer = undefined; });
   toggle.addEventListener("click", (event) => {
-    if (!zoomed) {
-      const point = event.detail ? pointIn(frame, event) : { x: 0.5, y: 0.5 };
-      aim(point.x, point.y);
-    }
+    const isTouch = event.detail && (event.pointerType || activationPointer) === "touch";
+    activationPointer = undefined;
+    const point = event.detail ? pointIn(frame, event) : { x: 0.5, y: 0.5 };
+    if (!zoomed) aim(point.x, point.y);
     setZoom(!zoomed);
+    if (isTouch) showRipple(point);
   });
   toggle.addEventListener("keydown", (event) => {
     if (!zoomed) return;

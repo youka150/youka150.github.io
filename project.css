@@ -55,12 +55,14 @@
 .project-deck .method-link {
   margin-top: 0.65rem;
 }
-.stage-tabs {
+.stage-tabs,
+.stage-bookmarks {
   display: flex;
   gap: clamp(1.5rem, 3.5vw, 4rem);
   border-block: 1px solid var(--line);
 }
-.stage-tabs button {
+.stage-tabs button,
+.stage-bookmarks a {
   position: relative;
   padding: 1.05rem 0;
   border: 0;
@@ -68,7 +70,8 @@
   font: inherit;
   color: var(--secondary-heading);
 }
-.stage-tabs button::after {
+.stage-tabs button::after,
+.stage-bookmarks a::after {
   content: "";
   position: absolute;
   inset: auto 0 -1px;
@@ -77,11 +80,25 @@
   transform: scaleX(0);
   transform-origin: left center;
 }
-.stage-tabs button[aria-selected="true"] {
+.stage-tabs button[aria-selected="true"],
+.stage-bookmarks a[aria-current="location"] {
   color: var(--accent);
 }
-.stage-tabs button[aria-selected="true"]::after {
+.stage-tabs button[aria-selected="true"]::after,
+.stage-bookmarks a[aria-current="location"]::after {
   transform: scaleX(1);
+}
+.inline-reader .stage-bookmarks {
+  position: sticky;
+  z-index: 2;
+  top: var(--header-h);
+  background: #eeefe6;
+}
+.stage-bookmarks a {
+  display: grid;
+  min-height: 44px;
+  padding-block: 0.65rem;
+  align-items: center;
 }
 .stage-scene {
   align-items: start;
@@ -91,6 +108,26 @@
 }
 .stage-scene[hidden] {
   display: none;
+}
+.inline-reader .stage-scene {
+  grid-template-areas: "heading" "demo" "notes";
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto;
+  gap: 1.45rem;
+  scroll-margin-top: 3rem;
+}
+.inline-reader .stage-scene + .stage-scene {
+  border-top: 1px solid var(--line);
+}
+.inline-reader .method-heading {
+  max-width: none;
+  margin: 0;
+}
+.inline-reader .method-note {
+  max-width: 42rem;
+}
+.inline-reader .method-demo {
+  width: 100%;
 }
 .method-note,
 .method-demo {
@@ -265,6 +302,12 @@
 .agent-node.is-running::marker {
   color: var(--accent);
 }
+.agent-node.is-running {
+  background: linear-gradient(90deg, rgb(156 104 60 / .13), transparent);
+}
+.agent-node.is-done::marker {
+  color: var(--heading);
+}
 .agent-log p {
   margin: 0.4rem 0;
 }
@@ -317,13 +360,15 @@ html:not(.js) .method-note {
   .method-link:hover,
   .method-options button:hover,
   .stage-tabs button:hover,
+  .stage-bookmarks a:hover,
   .project-build summary:hover {
     color: var(--accent);
     text-decoration-color: currentColor;
   }
 }
 @media (prefers-reduced-motion: no-preference) {
-  .stage-tabs button::after {
+  .stage-tabs button::after,
+  .stage-bookmarks a::after {
     transition: transform 220ms ease-out;
   }
 }
@@ -359,6 +404,13 @@ html:not(.js) .method-note {
   .agent-node span {
     display: block;
     margin: 0.3em 0 0;
+  }
+}
+
+@media (pointer: coarse) {
+  .method-options button,
+  .method-demo .method-link {
+    min-height: 44px;
   }
 }
 
