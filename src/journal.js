@@ -184,7 +184,7 @@ export function setupProjectReading(scenes, show, onEnter) {
         scene.removeAttribute("role");
         scene.setAttribute("aria-labelledby", scene.querySelector("h3").id);
         gsap.killTweensOf(scene);
-        gsap.set(scene, { clearProps: "transform" });
+        gsap.set(scene, { clearProps: "opacity,transform" });
         if (!entered.has(sceneIndex)) observer.observe(demos[sceneIndex]);
       } else {
         scene.setAttribute("role", "tabpanel");

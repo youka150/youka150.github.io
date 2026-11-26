@@ -765,7 +765,7 @@ function showStage(index, { animate = true } = {}) {
 
   stageScenes.forEach((scene, sIdx) => {
     gsap.killTweensOf(scene);
-    gsap.set(scene, { clearProps: "transform" });
+    gsap.set(scene, { clearProps: "opacity,transform" });
     scene.hidden = sIdx !== index;
   });
 
@@ -775,11 +775,13 @@ function showStage(index, { animate = true } = {}) {
 
   if (index !== 2 && agentTimeline?.isActive()) agentTimeline.progress(1);
   if (changed && animate && !motionQuery.matches) {
-    gsap.fromTo(
-      stageScenes[index],
-      { y: 10 },
-      { y: 0, duration: 0.36, ease: "power2.out", clearProps: "transform" },
-    );
+    const scene = stageScenes[index];
+    const pinned = scene.closest(".pinned-reader");
+    const from = pinned ? { opacity: 0.76 } : { y: 10 };
+    const to = pinned ? { opacity: 1 } : { y: 0 };
+    gsap.fromTo(scene, from, {
+      ...to, duration: 0.36, ease: "power2.out", clearProps: "opacity,transform",
+    });
   }
 }
 
