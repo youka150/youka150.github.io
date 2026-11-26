@@ -32,18 +32,35 @@ export function openJournal() {
   window.addEventListener("pageshow", syncMasthead);
 
   gsap.registerPlugin(ScrollTrigger);
-  gsap.matchMedia().add("(prefers-reduced-motion: no-preference)", () => {
-    // A ripple crosses the lake as the paper spread rises into view.
+  const motion = gsap.matchMedia();
+  motion.add({
+    enabled: "(prefers-reduced-motion: no-preference)",
+    touch: "(pointer: coarse)",
+  }, ({ conditions: { enabled, touch } }) => {
+    if (!enabled) return;
+    const coverStage = cover.querySelector(".cover-stage");
+    // A shorter travel on touch lets the first swipe carry the ripple across the lake.
     const crossing = gsap.timeline({
       defaults: { ease: "none" },
-      scrollTrigger: { trigger: cover, start: "top top", end: "bottom top", scrub: true },
+      scrollTrigger: {
+        trigger: cover,
+        start: "top top",
+        end: touch ? () => `+=${Math.round(coverStage.offsetHeight * .7)}` : "bottom top",
+        scrub: true,
+      },
     });
-    crossing.to(".photo-negative", { scale: 1.19, yPercent: 7, duration: 1 }, 0)
+    crossing.to(".photo-negative", { scale: touch ? 1.16 : 1.19, yPercent: touch ? 5 : 7, duration: 1 }, 0)
       .to("#hero-title", { yPercent: -38, opacity: 0, duration: .55 }, 0)
       .to(".cover-greeting", { y: -18, opacity: 0, duration: .24 }, 0)
       .fromTo(".lake-rings", { scale: .12 }, { scale: 3.6, duration: .85 }, .015)
-      .to(".lake-rings", { opacity: .68, duration: .18 }, .015)
-      .to(".lake-rings", { opacity: 0, duration: .48 }, .25);
+      .to(".lake-rings", { opacity: touch ? .84 : .68, duration: .18 }, .015)
+      .to(".lake-rings", { opacity: 0, duration: .48 }, touch ? .34 : .25);
+    if (touch) {
+      crossing.fromTo(".lake-rings", { rotation: -7 }, { rotation: 8, duration: .85 }, .015)
+        .to(".lake-glint", { "--lake-glint-angle": "-38deg", duration: .85 }, .015);
+    }
+  });
+  motion.add("(prefers-reduced-motion: no-preference)", () => {
     const travel = () => innerWidth > 760 ? 58 : 19;
     for (const note of document.querySelectorAll(".notes-stories .lens-panel")) {
       const print = note.querySelector(".note-print");
@@ -81,56 +98,176 @@ export function setupSoundtrack() {
   });
 }
 
-// Pin only when every method fits below the masthead, including at text zoom.
-export function setupProjectReading(scenes, show) {
+export function setupProjectReading(scenes, show, onEnter) {
   const reader = document.querySelector(".project-reader");
   const header = document.querySelector(".site-header");
   const tabs = reader.querySelector(".stage-tabs");
-  const eligible = matchMedia("(min-width: 981px) and (pointer: fine) and (prefers-reduced-motion: no-preference)");
+  const tabButtons = [...tabs.querySelectorAll("[data-stage-tab]")];
+  const bookmarks = reader.querySelector(".stage-bookmarks");
+  const links = [...bookmarks.querySelectorAll("[data-stage-bookmark]")];
+  const compact = matchMedia("(max-width: 980px), (pointer: coarse) and (orientation: portrait)");
+  const touch = matchMedia("(pointer: coarse)");
+  const motion = matchMedia("(prefers-reduced-motion: no-preference)");
+  const demos = scenes.map(scene => scene.querySelector("canvas, .agent-pipeline"));
+  const entered = new Set();
+  let inline;
+  let currentBookmark = -1;
   let top = 0;
   let distance = 0;
   let frame = 0;
+  const observer = new IntersectionObserver(entries => {
+    if (!inline) return;
+    for (const entry of entries) {
+      if (entry.intersectionRatio < 0.35) continue;
+      const index = demos.indexOf(entry.target);
+      observer.unobserve(entry.target);
+      if (entered.has(index)) continue;
+      entered.add(index);
+      onEnter(index);
+    }
+  }, { threshold: 0.35 });
+
+  function setBookmark(index) {
+    if (currentBookmark === index) return;
+    links[currentBookmark]?.removeAttribute("aria-current");
+    links[index].setAttribute("aria-current", "location");
+    currentBookmark = index;
+  }
+
   function read() {
     frame = 0;
+    if (inline) {
+      const line = readingLine();
+      const index = scenes.findIndex(scene => {
+        const bounds = scene.getBoundingClientRect();
+        return bounds.top <= line && bounds.bottom > line;
+      });
+      if (index >= 0) setBookmark(index);
+      return;
+    }
     if (!distance) return;
     const offset = top - reader.getBoundingClientRect().top;
     if (offset < -1 || offset > distance + 1) return;
     show(Math.round(Math.max(0, Math.min(1, offset / distance)) * (scenes.length - 1)));
   }
+
+  function readingLine() {
+    return Math.max(header.offsetHeight + bookmarks.offsetHeight + 18, innerHeight * 0.36);
+  }
+
+  function selectedStage() {
+    return tabButtons.findIndex(button => button.getAttribute("aria-selected") === "true");
+  }
+
+  function linkedStage() {
+    return scenes.findIndex(scene => location.hash === "#" + scene.id);
+  }
+
+  function setLayout(stacked) {
+    reader.classList.toggle("inline-reader", stacked);
+    if (inline === stacked) return;
+
+    const focus = document.activeElement;
+    const focusedScene = scenes.findIndex(scene => scene.contains(focus));
+    const focusedTab = tabButtons.indexOf(focus);
+    const focusedBookmark = links.indexOf(focus);
+    const previousStage = inline === undefined ? -1 : inline ? currentBookmark : selectedStage();
+    const index = [focusedScene, focusedTab, focusedBookmark, previousStage, linkedStage(), 0]
+      .find(candidate => candidate >= 0);
+
+    inline = stacked;
+    tabs.hidden = stacked;
+    bookmarks.hidden = !stacked;
+    scenes.forEach((scene, sceneIndex) => {
+      if (stacked) {
+        scene.hidden = false;
+        scene.removeAttribute("role");
+        scene.setAttribute("aria-labelledby", scene.querySelector("h3").id);
+        gsap.killTweensOf(scene);
+        gsap.set(scene, { clearProps: "transform" });
+        if (!entered.has(sceneIndex)) observer.observe(demos[sceneIndex]);
+      } else {
+        scene.setAttribute("role", "tabpanel");
+        scene.setAttribute("aria-labelledby", tabButtons[sceneIndex].id);
+      }
+    });
+    if (stacked) {
+      setBookmark(index);
+      if (focusedTab >= 0) links[index].focus({ preventScroll: true });
+    } else {
+      observer.disconnect();
+      show(index, { animate: false });
+      if (focusedBookmark >= 0) tabButtons[index].focus({ preventScroll: true });
+    }
+    return index;
+  }
+
+  // Pin only when every method fits below the masthead, including at text zoom.
   function measure() {
+    const wasPinned = distance > 0;
+    const bounds = reader.getBoundingClientRect();
+    const line = readingLine();
+    const keepChapter = inline !== undefined && bounds.top < line && bounds.bottom > line;
     distance = 0;
     reader.classList.remove("pinned-reader");
-    if (!eligible.matches) return;
-    top = header.offsetHeight + 8;
-    const heights = scenes.map(scene => {
-      const hidden = scene.hidden;
-      scene.hidden = false;
-      const height = scene.offsetHeight;
-      scene.hidden = hidden;
-      return height;
-    });
-    const pageHeight = tabs.offsetHeight + Math.max(...heights);
-    if (pageHeight + top + 12 > innerHeight) return;
-    distance = Math.round(innerHeight * 1.12);
-    reader.style.setProperty("--reader-top", top + "px");
-    reader.style.setProperty("--reader-page", pageHeight + "px");
-    reader.style.setProperty("--reader-distance", distance + "px");
-    reader.classList.add("pinned-reader");
+    if (!compact.matches && motion.matches) {
+      reader.classList.remove("inline-reader");
+      top = header.offsetHeight + 8;
+      const heights = scenes.map(scene => {
+        const hidden = scene.hidden;
+        scene.hidden = false;
+        const height = scene.offsetHeight;
+        scene.hidden = hidden;
+        return height;
+      });
+      const tabsWereHidden = tabs.hidden;
+      tabs.hidden = false;
+      const pageHeight = tabs.offsetHeight + Math.max(...heights);
+      tabs.hidden = tabsWereHidden;
+      if (pageHeight + top + 12 <= innerHeight) {
+        distance = Math.round(innerHeight * 1.12);
+        reader.style.setProperty("--reader-top", top + "px");
+        reader.style.setProperty("--reader-page", pageHeight + "px");
+        reader.style.setProperty("--reader-distance", distance + "px");
+        reader.classList.add("pinned-reader");
+      }
+    }
+    const switchedStage = setLayout(compact.matches || (touch.matches && !distance));
+    if (keepChapter && (switchedStage !== undefined || wasPinned !== (distance > 0))) {
+      alignStage(switchedStage ?? selectedStage());
+    }
     read();
   }
   window.addEventListener("scroll", () => {
-    if (!frame && distance) frame = requestAnimationFrame(read);
+    if (!frame && (inline || distance)) frame = requestAnimationFrame(read);
   }, {passive: true});
   window.addEventListener("resize", measure);
   function refreshReading() {
     measure();
     ScrollTrigger.refresh(true);
   }
-  eligible.addEventListener("change", refreshReading);
-  document.fonts.ready.then(refreshReading);
-  return index => {
+  touch.addEventListener("change", refreshReading);
+  motion.addEventListener("change", refreshReading);
+  function goToStage(index) {
     if (!distance) return;
     const start = window.scrollY + reader.getBoundingClientRect().top - top;
     window.scrollTo({top: start + distance * index / (scenes.length - 1), behavior: "instant"});
-  };
+  }
+  function alignStage(index) {
+    if (distance) goToStage(index);
+    else scenes[index]?.scrollIntoView({ block: "start", behavior: "instant" });
+  }
+  function navigateToLinkedStage() {
+    const index = linkedStage();
+    if (inline || index < 0) return;
+    show(index, { animate: false });
+    alignStage(index);
+  }
+  measure();
+  window.addEventListener("hashchange", navigateToLinkedStage);
+  document.fonts.ready.then(() => {
+    refreshReading();
+    navigateToLinkedStage();
+  });
+  return goToStage;
 }

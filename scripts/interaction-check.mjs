@@ -214,9 +214,17 @@ try {
   await mobile.locator("#mobile-nav-project").tap();
   await expect(mobile.locator("#mobile-nav")).not.toBeVisible();
   await expect(mobile.locator("#project-title")).toBeInViewport();
-  await mobile.locator("#stage-tab-2").tap();
-  await expect(mobile.locator('[data-chapter="2"]')).toBeVisible();
-  await expect(mobile.locator("#agent-replay-btn")).toBeVisible();
+  await expect(mobile.locator(".project-reader")).toHaveClass(/inline-reader/);
+  for (const index of [0, 1, 2]) {
+    await expect(mobile.locator(`#scene-${index} [data-chapter="${index}"]`)).toBeVisible();
+  }
+  await mobile.locator('[data-stage-bookmark="2"]').tap();
+  await expect(mobile).toHaveURL(/#scene-2$/);
+  await expect(mobile.locator("#scene-2 h3")).toBeInViewport();
+  const mobileReplay = mobile.locator("#agent-replay-btn");
+  await mobileReplay.tap();
+  await expect(mobileReplay).toBeEnabled();
+  await expect(mobile.locator(".agent-node.is-done")).toHaveCount(4);
   await mobile.close();
 
   // Responsive overflow sweep across 320px–1440px
