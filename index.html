@@ -27,9 +27,9 @@
       type="font/woff2"
       crossorigin
     />
-    <link rel="stylesheet" href="./styles.css?v=917e02b9217d" />
-    <link rel="stylesheet" href="./script.css?v=4768b3d4bf93" />
-    <script type="module" src="./script.js?v=1349e2a4e055"></script>
+    <link rel="stylesheet" href="./styles.css?v=b47f7aad7065" />
+    <link rel="stylesheet" href="./script.css?v=68da8abad6b1" />
+    <script type="module" src="./script.js?v=d9eaf853bbed"></script>
   </head>
   <body>
     <div class="opening-cover" aria-hidden="true"><span>youka<i class="journal-mark"></i></span></div>
@@ -76,7 +76,7 @@
               <span>山间的湖与木屋<small data-photo-hint></small></span>
             </figcaption>
           </figure>
-          <div class="lake-rings" aria-hidden="true"><i></i><i></i><i></i><span class="lake-glint"></span></div>
+          <div class="lake-rings" aria-hidden="true"><i></i><i></i><i></i></div>
           <div class="container cover-type">
             <p class="cover-greeting">你好，我是 <span lang="en">Youka</span>。</p>
             <h1 id="hero-title" lang="en"><span>Curious</span> <em>by nature<span>.</span></em></h1>
@@ -124,13 +124,8 @@
             </div>
           </header>
           <div class="project-reader">
-            <nav class="stage-bookmarks" aria-label="项目章节">
-              <a href="#scene-0" data-stage-bookmark="0">关系网络</a>
-              <a href="#scene-1" data-stage-bookmark="1">用户画像</a>
-              <a href="#scene-2" data-stage-bookmark="2">趋势分析</a>
-            </nav>
             <div class="stage-panel">
-              <div class="stage-tabs" role="tablist" aria-label="项目方法" hidden>
+              <div class="stage-tabs" role="tablist" aria-label="项目方法">
                 <button id="stage-tab-0" type="button" role="tab" aria-selected="true"
                   aria-controls="scene-0" data-stage-tab="0">关系网络</button>
                 <button id="stage-tab-1" type="button" role="tab" aria-selected="false" tabindex="-1"
@@ -138,8 +133,8 @@
                 <button id="stage-tab-2" type="button" role="tab" aria-selected="false" tabindex="-1"
                   aria-controls="scene-2" data-stage-tab="2">趋势分析</button>
               </div>
-              <section id="scene-0" class="stage-scene" aria-labelledby="stage-heading-0" data-scene="0" tabindex="-1">
-                <h3 class="method-heading" id="stage-heading-0">谁在连接不同的讨论？</h3>
+              <div id="scene-0" class="stage-scene" role="tabpanel" aria-labelledby="stage-tab-0" data-scene="0">
+                <h3 class="method-heading">谁在连接不同的讨论？</h3>
                 <div class="method-demo">
                   <figure class="method-figure">
                     <canvas id="network-canvas" width="680" height="360" tabindex="0"
@@ -175,9 +170,9 @@
                       href="https://github.com/youka150/community/blob/main/python/huawei_mining_service/scoring.py">影响力评分</a>
                   </div>
                 </div>
-              </section>
-              <section id="scene-1" class="stage-scene" aria-labelledby="stage-heading-1" data-scene="1" tabindex="-1">
-                <h3 class="method-heading" id="stage-heading-1">同样活跃，都在聊什么？</h3>
+              </div>
+              <div id="scene-1" class="stage-scene" role="tabpanel" aria-labelledby="stage-tab-1" data-scene="1">
+                <h3 class="method-heading">同样活跃，都在聊什么？</h3>
                 <div class="method-demo">
                   <figure class="method-figure">
                     <canvas id="cluster-canvas" width="680" height="360"
@@ -213,9 +208,9 @@
                       href="https://github.com/youka150/community/blob/main/python/huawei_mining_service/services/bertopic_service.py">主题模型</a>
                   </div>
                 </div>
-              </section>
-              <section id="scene-2" class="stage-scene" aria-labelledby="stage-heading-2" data-scene="2" tabindex="-1">
-                <h3 class="method-heading" id="stage-heading-2">哪些问题值得跟进？</h3>
+              </div>
+              <div id="scene-2" class="stage-scene" role="tabpanel" aria-labelledby="stage-tab-2" data-scene="2">
+                <h3 class="method-heading">哪些问题值得跟进？</h3>
                 <div class="method-demo">
                   <fieldset class="method-options">
                     <legend>演示议题</legend>
@@ -245,7 +240,7 @@
                       href="https://github.com/youka150/community/blob/main/python/huawei_mining_service/services/hotspot_service.py">热点分析</a>
                   </div>
                 </div>
-              </section>
+              </div>
             </div>
           </div>
           <section class="project-build" aria-labelledby="implementation-title">
@@ -303,7 +298,7 @@
                   <canvas id="regression-canvas" width="660" height="330" role="img"
                     aria-label="示意散点图，合并样本时趋势向上，各组内部趋势向下。"></canvas>
                 </div>
-                <figcaption>回归笔记 · 模拟样本<span class="note-touch-hint">在图上横划可切换手记。</span></figcaption>
+                <figcaption>回归笔记 · 模拟样本</figcaption>
               </figure>
             </div>
           </article>
@@ -344,7 +339,7 @@
                     <canvas id="music-canvas" width="660" height="330" role="button" tabindex="0"
                       aria-label="拨动弦线，可轻点或按回车、空格" aria-describedby="music-caption"></canvas>
                   </div>
-                  <figcaption id="music-caption">滑过或轻点弦线，试试拨弦。<span class="note-touch-hint">在图上横划可切换手记。</span></figcaption>
+                  <figcaption id="music-caption">滑过或轻点弦线，试试拨弦。</figcaption>
                 </figure>
                 <div class="lens-controls">
                   <div class="note-options" role="group" aria-label="选择弦线速度">
@@ -390,12 +385,8 @@
                 <div class="lens-stage">
                   <canvas id="court-canvas" width="660" height="330" role="button" tabindex="0"
                     aria-label="选择击球落点，方向键移动，回车或空格击球" aria-describedby="court-caption"></canvas>
-                  <span id="court-serve-marker" aria-hidden="true">→</span>
                 </div>
-                <figcaption id="court-caption">
-                  点选落点发球 · 也可用方向键选点，回车击球
-                  <span class="note-touch-hint">从箭头向右短划发球。图中其他位置横划可切换手记。</span>
-                </figcaption>
+                <figcaption id="court-caption">点选落点发球 · 也可用方向键选点，回车击球</figcaption>
               </figure>
             </div>
           </article>

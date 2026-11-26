@@ -32,14 +32,6 @@ async function rippleRadius(canvas, point) {
   }, point);
 }
 
-function scrollToMethod(reader, fraction) {
-  return reader.evaluate((el, at) => {
-    const style = getComputedStyle(el);
-    const top = scrollY + el.getBoundingClientRect().top - parseFloat(style.getPropertyValue("--reader-top"));
-    scrollTo({ top: top + at * parseFloat(style.getPropertyValue("--reader-distance")), behavior: "instant" });
-  }, fraction);
-}
-
 try {
   const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
   const errors = [];
@@ -117,7 +109,11 @@ try {
   const reader = page.locator(".project-reader");
   await expect(reader).toHaveClass(/pinned-reader/);
   for (const [step, fraction] of [[0,.06], [1,.50], [2,.92], [1,.47]]) {
-    await scrollToMethod(reader, fraction);
+    await reader.evaluate((el, at) => {
+      const style = getComputedStyle(el);
+      const top = scrollY + el.getBoundingClientRect().top - parseFloat(style.getPropertyValue("--reader-top"));
+      scrollTo({top: top + at * parseFloat(style.getPropertyValue("--reader-distance")), behavior: "instant"});
+    }, fraction);
     await expect(page.locator("#stage-tab-" + step)).toHaveAttribute("aria-selected", "true");
   }
 
@@ -187,41 +183,6 @@ try {
     viewport: {width:390, height:844}, isMobile:true, hasTouch:true,
   });
   mobile.on("pageerror", error => errors.push(error.message));
-  const cdp = await mobile.context().newCDPSession(mobile);
-  async function swipe(x, y, dx, dy) {
-    await cdp.send("Input.dispatchTouchEvent", {type: "touchStart", touchPoints: [{x, y}]});
-    for (let step = 1; step <= 12; step++) {
-      await cdp.send("Input.dispatchTouchEvent", {
-        type: "touchMove",
-        touchPoints: [{ x: x + dx * step / 12, y: y + dy * step / 12 }],
-      });
-      await mobile.waitForTimeout(30);
-    }
-    await cdp.send("Input.dispatchTouchEvent", {type: "touchEnd", touchPoints: []});
-  }
-
-  await mobile.goto(url, { waitUntil: "networkidle" });
-  await expect(mobile.locator(".opening-cover")).toBeHidden();
-  const mobilePhoto = mobile.locator(".photo-negative");
-  const coverRipple = mobile.locator(".cover-tap-ripple");
-  const photoScale = () => mobilePhoto.evaluate(el => new DOMMatrix(getComputedStyle(el).transform).a);
-  const glintAngle = () => mobile.locator(".lake-glint").evaluate(el =>
-    getComputedStyle(el).getPropertyValue("--lake-glint-angle").trim(),
-  );
-  await mobile.locator(".photo-toggle").tap({ position: { x: 225, y: 630 } });
-  await expect(coverRipple).toHaveCount(1);
-  await expect(coverRipple).toHaveCount(0);
-  const initialPhotoScale = await photoScale();
-  const initialGlintAngle = await glintAngle();
-  await swipe(225, 630, 0, -228);
-  await expect.poll(() => mobile.evaluate(() => scrollY)).toBeGreaterThan(140);
-  await expect.poll(photoScale).toBeGreaterThan(initialPhotoScale + .02);
-  await expect.poll(glintAngle).not.toBe(initialGlintAngle);
-  await expect(coverRipple).toHaveCount(0);
-  await mobile.evaluate(() => scrollTo({ top: 0, behavior: "instant" }));
-  await expect.poll(photoScale).toBeCloseTo(initialPhotoScale, 3);
-  await expect.poll(glintAngle).toBe(initialGlintAngle);
-
   await mobile.goto(url + "#field-intro", { waitUntil: "networkidle" });
   await expect(mobile.locator(".opening-cover")).toHaveCSS("display", "none");
   const mobileField = mobile.locator(".field-canvas");
@@ -230,63 +191,27 @@ try {
   const tap = {x: Math.round(mobileSize.width * .4), y: Math.round(mobileSize.height * .46)};
   await mobileField.tap({position: tap});
   await expect.poll(() => rippleRadius(mobileField, tap), {intervals: [16, 24]}).toBeGreaterThan(20);
+  const cdp = await mobile.context().newCDPSession(mobile);
+  async function swipeUp(x, y) {
+    await cdp.send("Input.dispatchTouchEvent", {type: "touchStart", touchPoints: [{x, y}]});
+    for (let step = 1; step <= 12; step++) {
+      await cdp.send("Input.dispatchTouchEvent", {type: "touchMove", touchPoints: [{x, y: y - step * 19}]});
+      await mobile.waitForTimeout(30);
+    }
+    await cdp.send("Input.dispatchTouchEvent", {type: "touchEnd", touchPoints: []});
+  }
   const startFieldScroll = await mobile.evaluate(() => scrollY);
-  await swipe(mobileSize.x + tap.x, mobileSize.y + tap.y, 0, -228);
+  await swipeUp(mobileSize.x + tap.x, mobileSize.y + tap.y);
   await expect.poll(() => mobile.evaluate(() => scrollY)).toBeGreaterThan(startFieldScroll + 100);
 
-  const researchNote = mobile.locator("#lens-panel-research");
-  const mobilePrint = researchNote.locator(".note-print");
-  await researchNote.evaluate(note => scrollTo({
-    top: scrollY + note.getBoundingClientRect().top - innerHeight * .65,
-    behavior: "instant",
-  }));
-  await expect.poll(() => yOffset(mobilePrint)).toBeGreaterThan(7);
+  const mobilePrint = mobile.locator("#lens-panel-research .note-print");
+  await mobilePrint.scrollIntoViewIfNeeded();
   const startScroll = await mobile.evaluate(() => scrollY);
   const startOffset = await yOffset(mobilePrint);
-  await swipe(190, 700, 0, -228);
+  await swipeUp(190, 700);
   await expect.poll(() => mobile.evaluate(() => scrollY)).toBeGreaterThan(startScroll + 150);
   await expect.poll(() => yOffset(mobilePrint)).toBeLessThan(startOffset - 3);
   expect(await mobile.evaluate(() => document.documentElement.scrollWidth)).toBe(390);
-
-  async function swipeOn(locator, dx, dy = 0) {
-    await locator.scrollIntoViewIfNeeded();
-    const bounds = await locator.boundingBox();
-    await swipe(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2, dx, dy);
-  }
-  const researchCanvas = mobile.locator("#regression-canvas");
-  await researchCanvas.scrollIntoViewIfNeeded();
-  const startCanvasScroll = await mobile.evaluate(() => scrollY);
-  await swipeOn(researchCanvas, 0, -115);
-  await expect.poll(() => mobile.evaluate(() => scrollY)).toBeGreaterThan(startCanvasScroll + 65);
-  await expect(mobile).toHaveURL(/#field-intro$/);
-  await swipeOn(researchCanvas, -110);
-  await expect(mobile).toHaveURL(/#lens-panel-music$/);
-  await swipeOn(mobile.locator("#music-canvas"), -110);
-  await expect(mobile).toHaveURL(/#lens-panel-court$/);
-
-  const serveMarker = mobile.locator("#court-serve-marker");
-  await expect(serveMarker).toBeVisible();
-  await swipeOn(serveMarker, 105);
-  await expect(mobile.locator(".lens-stage.is-rally-playing")).toHaveCount(1);
-  await expect(mobile.locator("#court-readout")).toContainText("发球落在");
-  await expect(mobile).toHaveURL(/#lens-panel-court$/);
-  await expect(mobile.locator("#rally-play-btn")).toBeEnabled({ timeout: 5000 });
-
-  const touchReader = mobile.locator(".project-reader");
-  await expect(touchReader).toHaveClass(/inline-reader/);
-  await expect(mobile.locator(".agent-node.is-done")).toHaveCount(0);
-  await mobile.locator('[data-stage-bookmark="2"]').tap();
-  await expect(mobile).toHaveURL(/#scene-2$/);
-  await expect(mobile.locator(".agent-node.is-done")).toHaveCount(4);
-
-  await mobile.setViewportSize({ width: 1180, height: 900 });
-  await expect(touchReader).toHaveClass(/pinned-reader/);
-  await scrollToMethod(touchReader, .50);
-  await expect(mobile.locator("#stage-tab-1")).toHaveAttribute("aria-selected", "true");
-  await mobile.setViewportSize({ width: 820, height: 1180 });
-  await expect(touchReader).toHaveClass(/inline-reader/);
-  await expect(mobile.locator("#scene-0")).toBeVisible();
-  await expect(mobile.locator("#scene-2")).toBeVisible();
   expect(errors).toEqual([]);
-  console.log("PASS: landscape transitions and touch ripples, field gestures and keyboard, reduced motion, desktop/tablet project reading, mobile chapters and Agent flow, terrain, note parallax, and touch swipes and serves.");
+  console.log("PASS: full-screen landscape and scroll transition, mouse/touch ripples, keyboard pulse, still field under reduced motion, project reading, terrain, note parallax, and native touch scrolling.");
 } finally { await browser.close(); }

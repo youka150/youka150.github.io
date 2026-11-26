@@ -13,8 +13,8 @@ npm run dev
 - `index.html`：语义化页面结构、项目叙事与个人兴趣切面。
 - `styles.css` 定义全站排版、导航、全屏山湖封面、个人简介与响应式布局。
 - `src/main.js` 管理项目和手记中的图解、参数和键盘交互。项目页和手记的专属样式位于 `project.css` 与 `interests.css`。
-- `src/pointer.js` 与 `pointer.css` 提供照片取景、触点水纹与链接悬停反馈。能完整放下图文的宽屏按滚动位置切换三种方法。较窄或较矮的屏幕按顺序显示三幕，目录链接可直接跳到对应图文。
-- `src/journal.js` 控制山湖封面的滚动推近、水纹转场、手记照片的视差和配乐选曲。三则手记可自然滚动阅读，也可在图形内横扫查看相邻图解。在球场内从发球点向右短划可发球。
+- `src/pointer.js` 与 `pointer.css` 提供照片取景与链接悬停反馈。原生锚点负责页面内导航。能完整放下图文的宽屏按滚动位置切换三种方法，点击标签也能直接定位。
+- `src/journal.js` 控制山湖封面的滚动推近、水纹转场、手记照片的视差和配乐选曲。三则手记按自然滚动阅读，研究笔记、唱片和羽毛球照片沿用生成的情境配图。
 - `src/field-network.js` 参考历史提交 `5255bcb` 的首页网络绘制简介旁的点线图。移动指针可牵引节点，点击、轻触或用键盘激活「泛起涟漪」可触发水纹。
 - `src/terrain.js` 绘制全站背景等高线。桌面指针会拨动等高线并留下逐渐消散的波纹。触屏与减少动态效果模式使用静态底图。
 - `script.js`、`script.css`、`script.js.LEGAL.txt`：提交至仓库根目录供 GitHub Pages 直接加载的构建产物。
@@ -32,7 +32,7 @@ npm run dev
 | 02 融合画像 | 对比纯活跃频次视图与 384 维多语言句向量经 PCA + KMeans 融合后的群体分离 | `python/huawei_mining_service/services/clustering_service.py`、`bertopic_service.py` |
 | 03 趋势 Agent | 维度拆解 → 多源检索 → Reflection 证据自检补搜 → SSE 流式输出 | `src/lib/agents/TrendAgent.js`、`hotspot_service.py` |
 
-图中使用示例数据。每幕都有对应的文字、图解与源码入口。琴弦动画只在可见时运行，系统的减少动态效果偏好会同步生效。禁用 JavaScript 后，仍可阅读三个项目章节与三则手记。
+图中使用示例数据。项目的文字、图解、源码入口随所选方法一起切换。琴弦动画只在可见时运行，系统的减少动态效果偏好会同步生效。禁用 JavaScript 后，仍可阅读三个项目章节与三则手记。
 
 ## 手记配乐
 

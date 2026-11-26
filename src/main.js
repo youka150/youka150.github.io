@@ -33,20 +33,15 @@ syncMotionMode();
 
 const sectionLinks = $$(".primary-nav .nav-link");
 const navSections = sectionLinks.map((link) => document.querySelector(link.hash));
-const noteLinks = $$(".notes-index a");
-const noteSections = noteLinks.map((link) => document.querySelector(link.hash));
-const locationLinks = [...sectionLinks, ...noteLinks];
 function updateCurrentSection() {
   const readingLine = window.innerHeight * 0.36;
   const atEnd = window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 2;
-  const coversReadingLine = (section) => {
+  const current = atEnd ? navSections.at(-1) : navSections.find((section) => {
     const bounds = section.getBoundingClientRect();
     return bounds.top <= readingLine && bounds.bottom > readingLine;
-  };
-  const current = atEnd ? navSections.at(-1) : navSections.find(coversReadingLine);
-  const note = current?.id === "perspectives" ? noteSections.find(coversReadingLine) : null;
-  for (const link of locationLinks) {
-    if (link.hash === `#${current?.id}` || link.hash === `#${note?.id}`) link.setAttribute("aria-current", "location");
+  });
+  for (const link of sectionLinks) {
+    if (link.hash === `#${current?.id}`) link.setAttribute("aria-current", "location");
     else link.removeAttribute("aria-current");
   }
 }
@@ -179,7 +174,6 @@ const topologyOutput = $("#topology-share");
 const qualityOutput = $("#quality-share");
 const weightPresetBtns = $$("[data-weight-preset]");
 let drawNetworkStatic = () => {};
-let revealNetwork = () => {};
 
 if (networkCanvas) {
   const communityColors = ["#47634c", "#ab5839", "#6b737e"];
@@ -210,8 +204,6 @@ if (networkCanvas) {
 
   let pointedNode = -1;
   let pinnedNode = -1;
-  const edgeReveal = { progress: 1 };
-  let edgeRevealTween;
   const initialHint = networkTooltip?.textContent.trim() || "指向或轻点一个节点，查看它连接了谁。";
   const surface = setupResponsiveCanvas(networkCanvas, drawNetwork);
 
@@ -235,9 +227,7 @@ if (networkCanvas) {
       n.radius = unit * (3.5 + n.score * 8 + (n.rank <= 3 ? 1.5 : 0));
     }
 
-    for (const [index, [from, to, weight]] of netEdges.entries()) {
-      const progress = Math.min(1, edgeReveal.progress * 1.7 - 0.7 * index / netEdges.length);
-      if (progress <= 0) continue;
+    for (const [from, to, weight] of netEdges) {
       const a = netNodes[from];
       const b = netNodes[to];
       const highlighted = from === selected || to === selected;
@@ -252,19 +242,6 @@ if (networkCanvas) {
       ctx.lineWidth = highlighted ? 1.7 : 0.6 + weight * 0.75;
       ctx.beginPath();
       ctx.moveTo(a.x, a.y);
-      if (progress < 1) {
-        const middleX = a.x + (bendX - a.x) * progress;
-        const middleY = a.y + (bendY - a.y) * progress;
-        const nextX = bendX + (tipX - bendX) * progress;
-        const nextY = bendY + (tipY - bendY) * progress;
-        ctx.quadraticCurveTo(
-          middleX, middleY,
-          middleX + (nextX - middleX) * progress,
-          middleY + (nextY - middleY) * progress,
-        );
-        ctx.stroke();
-        continue;
-      }
       ctx.quadraticCurveTo(bendX, bendY, tipX, tipY);
       ctx.stroke();
       const arrow = highlighted ? 6 : 4;
@@ -408,20 +385,7 @@ if (networkCanvas) {
   weightPresetBtns.forEach((btn) => {
     btn.addEventListener("click", () => setWeightValue(btn.dataset.weightPreset));
   });
-  drawNetworkStatic = () => {
-    if (motionQuery.matches) {
-      edgeRevealTween?.kill();
-      edgeReveal.progress = 1;
-    }
-    surface().resize();
-  };
-  revealNetwork = () => {
-    if (motionQuery.matches) return;
-    edgeReveal.progress = 0;
-    edgeRevealTween = gsap.to(edgeReveal, {
-      progress: 1, duration: 0.9, ease: "power1.inOut", onUpdate: drawNetwork,
-    });
-  };
+  drawNetworkStatic = () => surface().resize();
   setWeightValue(influenceSlider?.value || 52);
 }
 
@@ -432,7 +396,6 @@ const personaChips = $$("[data-persona]");
 const clusterBadge = $("#cluster-badge");
 const clusterInsightText = $("#cluster-insight-text");
 let drawClusterStatic = () => {};
-let revealClusters = () => {};
 
 if (clusterCanvas) {
   const personaMeta = [
@@ -601,7 +564,7 @@ if (clusterCanvas) {
         : "只看发帖和回复频次，不同话题的用户会挤在同一条带上。");
   }
 
-  function setClusterMode(nextMode, { duration = 0.45 } = {}) {
+  function setClusterMode(nextMode) {
     mode = nextMode;
     pointedPersona = -1;
     clusterCanvas.style.cursor = "";
@@ -621,7 +584,7 @@ if (clusterCanvas) {
       renderClusters();
     } else {
       clusterTween = gsap.to(blendState, {
-        t: target, duration, ease: "power2.inOut", onUpdate: renderClusters,
+        t: target, duration: 0.45, ease: "power2.inOut", onUpdate: renderClusters,
       });
     }
   }
@@ -675,11 +638,6 @@ if (clusterCanvas) {
 
   selectPersona(-1);
   setClusterMode("fused");
-  revealClusters = () => {
-    if (motionQuery.matches || mode !== "fused" || clusterTween?.isActive()) return;
-    blendState.t = 0;
-    setClusterMode(mode, { duration: 0.85 });
-  };
 }
 
 /* --- Scene 2: Reflective Trend Agent Simulator --- */
@@ -707,7 +665,6 @@ const agentScenarios = [
 
 function playAgentSimulation() {
   if (!agentNodes.length || !agentTraceLog) return;
-  agentAutoPlayed = true;
   agentTimeline?.kill();
   const steps = agentScenarios[activeAgentTopic];
   const showStep = (index, complete = false) => {
@@ -765,42 +722,33 @@ function showStage(index, { animate = true } = {}) {
 
   stageScenes.forEach((scene, sIdx) => {
     gsap.killTweensOf(scene);
-    gsap.set(scene, { clearProps: "opacity,transform" });
+    gsap.set(scene, { clearProps: "transform" });
     scene.hidden = sIdx !== index;
   });
 
   if (index === 0) requestAnimationFrame(drawNetworkStatic);
   if (index === 1) requestAnimationFrame(drawClusterStatic);
-  if (index === 2 && !agentAutoPlayed) playAgentSimulation();
+  if (index === 2 && !agentAutoPlayed) {
+    agentAutoPlayed = true;
+    playAgentSimulation();
+  }
 
   if (index !== 2 && agentTimeline?.isActive()) agentTimeline.progress(1);
   if (changed && animate && !motionQuery.matches) {
-    const scene = stageScenes[index];
-    const pinned = scene.closest(".pinned-reader");
-    const from = pinned ? { opacity: 0.76 } : { y: 10 };
-    const to = pinned ? { opacity: 1 } : { y: 0 };
-    gsap.fromTo(scene, from, {
-      ...to, duration: 0.36, ease: "power2.out", clearProps: "opacity,transform",
-    });
+    gsap.fromTo(
+      stageScenes[index],
+      { y: 10 },
+      { y: 0, duration: 0.36, ease: "power2.out", clearProps: "transform" },
+    );
   }
 }
 
-const stageEntrances = [
-  revealNetwork,
-  revealClusters,
-  () => { if (!agentAutoPlayed) playAgentSimulation(); },
-];
-const scrollToStage = setupProjectReading(
-  stageScenes,
-  (index, { animate = true } = {}) => {
-    if (animate && activeStage === index) return;
-    const focusedInScene = activeStage !== index &&
-      stageScenes[activeStage]?.contains(document.activeElement);
-    showStage(index, { animate });
-    if (focusedInScene) stageTabs[index].focus({ preventScroll: true });
-  },
-  index => stageEntrances[index]?.(),
-);
+const scrollToStage = setupProjectReading(stageScenes, index => {
+  if (activeStage === index) return;
+  const focusedInScene = stageScenes[activeStage]?.contains(document.activeElement);
+  showStage(index);
+  if (focusedInScene) stageTabs[index].focus({preventScroll: true});
+});
 function activateStageTab(tab) {
   const index = Number(tab.dataset.stageTab);
   showStage(index);
@@ -808,6 +756,7 @@ function activateStageTab(tab) {
 }
 stageTabs.forEach((tab) => tab.addEventListener("click", () => activateStageTab(tab)));
 bindTabKeyboard(stageTabs, activateStageTab);
+showStage(0, { animate: false });
 
 /* ==========================================================================
    4. Personal Studio — Three Everyday Lenses
@@ -1148,13 +1097,9 @@ const shotTypeBtns = $$("[data-shot-type]");
 const rallyPlayBtn = $("#rally-play-btn");
 const courtReadout = $("#court-readout");
 let drawCourtStatic = () => {};
-let serveFromSwipe = () => false;
 let activeRallyTween;
 
 if (courtCanvas) {
-  const courtStage = courtCanvas.parentElement;
-  const serveMarker = $("#court-serve-marker");
-  const serveOrigin = [0.22, 0.52];
   const rallies = {
     clear: {
       label: "高远球拉吊：后场深区大角度对拉，紧接一拍斜线劈吊调动步伐。",
@@ -1185,10 +1130,9 @@ if (courtCanvas) {
   let target = null;
   let currentShotKey = "clear";
   let activeSegments = rallies.clear.shots;
-  const shuttleState = { segIndex: 0, segT: 1, completed: true, landing: 1 };
+  const shuttleState = { segIndex: 0, segT: 1, completed: true };
 
   const getCourtSurface = setupResponsiveCanvas(courtCanvas, () => {
-    positionServeMarker();
     renderCourt();
   });
 
@@ -1201,14 +1145,6 @@ if (courtCanvas) {
       w: width - marginX * 2,
       h: height - marginY * 2,
     };
-  }
-
-  function positionServeMarker() {
-    if (!serveMarker) return;
-    const { width, height } = getCourtSurface();
-    const box = getCourtBox(width, height);
-    serveMarker.style.left = `${(box.x + box.w * serveOrigin[0]) / width * 100}%`;
-    serveMarker.style.top = `${(box.y + box.h * serveOrigin[1]) / height * 100}%`;
   }
 
   function renderCourt() {
@@ -1283,14 +1219,6 @@ if (courtCanvas) {
       const eased = 1 - Math.pow(1 - progress, 2.2);
       const ctrlX = (sx + ex) * 0.5;
       const ctrlY = (sy + ey) * 0.5 - box.h * seg.loft;
-      const pointOnArc = (time) => {
-        const inv = 1 - time;
-        return [
-          inv * inv * sx + 2 * inv * time * ctrlX + time * time * ex,
-          inv * inv * sy + 2 * inv * time * ctrlY + time * time * ey,
-        ];
-      };
-      const [px, py] = pointOnArc(eased);
 
       // Draw full ghost path
       ctx.save();
@@ -1307,25 +1235,16 @@ if (courtCanvas) {
       ctx.strokeStyle = idx === shuttleState.segIndex || shuttleState.completed ? "#a6482e" : "rgba(166, 72, 46, 0.5)";
       ctx.lineWidth = 2.3;
       ctx.beginPath();
-      ctx.moveTo(sx, sy);
-      ctx.quadraticCurveTo(sx + (ctrlX - sx) * eased, sy + (ctrlY - sy) * eased, px, py);
-      ctx.stroke();
-
-      if (!shuttleState.completed && idx === shuttleState.segIndex && eased > 0) {
-        const tail = Math.max(0, eased - 0.19);
-        const [tailX, tailY] = pointOnArc(tail);
-        const [midX, midY] = pointOnArc((tail + eased) / 2);
-        const glow = ctx.createLinearGradient(tailX, tailY, px, py);
-        glow.addColorStop(0, "#f6d39e00");
-        glow.addColorStop(1, "#fff1bf");
-        ctx.strokeStyle = glow;
-        ctx.lineWidth = 3;
-        ctx.lineCap = "round";
-        ctx.beginPath();
-        ctx.moveTo(tailX, tailY);
-        ctx.quadraticCurveTo(2 * midX - (tailX + px) / 2, 2 * midY - (tailY + py) / 2, px, py);
-        ctx.stroke();
+      const steps = 28;
+      for (let s = 0; s <= steps; s++) {
+        const u = (s / steps) * eased;
+        const inv = 1 - u;
+        const px = inv * inv * sx + 2 * inv * u * ctrlX + u * u * ex;
+        const py = inv * inv * sy + 2 * inv * u * ctrlY + u * u * ey;
+        if (s === 0) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
       }
+      ctx.stroke();
 
       // Landing marker when segment finishes
       if (progress >= 0.98) {
@@ -1336,22 +1255,15 @@ if (courtCanvas) {
         ctx.stroke();
       }
 
-      if (idx === activeSegments.length - 1 && shuttleState.landing < 1) {
-        const opacity = 1 - shuttleState.landing;
-        ctx.beginPath();
-        ctx.arc(ex, ey, 8 + shuttleState.landing * 17, 0, Math.PI * 2);
-        ctx.strokeStyle = `rgba(166, 72, 46, ${0.85 * opacity})`;
-        ctx.fillStyle = `rgba(255, 235, 182, ${0.5 * opacity})`;
-        ctx.lineWidth = 1.5;
-        ctx.fill();
-        ctx.stroke();
-      }
-
       // Draw shuttlecock at current tip
       if (
         (!shuttleState.completed && idx === shuttleState.segIndex) ||
         (shuttleState.completed && idx === activeSegments.length - 1)
       ) {
+        const inv = 1 - eased;
+        const px = inv * inv * sx + 2 * inv * eased * ctrlX + eased * eased * ex;
+        const py = inv * inv * sy + 2 * inv * eased * ctrlY + eased * eased * ey;
+
         // Ground shadow
         const groundY = sy + (ey - sy) * eased;
         ctx.beginPath();
@@ -1397,7 +1309,6 @@ if (courtCanvas) {
       shuttleState.completed = true;
       shuttleState.segT = 1;
       shuttleState.segIndex = activeSegments.length - 1;
-      shuttleState.landing = 1;
     }
     getCourtSurface().resize();
     renderCourt();
@@ -1406,8 +1317,6 @@ if (courtCanvas) {
   function runRally(segments, description) {
     activeRallyTween?.kill();
     activeSegments = segments;
-    shuttleState.landing = 1;
-    courtStage.classList.toggle("is-rally-playing", !motionQuery.matches);
 
     if (courtReadout && description) {
       courtReadout.textContent = description;
@@ -1430,7 +1339,6 @@ if (courtCanvas) {
     const tl = gsap.timeline({
       onComplete: () => {
         shuttleState.completed = true;
-        courtStage.classList.remove("is-rally-playing");
         if (rallyPlayBtn) rallyPlayBtn.disabled = false;
         renderCourt();
       },
@@ -1447,13 +1355,6 @@ if (courtCanvas) {
         ease: "none",
         onUpdate: renderCourt,
       });
-    });
-    tl.fromTo(shuttleState, { landing: 0 }, {
-      landing: 1,
-      duration: 0.34,
-      ease: "power2.out",
-      immediateRender: false,
-      onUpdate: renderCourt,
     });
 
     activeRallyTween = tl;
@@ -1482,32 +1383,15 @@ if (courtCanvas) {
     renderCourt();
   }
 
-  function hitTarget(from, action = "这一拍") {
+  function hitTarget() {
     if (!target) return;
     const [x, y] = target;
-    const origin = from ?? (x < 0.5 ? [0.78, 0.52] : serveOrigin);
+    const origin = x < 0.5 ? [0.78, 0.52] : [0.22, 0.52];
     const depth = Math.abs(x - 0.5);
     const zone = depth < 0.16 ? "网前" : depth > 0.34 ? "底线" : "中场";
     shotTypeBtns.forEach((btn) => btn.setAttribute("aria-pressed", "false"));
-    runRally([{ from: origin, to: [x, y], loft: 0.08 + depth * 0.24 }], `${action}落在${zone}。`);
+    runRally([{ from: origin, to: [x, y], loft: 0.08 + depth * 0.24 }], "这一拍落在" + zone + "。");
   }
-
-  serveFromSwipe = (start, dx, dy) => {
-    if (!serveMarker || dx < 24 || courtStage.classList.contains("is-rally-playing")) return false;
-    const bounds = serveMarker.getBoundingClientRect();
-    if (!bounds.width) return false;
-    const startX = bounds.left + bounds.width / 2;
-    const startY = bounds.top + bounds.height / 2;
-    if (Math.hypot(start.x - startX, start.y - startY) > 25) return false;
-
-    const { width, height } = getCourtSurface();
-    const box = getCourtBox(width, height);
-    const depth = Math.min(1, dx / (box.w * 0.5));
-    const landingY = gsap.utils.clamp(0.08, 0.92, serveOrigin[1] + dy / box.h * 2);
-    target = [0.57 + 0.36 * depth, landingY];
-    hitTarget(serveOrigin, "发球");
-    return true;
-  };
 
   courtCanvas.addEventListener("pointermove", (event) => {
     if (event.pointerType !== "touch") aimAtPointer(event);
@@ -1541,72 +1425,7 @@ if (courtCanvas) {
     }
   });
 
-  positionServeMarker();
   renderCourt();
-}
-
-/* Note diagrams are the only surfaces that interpret horizontal touch gestures. */
-const noteStages = $$(".notes-stories .lens-stage");
-let noteTouch;
-let lastNoteSwipe;
-let noteTransition;
-
-function moveToNote(index, direction) {
-  const next = (index + direction + noteStages.length) % noteStages.length;
-  const stage = noteStages[next];
-  const panel = stage.closest(".lens-panel");
-  if (document.activeElement === noteStages[index].querySelector("canvas")) {
-    document.activeElement.blur();
-  }
-  history.pushState(null, "", `#${panel.id}`);
-  stage.scrollIntoView({ block: "center", behavior: "instant" });
-  updateCurrentSection();
-  noteTransition?.cancel();
-  if (!motionQuery.matches) {
-    noteTransition = stage.animate([
-      { opacity: 0.65, transform: `translateX(${10 * direction}px)` },
-      { opacity: 1, transform: "translateX(0)" },
-    ], { duration: 240, easing: "ease-out" });
-  }
-}
-
-if (noteStages.length > 1) {
-  window.addEventListener("pointerdown", (event) => {
-    lastNoteSwipe = undefined;
-    if (event.pointerType !== "touch") return;
-    const stage = event.target.closest?.(".lens-stage");
-    const index = noteStages.indexOf(stage);
-    noteTouch = event.isPrimary && index >= 0
-      ? { id: event.pointerId, index, x: event.clientX, y: event.clientY }
-      : undefined;
-  }, { passive: true });
-  window.addEventListener("pointercancel", (event) => {
-    if (event.pointerId === noteTouch?.id) noteTouch = undefined;
-  }, { passive: true });
-  window.addEventListener("pointerup", (event) => {
-    if (event.pointerId !== noteTouch?.id) return;
-    const start = noteTouch;
-    noteTouch = undefined;
-    const dx = event.clientX - start.x;
-    const dy = event.clientY - start.y;
-    if (Math.abs(dx) < 24 || Math.abs(dx) < Math.abs(dy) * 1.4) return;
-
-    const stage = noteStages[start.index];
-    const served = stage.contains(courtCanvas) && serveFromSwipe(start, dx, dy);
-    if (!served && Math.abs(dx) < 44) return;
-    lastNoteSwipe = { stage, at: performance.now() };
-    if (!served) moveToNote(start.index, dx < 0 ? 1 : -1);
-  }, { passive: true });
-
-  for (const stage of noteStages) {
-    stage.addEventListener("click", (event) => {
-      // A compatibility click after a swipe must not trigger a tap action.
-      if (event.detail && stage === lastNoteSwipe?.stage && performance.now() - lastNoteSwipe.at < 450) {
-        event.preventDefault();
-        event.stopImmediatePropagation();
-      }
-    }, { capture: true });
-  }
 }
 
 /* Live Reduced-Motion & Visibility Listeners */
@@ -1617,7 +1436,6 @@ document.addEventListener("visibilitychange", () => {
 motionQuery.addEventListener("change", () => {
   syncMotionMode();
   if (motionQuery.matches) {
-    noteTransition?.cancel();
     if (agentTimeline?.isActive()) playAgentSimulation();
     activeRallyTween?.progress(1).kill();
     if (rallyPlayBtn) rallyPlayBtn.disabled = false;
